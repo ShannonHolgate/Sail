@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2013. Shannon Holgate.
+ *
+ * Sail - A personal fund management web application.
+ *
+ * Makes use of the Play web framework for scala, MongoDB and the salat-Play plugin
+ */
+
 package controllers
 
 import play.api.mvc.{Action, Security, Controller}
@@ -8,13 +16,12 @@ import views.html
 import org.joda.time.DateTime
 
 /**
- * Created with IntelliJ IDEA.
- * User: Shannon
- * Date: 05/11/13
- * Time: 22:49
+ * Controller for the Register flow.
+ * Holds the form and login to register a new user
  */
 object Register extends Controller{
 
+  /** Register form used on the Register page to gather registration information*/
   val registerForm = Form(
     tuple(
       "username" -> text,
@@ -25,10 +32,22 @@ object Register extends Controller{
     })
   )
 
+  /**
+   * Routes to the Register index page and passes the register form to it
+   *
+   * @return    Result directing the flow to the Register page including the register form
+   */
   def index = Action { implicit request =>
     Ok(html.register(registerForm)).withNewSession
   }
 
+  /**
+   * Takes the registration attempt from the Registration page, bound to the registerForm
+   * The user's email is then mapped to the security username cookie along
+   * along with the login date time.
+   *
+   * @return    Result redirecting the user back to the root application index
+   */
   def register = Action { implicit request =>
     registerForm.bindFromRequest.fold(
       formWithErrors => BadRequest(html.register(formWithErrors)),
