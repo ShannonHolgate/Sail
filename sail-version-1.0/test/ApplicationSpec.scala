@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2013. Shannon Holgate.
+ *
+ * Sail - A personal fund management web application.
+ *
+ * Makes use of the Play web framework for scala, MongoDB and the salat-Play plugin
+ */
+
 import org.specs2.mutable._
 import org.specs2.runner._
 import org.junit.runner._
@@ -6,9 +14,7 @@ import play.api.test._
 import play.api.test.Helpers._
 
 /**
- * Add your spec here.
- * You can mock out a whole application including requests, plugins etc.
- * For more information, consult the wiki.
+ * Tests the root application controller
  */
 @RunWith(classOf[JUnitRunner])
 class ApplicationSpec extends Specification {
@@ -19,12 +25,10 @@ class ApplicationSpec extends Specification {
       route(FakeRequest(GET, "/boum")) must beNone
     }
 
-    "render the index page" in new WithApplication{
+    "Redirect to the Login page" in new WithApplication{
       val home = route(FakeRequest(GET, "/")).get
-
-      status(home) must equalTo(OK)
-      contentType(home) must beSome.which(_ == "text/html")
-      contentAsString(home) must contain ("Your new application is ready.")
+      status(home) must equalTo(SEE_OTHER)
+      redirectLocation(home) must some("/login")
     }
   }
 }

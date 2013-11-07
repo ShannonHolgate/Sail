@@ -14,6 +14,9 @@ import play.api.data.Forms._
 import models.User
 import views.html
 import org.joda.time.{Days, DateTime}
+import play.api.Play.current
+import play.api.Play
+import play.Logger
 
 /**
  * Controller for the Login flow.
@@ -78,9 +81,8 @@ object Login extends Controller {
  */
 trait Secured extends Controller{
 
-  /** The message to display when the user times out */
-  val inactivityLimit = 5
-  val inactivityString = "You have been inactive for over "+inactivityLimit+" days"
+  /** The time limit from last login until the user should be timed out */
+  val inactivityLimit: Double = Play.application.configuration.getString("user.timeout.milli").getOrElse(Play.application.configuration.getString("user.timeout.days").getOrElse("5")).toDouble
 
   /**
    * Gets the email address from the current session cookie
@@ -113,15 +115,14 @@ trait Secured extends Controller{
    * @return      Result specified in the Function parameter f
    *              Will change when user has timed out to redirect the
    *              flow to the Login page.
-   * @see         #hasTimedOut(Request[AnyContent])
+   * @see         #hasTimedOut(Request[AnyContent], timeout)
    */
   def withAuth(f: => String => Request[AnyContent] => Result) = {
     Security.Authenticated(email, onUnauthorized) { user =>
       Action(request => {
-        if (hasTimedOut(request)) {
-          Redirect(routes.Login.index).withNewSession.flashing("Timeout" -> inactivityString)
-        }
-        else f(user)(request)
+          hasTimedOut(request, inactivityLimit).getOrElse({
+            f(user)(request)
+          })
       })
     }
   }
@@ -150,14 +151,26 @@ trait Secured extends Controller{
    * 'x' is the inactivityLimit value.
    *
    * @param request   Request[AnyContent] the incoming request
-   * @return          Boolean value stating whether the user has timeout or not
+   * @param timeout   Double the time in days until the user should be timed out
+   * @return          Option[Result] result redirecting the user to the login page
+   *                  when timed out
    * @see             #inactivityLimit
    */
-  def hasTimedOut (request:Request[AnyContent]):Boolean= {
+  def hasTimedOut (request:Request[AnyContent], timeout:Double):Option[Result]= {
     request.session.get("connected").map ({
       connected =>
-      //DateTime.now().getMillisOfDay.-(DateTime.parse(connected).getMillisOfDay).>(500)
-        Days.daysBetween(DateTime.parse(connected).toDateMidnight() , DateTime.now().toDateMidnight()).getDays().>(inactivityLimit)
-    }).getOrElse(true)
+        if (Play.application.configuration.getString("user.timeout.milli").isDefined) {
+          /** We are in dev or test */
+          if (DateTime.now().getMillisOfDay.-(DateTime.parse(connected).getMillisOfDay).>(timeout)) {
+          val inactivityString = "You have been inactive for over "+timeout.toInt+" milli seconds"
+          return Option(Redirect(routes.Login.index).withNewSession.flashing("Timeout" -> inactivityString))
+          }
+        }
+        else if (Days.daysBetween(DateTime.parse(connected).toDateMidnight() , DateTime.now().toDateMidnight()).getDays().>(timeout)) {
+          val inactivityString = "You have been inactive for over "+timeout+" days"
+          return Option(Redirect(routes.Login.index).withNewSession.flashing("Timeout" -> inactivityString))
+        }
+    })
+    return None
   }
 }
