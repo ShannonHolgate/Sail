@@ -1,10 +1,71 @@
-/**
- * Created with IntelliJ IDEA.
- * User: shannonholgate
- * Date: 06/11/2013
- * Time: 17:12
- * To change this template use File | Settings | File Templates.
+/*
+ * Copyright (c) 2013. Shannon Holgate.
+ *
+ * Sail - A personal fund management web application.
+ *
+ * Makes use of the Play web framework for scala, MongoDB and the salat-Play plugin
  */
-class RegisterSpec {
 
+import org.junit.runner.RunWith
+import org.specs2.mutable.Specification
+import org.specs2.runner.JUnitRunner
+import play.api.libs.json.Json._
+import play.api.test.{FakeApplication, FakeRequest}
+import play.api.test.Helpers._
+import play.api.test._
+
+/**
+ * Tests the register controller
+ */
+@RunWith(classOf[JUnitRunner])
+class RegisterSpec extends Specification with TestUser{
+
+  "Register" should {
+    "respond to the index Action" in {
+      val result = controllers.Register.index()(FakeRequest())
+
+      status(result) must equalTo(OK)
+      contentAsString(result) must contain("register")
+    }
+
+    "respond to the register action" in new WithApplication(currentApplication){
+      /** Ensure Test User does NOT exist */
+      removeTestUser
+
+      /** The Json form object*/
+      val jsonObject = toJson(
+        Map(
+          "email" -> toJson(testUser.email),
+          "username" -> toJson(testUser.username),
+          "password" -> toJson(testUser.password)
+        )
+      )
+      val result= controllers.Register.register()(FakeRequest().withJsonBody(jsonObject))
+
+      /** Store the cookies to pass onto the next request */
+      val sessionCookies = cookies(result).get("PLAY_SESSION").orNull
+
+      status(result) must equalTo(SEE_OTHER)
+      sessionCookies.value must find("mail.{1,4}com.*connected")
+      redirectLocation(result) must some("/")
+    }
+
+    "respond to the register action - user already exists" in new WithApplication(currentApplication){
+      /** Ensure Test User DOES exist */
+      confirmTestUserExists
+
+      /** The Json form object*/
+      val jsonObject = toJson(
+        Map(
+          "email" -> toJson(testUser.email),
+          "username" -> toJson(testUser.username),
+          "password" -> toJson(testUser.password)
+        )
+      )
+      val result= controllers.Register.register()(FakeRequest().withJsonBody(jsonObject))
+
+      status(result) must equalTo(BAD_REQUEST)
+      contentAsString(result) must contain("User Already exists")
+    }
+  }
 }

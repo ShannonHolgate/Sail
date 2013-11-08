@@ -10,13 +10,10 @@ package models
 
 import play.api.Play.current
 import java.util.Date
-import com.novus.salat._
-import com.novus.salat.annotations._
 import com.novus.salat.dao._
 import com.mongodb.casbah.Imports._
 import se.radley.plugin.salat._
 import models.MongoContext._
-import play.Logger
 
 /**
  * User class to be mapped from MongoDB with use of the Salat library
@@ -60,22 +57,6 @@ object User extends ModelCompanion[User, ObjectId] {
   def create(username: String, email: String, password: String) {
     dao.insert(User(username = username, email = email, password = password))
   }
-
-  /**
-   * Deletes a user from the users collection on the MongoDB
-   *
-   * @param email String email address of the User to be removed
-   */
-  def delete(email: String) {
-    dao.remove(MongoDBObject("email" -> email))
-  }
-
-  /**
-   * Gets all the Users in the user collection on the MongoDB
-   *
-   * @return   List[User] a collection of all user objects
-   */
-  def All(): List[User] = dao.find(MongoDBObject.empty).toList
 
   /**
    * Gets a single user from the users collection on the MongoDB.

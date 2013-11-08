@@ -16,7 +16,6 @@ import views.html
 import org.joda.time.{Days, DateTime}
 import play.api.Play.current
 import play.api.Play
-import play.Logger
 
 /**
  * Controller for the Login flow.
@@ -24,7 +23,7 @@ import play.Logger
  * Holds the Security trait which is used by the root flow to ensure the user
  * is authenticated
  */
-object Login extends Controller {
+object  Login extends Controller {
 
   /**login form used on the Login screen to gather details */
   val loginForm = Form(
@@ -53,10 +52,10 @@ object Login extends Controller {
    *
    * @return    Result redirecting the user back to the root application index
    */
-  def authenticate = Action { implicit request =>
+  def authenticate(date:String=DateTime.now().toString()) = Action { implicit request =>
     loginForm.bindFromRequest.fold(
       formWithErrors => BadRequest(html.login(formWithErrors)),
-      user => Redirect(routes.Application.index).withSession(Security.username -> user._1, "connected" -> DateTime.now.toString())
+      user => Redirect(routes.Application.index).withSession(Security.username -> user._1, "connected" -> date)
     )
   }
 
@@ -81,8 +80,11 @@ object Login extends Controller {
  */
 trait Secured extends Controller{
 
+  /** The constant for seconds in day */
+  val secondsInDay : Int = 86400
+
   /** The time limit from last login until the user should be timed out */
-  val inactivityLimit: Double = Play.application.configuration.getString("user.timeout.milli").getOrElse(Play.application.configuration.getString("user.timeout.days").getOrElse("5")).toDouble
+  var inactivityLimit: BigDecimal = BigDecimal(Play.application.configuration.getString("user.timeout.days").getOrElse("5"))
 
   /**
    * Gets the email address from the current session cookie
@@ -156,18 +158,11 @@ trait Secured extends Controller{
    *                  when timed out
    * @see             #inactivityLimit
    */
-  def hasTimedOut (request:Request[AnyContent], timeout:Double):Option[Result]= {
+  def hasTimedOut (request:Request[AnyContent], timeout:BigDecimal):Option[Result]= {
     request.session.get("connected").map ({
       connected =>
-        if (Play.application.configuration.getString("user.timeout.milli").isDefined) {
-          /** We are in dev or test */
-          if (DateTime.now().getMillisOfDay.-(DateTime.parse(connected).getMillisOfDay).>(timeout)) {
-          val inactivityString = "You have been inactive for over "+timeout.toInt+" milli seconds"
-          return Option(Redirect(routes.Login.index).withNewSession.flashing("Timeout" -> inactivityString))
-          }
-        }
-        else if (Days.daysBetween(DateTime.parse(connected).toDateMidnight() , DateTime.now().toDateMidnight()).getDays().>(timeout)) {
-          val inactivityString = "You have been inactive for over "+timeout+" days"
+        if (Days.daysBetween(DateTime.parse(connected), DateTime.now()).getDays.>(timeout)) {
+          val inactivityString = "You have been inactive for over "+timeout.toInt+" days"
           return Option(Redirect(routes.Login.index).withNewSession.flashing("Timeout" -> inactivityString))
         }
     })

@@ -9,38 +9,94 @@
 import org.junit.runner._
 import org.specs2.mutable._
 import org.specs2.runner._
-import play.api.libs.json._
 import play.api.libs.json.Json._
-import play.api.mvc.{Session, Cookie}
 import play.api.test.Helpers._
 import play.api.test._
-import play.mvc.Http
+import play.api.test.WithApplication
+import org.joda.time.DateTime
 
+/**
+ * Tests the login controller
+ */
 @RunWith(classOf[JUnitRunner])
-class LoginSpec extends Specification{
+class LoginSpec extends Specification with TestUser{
 
   "Login" should {
-    "Respond to the login Action" in new WithApplication(FakeApplication(additionalConfiguration = Map("user.timeout.milli" -> "1"))){
+
+    "respond to the index Action" in {
+      val result = controllers.Login.index()(FakeRequest())
+
+      status(result) must equalTo(OK)
+      contentAsString(result) must contain("login")
+    }
+
+    "respond to the authenticate Action" in new WithApplication(currentApplication){
+      /** Ensure user exists */
+      confirmTestUserExists
+
+      /** The Json form object*/
       val jsonObject = toJson(
         Map(
-          "email" -> toJson("shannon@mail.com"),
-          "password" -> toJson("shannon")
+          "email" -> toJson(testUser.email),
+          "password" -> toJson(testUser.password)
         )
       )
+      val result= controllers.Login.authenticate()(FakeRequest().withJsonBody(jsonObject))
 
-      val result = route(FakeRequest(POST, "/login").withJsonBody(jsonObject)).get
+      /** Store the cookies to pass onto the next request */
       val sessionCookies = cookies(result).get("PLAY_SESSION").orNull
 
       status(result) must equalTo(SEE_OTHER)
-      sessionCookies.value must find("shannon.{1,4}mail.{1,4}com.*connected")
+      sessionCookies.value must find("mail.{1,4}com.*connected")
       redirectLocation(result) must some("/")
     }
 
-    "Respond to the logout Action" in {
-      val result = controllers.Login.logout()(FakeRequest())
+    "respond to the authenticate Action - user non-existent" in new WithApplication(currentApplication){
+
+      /** The Json form object*/
+      val jsonObject = toJson(
+        Map(
+          "email" -> toJson("user@fakemail.com"),
+          "password" -> toJson(testUser.password)
+        )
+      )
+      val result= controllers.Login.authenticate()(FakeRequest().withJsonBody(jsonObject))
+
+      status(result) must equalTo(BAD_REQUEST)
+      contentAsString(result) must contain("Invalid email")
+    }
+
+    "respond to the logout Action via route" in new WithApplication{
+      val result = route(FakeRequest(GET,"/logout")).get
 
       status(result) must equalTo(SEE_OTHER)
       headers(result).mkString must find("success")
+      redirectLocation(result) must some("/login")
+    }
+
+    "respond to the authenticate Action with timeout" in new WithApplication(currentApplication) {
+      /** Ensure user exists */
+      confirmTestUserExists
+
+      /** The Json form object*/
+      val jsonObject = toJson(
+        Map(
+          "email" -> toJson(testUser.email),
+          "password" -> toJson(testUser.password)
+        )
+      )
+
+      /** Run the authenticate action and set the connected date a week in the past
+        * This allows the timeout to be reached by the next request
+        */
+      val authenticate= controllers.Login.authenticate(DateTime.now().minusWeeks(1).toString())(FakeRequest(POST,"/login").withJsonBody(jsonObject))
+
+      /** Store the cookies to pass onto the next request */
+      val sessionCookies = cookies(authenticate).get("PLAY_SESSION").orNull
+
+      val result = route(FakeRequest(GET,"/").withCookies(sessionCookies)).get
+      status(result) must equalTo(SEE_OTHER)
+      flash(result).data must haveKey("Timeout")
       redirectLocation(result) must some("/login")
     }
   }
