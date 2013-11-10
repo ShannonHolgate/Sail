@@ -11,12 +11,14 @@ import play.Project._
 
 object ApplicationBuild extends Build {
 
-  val appName         = "test-play-users"
+  val appName         = "sail-version-10"
   val appVersion      = "1.0-SNAPSHOT"
 
   val appDependencies = Seq(
     /** Add the salat-Play plugin*/
-    "se.radley" %% "play-plugins-salat" % "1.3.0"
+    "se.radley" %% "play-plugins-salat" % "1.3.0",
+    /** Add the emailer plugin*/
+    "com.typesafe" %% "play-plugins-mailer" % "2.2.0"
   )
 
   val main = play.Project(appName, appVersion, appDependencies).settings(

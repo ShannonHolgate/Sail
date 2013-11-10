@@ -1,2 +1,5 @@
 # The salat-Play plugin
 500:se.radley.plugin.salat.SalatPlugin
+
+# The emailer plugin
+1500:com.typesafe.plugin.CommonsMailerPlugin

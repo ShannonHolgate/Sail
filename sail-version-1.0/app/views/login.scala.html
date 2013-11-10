@@ -1,24 +1,35 @@
-@(form: Form[(String,String)])(implicit flash: Flash)
-
+@(loginForm: Form[(String,String)], resetForm: Form[(String)])(implicit flash: Flash)
+@import play.api.Play
+@import play.api.Play.current
 <html>
     <body>
        @helper.form(routes.Login.authenticate) {
 
             <h1>Sign in</h1>
 
-            @form.globalError.map { error =>
+           @loginForm.globalError.map { error =>
                 <p class="error">
                     @error.message
                 </p>
             }
-           @flash.get("Timeout").map { message =>
+           @flash.get(Play.application.configuration.getString("timeout.flash").get).map { message =>
                <p class="timeout">
                    @message
                </p>
            }
+           @flash.get(Play.application.configuration.getString("user.reset.flash").get).map { username =>
+               <p class="reset-success">
+                   Success! @username, your password has been changed.
+               </p>
+           }
+           @flash.get(Play.application.configuration.getString("user.reset.request").get).map { email =>
+               <p class="reset-request">
+                   An email has been sent to @email, please follow the link to change your password.
+               </p>
+           }
 
             <p>
-                <input type="email" name="email" placeholder="Email" id="email" value="@form("email").value">
+                <input type="email" name="email" placeholder="Email" id="email" value="@loginForm("email").value">
             </p>
             <p>
                 <input type="password" name="password" id="password" placeholder="Password">
@@ -28,7 +39,21 @@
             </p>
 
         }
-        <a href="/Register">Register</a>
+
+       @helper.form(routes.Login.requestReset) {
+           @resetForm.globalError.map { error =>
+               <p class="error">
+                   @error.message
+               </p>
+           }
+           <p>
+               <input type="email" name="email" placeholder="Email" id="email" value="@resetForm("email").value">
+           </p>
+           <p>
+               <button type="submit" id="resetbutton">Reset Password</button>
+           </p>
+       }
+        <a href="/register">Register</a>
 
         <p class="note">
             Try <em>guillaume@@sample.com</em> with <em>secret</em> as password.

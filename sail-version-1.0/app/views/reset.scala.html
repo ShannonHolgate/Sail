@@ -1,10 +1,10 @@
-@(form: Form[(String,String,String)])(implicit flash: Flash)
+@(form: Form[(String,String,String)], key: String)(implicit flash: Flash)
 
 <html>
     <body>
-        @helper.form(routes.Register.register) {
+        @helper.form(routes.Reset.reset(key)) {
 
-            <h1>Register</h1>
+            <h1>Reset</h1>
 
             @form.globalError.map { error =>
                 <p class="error">
@@ -16,17 +16,15 @@
                 <input type="email" name="email" placeholder="Email" id="email" value="@form("email").value">
             </p>
             <p>
-                <input type="text" name="name" placeholder="name" id="name" value="@form("name").value">
-            </p>
-            <p>
                 <input type="password" name="password" id="password" placeholder="Password">
             </p>
             <p>
-                <button type="submit" id="registerbutton">Register</button>
+                <input type="password" name="confirm" id="confirm" placeholder="Confirm Password">
+            </p>
+            <p>
+                <button type="submit" id="resetbutton">Reset</button>
             </p>
 
         }
-
     </body>
 </html>
-

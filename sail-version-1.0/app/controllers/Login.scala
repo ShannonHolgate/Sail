@@ -11,37 +11,46 @@ package controllers
 import play.api.mvc._
 import play.api.data.Form
 import play.api.data.Forms._
+import org.joda.time._
+import play.api.{mvc, Play}
 import models.User
 import views.html
-import org.joda.time.{Days, DateTime}
-import play.api.Play.current
-import play.api.Play
+import play.i18n.Messages
+import helpers._
 
 /**
  * Controller for the Login flow.
  * Holds the form and logic to log the user in.
- * Holds the Security trait which is used by the root flow to ensure the user
- * is authenticated
  */
-object  Login extends Controller {
+object  Login extends Controller with Secured with Mailer{
 
-  /**login form used on the Login screen to gather details */
+  /** login form used on the Login screen to gather details */
   val loginForm = Form(
     tuple(
       "email" -> text,
       "password" -> text
-    ) verifying ("Invalid email or password", result => result match {
+    ) verifying (Messages.get("incorrectLoginMessage"), result => result match {
       case (email, password) => User.authenticate(email, password).isDefined
+    })
+  )
+
+  /** reset password form used on the Login screen */
+  val resetRequestForm = Form(
+    single(
+      "email" -> text
+    )verifying (Messages.get("noUserMessage"), result => result match {
+      case (email) => User.findByEmail(email).isDefined
     })
   )
 
   /**
    * Routes to the login index page and passes the login form to it
+   * Makes user of the Login Restriction to ensure the user is not logged in
    *
    * @return    Result directing the flow to the Login page including the login form
    */
-  def index = Action { implicit request =>
-    Ok(html.login(loginForm))
+  def index = Action{ implicit request =>
+    withLoginRestriction(request, Ok(html.login(loginForm,resetRequestForm)).flashing(request.flash))
   }
 
   /**
@@ -54,8 +63,8 @@ object  Login extends Controller {
    */
   def authenticate(date:String=DateTime.now().toString()) = Action { implicit request =>
     loginForm.bindFromRequest.fold(
-      formWithErrors => BadRequest(html.login(formWithErrors)),
-      user => Redirect(routes.Application.index).withSession(Security.username -> user._1, "connected" -> date)
+      formWithErrors => BadRequest(html.login(formWithErrors,resetRequestForm)),
+      user => Redirect(routes.Application.index).withSession(Security.username -> user._1, configValues.timeoutSession -> date)
     )
   }
 
@@ -68,104 +77,36 @@ object  Login extends Controller {
    */
   def logout = Action {
     Redirect(routes.Login.index).withNewSession.flashing(
-      "success" -> "You are now logged out."
+      configValues.logoutSuccess -> Messages.get("logoutSuccess")
     )
   }
-}
-
-
-/**
- * Implements the Secured trait from the Play api to allow
- * secure authorisations and sessions through cookies
- */
-trait Secured extends Controller{
-
-  /** The constant for seconds in day */
-  val secondsInDay : Int = 86400
-
-  /** The time limit from last login until the user should be timed out */
-  var inactivityLimit: BigDecimal = BigDecimal(Play.application.configuration.getString("user.timeout.days").getOrElse("5"))
 
   /**
-   * Gets the email address from the current session cookie
-   * To be used in authentication and by the Play api for the
-   * Security  trait
+   * Requests a password reset for the email entered
+   * Binds the form to ensure the email address exists
+   * Updates the user object on the MongoDB to hold a new unique password
+   * reset key then refreshes the page with confirmation in flash scope
    *
-   * @param request   RequestHeader sent by the browser.
-   *                  Holds the cookie to be accessed
-   * @return          String the email address from the cookie
+   * @return    Result refreshing the pages with confirmation or the form with
+   *            errors
+   * @see       User#requestReset(email:String)
    */
-  def email(request: RequestHeader) = request.session.get(Security.username)
-
-  /**
-   * Redirects the flow to the Login page when the user is not authorised
-   * Used by the Play api so the Secured trait knows what to do when
-   * unauthorised
-   *
-   * @param request   RequestHeader sent by the browser
-   * @return          Result redirecting the flow to the Login page
-   */
-  def onUnauthorized(request: RequestHeader) = Results.Redirect(routes.Login.index)
-
-  /**
-   * Authorisation method used to check the cookie in the request and ensure it holds
-   * the email address specified. When the cookie has been tampered with, the unauthorised
-   * function is run.
-   * Checks for timeout in the cookie by comparing the current time against it
-   *
-   * @param f     Function to run when authentication is confirmed
-   * @return      Result specified in the Function parameter f
-   *              Will change when user has timed out to redirect the
-   *              flow to the Login page.
-   * @see         #hasTimedOut(Request[AnyContent], timeout)
-   */
-  def withAuth(f: => String => Request[AnyContent] => Result) = {
-    Security.Authenticated(email, onUnauthorized) { user =>
-      Action(request => {
-          hasTimedOut(request, inactivityLimit).getOrElse({
-            f(user)(request)
-          })
-      })
-    }
-  }
-
-  /**
-   * Authorisation function used to wrap the withAuth function to get a handle on the user object
-   * dictated by the email address in the cookie.
-   * Makes use of the findByEmail function of the User class to return a full User object
-   * from MongoDB
-   *
-   * @param f     Function to run when authentication is confirmed
-   * @return      Result specified in the Function parameter f
-   *              Will change when user has timed out to redirect the
-   *              flow to the Login page.
-   * @see         #withAuth
-   * @see         User#findByEmail(String)
-   */
-  def withUser(f: User => Request[AnyContent] => Result) = withAuth { email => implicit request =>
-    User.findByEmail(email).map { user =>
-      f(user)(request)
-    }.getOrElse(onUnauthorized(request))
-  }
-
-  /**
-   * Checks the incoming request to ensure the user has logged in within the previous 'x' days, where
-   * 'x' is the inactivityLimit value.
-   *
-   * @param request   Request[AnyContent] the incoming request
-   * @param timeout   Double the time in days until the user should be timed out
-   * @return          Option[Result] result redirecting the user to the login page
-   *                  when timed out
-   * @see             #inactivityLimit
-   */
-  def hasTimedOut (request:Request[AnyContent], timeout:BigDecimal):Option[Result]= {
-    request.session.get("connected").map ({
-      connected =>
-        if (Days.daysBetween(DateTime.parse(connected), DateTime.now()).getDays.>(timeout)) {
-          val inactivityString = "You have been inactive for over "+timeout.toInt+" days"
-          return Option(Redirect(routes.Login.index).withNewSession.flashing("Timeout" -> inactivityString))
+  def requestReset = Action { implicit request =>
+    resetRequestForm.bindFromRequest.fold(
+      formWithErrors => BadRequest(html.login(loginForm,formWithErrors)),
+      email => {
+        val (key,expire,name) = User.requestReset(email)
+        if (key.isEmpty || expire.isEmpty || name.isEmpty) {
+          /** In the very strange event of an ObjectId not being distinct, throw an error */
+          val formWithErrors = resetRequestForm.fill(email).withGlobalError(Messages.get("noUserMessage"))
+          BadRequest(html.login(loginForm,formWithErrors))
         }
-    })
-    return None
+        else {
+          /** Send the reset email to the user */
+          sendResetEmail(email,name.get,key.get,expire.get, request)
+          Redirect(routes.Login.index).flashing(configValues.resetRequest -> email)
+        }
+      }
+    )
   }
 }

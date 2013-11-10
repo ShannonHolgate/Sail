@@ -11,34 +11,37 @@ package controllers
 import play.api.mvc.{Action, Security, Controller}
 import play.api.data._
 import play.api.data.Forms._
+import org.joda.time.DateTime
 import models.User
 import views.html
-import org.joda.time.DateTime
+import play.i18n.Messages
+import helpers._
 
 /**
  * Controller for the Register flow.
  * Holds the form and login to register a new user
  */
-object Register extends Controller{
+object Register extends Controller with Secured with Mailer{
 
   /** Register form used on the Register page to gather registration information*/
   val registerForm = Form(
     tuple(
-      "username" -> text,
+      "name" -> text,
       "email" -> text,
       "password" -> text
-    ) verifying ("User Already exists", result => result match {
-      case (username,email,password) => User.findByEmail(email).isEmpty
+    ) verifying (Messages.get("userExistsMessage"), result => result match {
+      case (name,email,password) => User.findByEmail(email).isEmpty
     })
   )
 
   /**
    * Routes to the Register index page and passes the register form to it
+   * Makes user of the Login Restriction to ensure the user is not logged in
    *
    * @return    Result directing the flow to the Register page including the register form
    */
   def index = Action { implicit request =>
-    Ok(html.register(registerForm)).withNewSession
+    withLoginRestriction(request, Ok(html.register(registerForm)).withNewSession)
   }
 
   /**
@@ -53,7 +56,8 @@ object Register extends Controller{
       formWithErrors => BadRequest(html.register(formWithErrors)),
       user => {
         User.create(user._1,user._2,user._3)
-        Redirect(routes.Application.index).withSession(Security.username -> user._2, "connected" -> DateTime.now.toString())
+        sendRegisteredEmail(user._2,user._1, request)
+        Redirect(routes.Application.index).withSession(Security.username -> user._2, configValues.timeoutSession -> DateTime.now.toString())
       }
     )
   }
