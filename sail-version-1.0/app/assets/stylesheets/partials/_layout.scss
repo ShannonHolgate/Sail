@@ -1,0 +1,37 @@
+@import "modules/colours";
+@import "modules/font";
+@import "modules/margins";
+@import "vendor/bourbon/bourbon";
+@import "vendor/neat/neat";
+
+body {
+  font-family: $helvetica;
+  color: $font-link-colour;
+  font-size: $font-base-size;
+  background-color: $background-colour;
+}
+
+div.login {
+	@include outer-container;	
+
+	.modal {
+		margin-top: $margin-above-modal;
+		@include span-columns(8);
+		@include shift(2);	
+		background-color: $primary-content-colour;
+		padding: $small-margin;
+
+		form.login {	
+
+		}
+
+		.left {
+			@include span-columns(4);
+		}
+
+		.right {
+			@include span-columns(8);
+		}
+	}
+
+}

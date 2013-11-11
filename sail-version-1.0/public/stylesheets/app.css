@@ -1,0 +1,46 @@
+* {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box; }
+
+body {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color: #ff9955;
+  font-size: 14px;
+  background-color: #333333; }
+
+div.login {
+  *zoom: 1;
+  max-width: 68em;
+  margin-left: auto;
+  margin-right: auto; }
+  div.login:before, div.login:after {
+    content: " ";
+    display: table; }
+  div.login:after {
+    clear: both; }
+  div.login .modal {
+    margin-top: 140px;
+    display: block;
+    float: left;
+    margin-right: 2.35765%;
+    width: 65.88078%;
+    margin-left: 17.05961%;
+    background-color: #444444;
+    padding: 4px; }
+    div.login .modal:last-child {
+      margin-right: 0; }
+    div.login .modal .left {
+      display: block;
+      float: left;
+      margin-right: 2.35765%;
+      width: 31.76157%; }
+      div.login .modal .left:last-child {
+        margin-right: 0; }
+    div.login .modal .right {
+      display: block;
+      float: left;
+      margin-right: 2.35765%;
+      width: 65.88078%; }
+      div.login .modal .right:last-child {
+        margin-right: 0; }
