@@ -5,60 +5,80 @@
 @main("Sail - Login") {
   <div class="login">
     <div class="modal">
-    @helper.form(routes.Login.authenticate, 'class -> "login") {
-      <h1>Sign in</h1>
+      <div>
+        <aside>
+         <div class="row">
+            <img src="@routes.Assets.at("images/Sail logo long.png")" alt="Sail">
+         </div> 
+         <div class="row">
+            <p class="tagline">
+              Eventually, there will be a really nice tagline here about how Sail guides your investments
+            </p>
+         </div> 
+        </aside>
+        <article>
+          <div class="row">
+            nothing to see here
+          </div>
 
-       @loginForm.globalError.map { error =>
-          <p class="error">
-              @error.message
-          </p>
+        @helper.form(routes.Login.authenticate, 'class -> "login") {
+
+           @loginForm.globalError.map { error =>
+              <p class="error">
+                  @error.message
+              </p>
+            }
+           @flash.get(Play.application.configuration.getString("timeout.flash").get).map { message =>
+             <p class="error">
+                 @message
+             </p>
+           }
+           @flash.get(Play.application.configuration.getString("user.reset.flash").get).map { username =>
+             <p class="success">
+                 Success! @username, your password has been changed.
+             </p>
+           }
+           @flash.get(Play.application.configuration.getString("user.reset.request").get).map { email =>
+             <p class="success">
+                 An email has been sent to @email, please follow the link to change your password.
+             </p>
+           }
+          <div class="row">
+              Email address:
+          </div>  
+          <div class="row">
+              <input type="email" name="email" id="email" value="@loginForm("email").value">
+          </div>  
+          <div class="row">
+              Password:
+          </div>
+          <div class="row">
+            <input type="password" name="password" id="password">
+          </div>  
+          <div class="row">
+            <a href="/register">Register</a> <button type="submit" id="loginbutton">Login</button>
+          </div>
+
+              
+
         }
-       @flash.get(Play.application.configuration.getString("timeout.flash").get).map { message =>
-         <p class="error">
-             @message
-         </p>
-       }
-       @flash.get(Play.application.configuration.getString("user.reset.flash").get).map { username =>
-         <p class="success">
-             Success! @username, your password has been changed.
-         </p>
-       }
-       @flash.get(Play.application.configuration.getString("user.reset.request").get).map { email =>
-         <p class="success">
-             An email has been sent to @email, please follow the link to change your password.
-         </p>
-       }
-
-      <p>
-          <input type="email" name="email" placeholder="Email" id="email" value="@loginForm("email").value">
-      </p>
-      <p>
-          <input type="password" name="password" id="password" placeholder="Password">
-      </p>
-      <p>
-          <button type="submit" id="loginbutton">Login</button>
-      </p>
-
-    }
-
-    @helper.form(routes.Login.requestReset) {
-       @resetForm.globalError.map { error =>
-         <p class="error">
-             @error.message
-         </p>
-       }
-       <p>
-           <input type="email" name="email" placeholder="Email" id="email" value="@resetForm("email").value">
-       </p>
-       <p>
-           <button type="submit" id="resetbutton">Reset Password</button>
-       </p>
-      }
-      <a href="/register">Register</a>
-
-      <p class="note">
-          Try <em>guillaume@@sample.com</em> with <em>secret</em> as password.
-      </p>
+        <div class="register">
+          @helper.form(routes.Login.requestReset) {
+             @resetForm.globalError.map { error =>
+               <p class="error">
+                   @error.message
+               </p>
+             }
+             <p>
+                 <input type="email" name="email" placeholder="Email" id="email" value="@resetForm("email").value">
+             </p>
+             <p>
+                 <button type="submit" id="resetbutton">Reset Password</button>
+             </p>
+            }
+          </div>
+        </article>
+      </div>
     </div>
   </div>
 }

@@ -5,8 +5,8 @@
 
 body {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  color: #ff9955;
-  font-size: 14px;
+  color: white;
+  font-size: 15px;
   background-color: #333333; }
 
 div.login {
@@ -21,26 +21,59 @@ div.login {
     clear: both; }
   div.login .modal {
     margin-top: 140px;
-    display: block;
-    float: left;
-    margin-right: 2.35765%;
-    width: 65.88078%;
-    margin-left: 17.05961%;
+    margin-left: auto;
+    margin-right: auto;
+    width: 600px;
     background-color: #444444;
-    padding: 4px; }
-    div.login .modal:last-child {
-      margin-right: 0; }
-    div.login .modal .left {
-      display: block;
-      float: left;
-      margin-right: 2.35765%;
-      width: 31.76157%; }
-      div.login .modal .left:last-child {
-        margin-right: 0; }
-    div.login .modal .right {
-      display: block;
-      float: left;
-      margin-right: 2.35765%;
-      width: 65.88078%; }
-      div.login .modal .right:last-child {
-        margin-right: 0; }
+    padding: 4px;
+    border-radius: 6px;
+    box-shadow: 0 0 6px black; }
+    div.login .modal form.login input {
+      font-size: 15px;
+      color: #333333;
+      border: 1px solid black;
+      border-radius: 3px;
+      padding: 5px 5px 5px; }
+    div.login .modal div {
+      *zoom: 1;
+      display: table;
+      width: 100%;
+      table-layout: fixed; }
+      div.login .modal div:before, div.login .modal div:after {
+        content: " ";
+        display: table; }
+      div.login .modal div:after {
+        clear: both; }
+    div.login .modal aside {
+      display: table-cell;
+      padding-right: 1.76824%;
+      width: 33.5298%;
+      padding: 2.35765%;
+      height: 100%;
+      border-right: 1px solid white;
+      box-shadow: 10px 0 6px -10px black; }
+      div.login .modal aside img {
+        display: table-cell;
+        padding-right: 2.16118%;
+        width: 102.16118%; }
+      div.login .modal aside .tagline {
+        font-size: 17px;
+        font-style: italic;
+        line-height: 1.3;
+        text-align: center; }
+    div.login .modal article {
+      display: table-cell;
+      padding-right: 2.06295%;
+      width: 67.94373%;
+      padding: 2.35765%;
+      vertical-align: bottom; }
+    div.login .modal .row {
+      padding: 0 0 2.35765% 0; }
+    div.login .modal .row:after {
+      clear: both; }
+    div.login .modal .register {
+      display: none; }
+    div.login .modal button {
+      float: right; }
+    div.login .modal a {
+      color: #ff9955; }

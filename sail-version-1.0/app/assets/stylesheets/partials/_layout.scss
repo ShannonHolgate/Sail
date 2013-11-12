@@ -1,12 +1,14 @@
 @import "modules/colours";
 @import "modules/font";
 @import "modules/margins";
+@import "modules/border";
+@import "modules/sizes";
 @import "vendor/bourbon/bourbon";
 @import "vendor/neat/neat";
 
 body {
   font-family: $helvetica;
-  color: $font-link-colour;
+  color: $font-main-colour;
   font-size: $font-base-size;
   background-color: $background-colour;
 }
@@ -16,22 +18,81 @@ div.login {
 
 	.modal {
 		margin-top: $margin-above-modal;
-		@include span-columns(8);
-		@include shift(2);	
+		margin-left: auto;
+		margin-right: auto;
+		width: $login-modal-width;	
+
 		background-color: $primary-content-colour;
-		padding: $small-margin;
+		padding: $small-margin;	
+		border-radius: $default-border-radius;
+		box-shadow: 0 0 $default-border-radius $default-shadow-colour; 
 
-		form.login {	
+		form.login {
+			input {
+				font-size: $font-base-size;
+				color: $font-input-colour;
+				border: $default-border-weight solid $default-border-colour;
+				border-radius: $input-radius;
+				padding: $default-input-padding $default-input-padding $default-input-padding;
+			}	
 
 		}
 
-		.left {
+		div {
+			@include row(table);
+		}
+
+		aside {
 			@include span-columns(4);
+			@include pad();
+
+			height:100%;
+
+			border-right: $default-border-weight solid $light-border-colour;
+			box-shadow: 10px 0 $default-border-radius -10px $default-shadow-colour; 
+
+			img {
+				@include span-columns(12);
+			}
+
+			.tagline {
+				font-size: $tag-line-font-size;
+				font-style: italic;
+				line-height: 1.3;	
+				text-align: center;
+			}
 		}
 
-		.right {
+		article {
 			@include span-columns(8);
+			@include reset-display;
+			@include pad(); 
+
+			vertical-align: bottom;
+
 		}
+
+		.row {
+			@include pad(0 0 default 0);
+		}
+
+		.row:after {
+			clear:both;
+		}
+
+		.register {
+			display:none;
+		}
+
+		button {
+			float:right;
+		}
+
+		a {
+			color: $font-link-colour;
+		}
+
 	}
 
 }
+
