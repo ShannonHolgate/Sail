@@ -1,0 +1,28 @@
+@import "modules/colours";
+@import "modules/font";
+@import "modules/margins";
+@import "modules/border";
+@import "modules/sizes";
+@import "vendor/bourbon/bourbon";
+@import "vendor/neat/neat";
+
+/* -------------------------------------
+  Global Input Styles
+------------------------------------- */
+
+input {
+  font-size: $font-base-size;
+  color: $font-input-colour;
+  border: $default-border-weight solid $default-border-colour;
+  border-radius: $input-radius;
+  padding: $default-input-padding $default-input-padding $default-input-padding;
+  width:100%
+}
+
+input.error {
+  border: $heavy-border-weight solid red;
+}
+
+label.error {
+  color: $light-red;
+}

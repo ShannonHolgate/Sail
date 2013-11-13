@@ -34,6 +34,7 @@ trait Mailer {
    * @see         views.email.register
    */
   def sendRegisteredEmail(email:String, name:String, request: Request[AnyContent]) = {
+    
     try {
       val mail = use[MailerPlugin].email
       mail.setSubject(Messages.get("registerSubject"))
@@ -43,6 +44,7 @@ trait Mailer {
     } catch {
       case eme: EmailException => eme.printStackTrace
     }
+    
   }
 
   /**
@@ -60,6 +62,7 @@ trait Mailer {
    */
   def sendResetEmail(email:String, name:String, key:String, expire:Date, request:Request[AnyContent]) = {
     val dateFormatter = new SimpleDateFormat(Messages.get("dateFormat"))
+    
     try {
       val mail = use[MailerPlugin].email
       mail.setSubject(Messages.get("resetSubject"))
@@ -69,5 +72,6 @@ trait Mailer {
     } catch {
       case eme: EmailException => eme.printStackTrace
     }
+    
   }
 }

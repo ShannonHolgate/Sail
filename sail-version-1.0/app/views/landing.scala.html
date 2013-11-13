@@ -1,4 +1,4 @@
-@(title:String, errors:List[Option[String]], success:List[Option[String]])(content:Html)
+@(title:String, header:String,errors:List[Option[String]], success:List[Option[String]])(content:Html)
 
 @main(title) {
   <div class="login">
@@ -15,35 +15,45 @@
          </div> 
         </aside>
         <article>
-            @content
+          <div class="row container">
+            <div class="span-12 banner">
+              <h3>@header<span class="arrow"></span></h3>
+            </div>
+          </div>
+          @content
         </article>
       </div>
     </div>
-    <a href="#x" class="overlay" id="message"></a>
-    <div class="popup modal">
-      <p id="error">
-        #{list items:errors, as:'error'}
-            #{if error.isDefined}
-              ${error}
-            #{/if}
-        #{/list}
-      </p>
-      <p id="success">
-        #{list items:success, as:'success'}
-            #{if success.isDefined}
-              ${success}
-            #{/if}
-        #{/list}
-      </p>
-      <a class="close" href="#close"></a>
-    </div>
+    @for(error <- errors) {
+      @if(error.isDefined) {
+          <a href="#x" class="overlay" id="message"></a>
+          <div class="popup modal error">
+            <p id="error">
+              @error.get
+            </p>
+            <a class="close" href="#close"></a>
+          </div>
+        }
+    } 
+    @for(successMessage <- success) {
+      @if(successMessage.isDefined) {
+          <a href="#x" class="overlay" id="message"></a>
+          <div class="popup modal success">
+            <p id="success">
+              @successMessage.get
+            </p>
+            <a class="close" href="#close"></a>
+          </div>
+        }
+    } 
     <script> 
       var errorP = document.getElementById("error"); 
       var successP = document.getElementById("success"); 
-      if (errorP.innerHTML.replace(/^\s*/, "").replace(/\s*$/, "") != "" ||
-          successP.innerHTML.replace(/^\s*/, "").replace(/\s*$/, "") != "") {
-            window.location.hash = '#message';
+      if (errorP && errorP.innerHTML.replace(/^\s*/, "").replace(/\s*$/, "") != "" ||
+          successP && successP.innerHTML.replace(/^\s*/, "").replace(/\s*$/, "") != "") {
+          window.location.hash = '#message';
       } 
       </script>
+      <link rel="stylesheet" href="@routes.Assets.at("stylesheets/login.css")">
   </div>
 }

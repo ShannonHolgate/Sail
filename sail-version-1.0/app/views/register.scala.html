@@ -1,62 +1,40 @@
 @(form: Form[(String,String,String)])(implicit flash: Flash)
 
-@main("Sail - Register") {
-  <div class="login">
-    <div class="centre-container">
-      <div>
-        <aside>
-         <div class="row">
-            <img src="@routes.Assets.at("images/Sail logo long.png")" alt="Sail">
-         </div> 
-         <div class="row">
-            <p class="tagline">
-              Eventually, there will be a really nice tagline here about how Sail guides your investments
-            </p>
-         </div> 
-        </aside>
-        <article>
-          <div class="span-11">
-
-            @helper.form(routes.Register.register, 'class -> "login") {
-
-             @form.globalError.map { error =>
-                <p class="error">
-                    @error.message
-                </p>
-              }
-
-            <div class="row">
-                Email address:
-            </div>  
-            <div class="row">
-                <input type="email" name="email" id="email" value="@form("email").value">
-            </div>  
-            <div class="row">
-                Name:
-            </div>
-            <div class="row">
-              <input type="text" name="name" id="name" value="@form("name").value">
-            </div>  
-            <div class="row">
-                Password:
-            </div>
-            <div class="row">
-              <input type="text" name="password" id="password">
-            </div>  
-            <div class="row end">
-              <div class="span-8">
-                <a href="/login">Login</a>
-              </div>
-              <div class="span-4 omega">
-                <button type="submit" class="right" id="register-button">Register</button>
-              </div>
-            </div>
-            }
-          </div>
-        </article>
-      </div>
+@landing("Sail - Register", "Register", {
+  form.globalError.map { error => error.message } :: 
+  Nil
+},Nil) {
+<div class="span-11">
+  @helper.form(routes.Register.register, 'class -> "login", 'id -> "register-form", 'novalidate -> "novalidate") {
+  <div class="row">
+    Email address:
+  </div>  
+  <div class="row">
+    <input type="email" name="email" id="email" value="@form("email").value">
+  </div>  
+  <div class="row">
+    Name:
+  </div>
+  <div class="row">
+    <input type="text" name="name" id="name" value="@form("name").value">
+  </div>  
+  <div class="row">
+    Password:
+  </div>
+  <div class="row">
+    <input type="password" name="password" id="password">
+  </div>  
+  <div class="row end">
+    <div class="span-8">
+      <a href="/login">Login</a>
+    </div>
+    <div class="span-4 omega">
+      <button type="submit" class="right" id="register-button">Register</button>
     </div>
   </div>
+  }
+</div>
+<script src="@routes.Assets.at("javascripts/validation/register.validation.js")" type="text/javascript"></script>
 }
 
 

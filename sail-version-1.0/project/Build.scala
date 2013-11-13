@@ -8,6 +8,7 @@
 
 import sbt._
 import play.Project._
+import net.litola.SassPlugin
 
 object ApplicationBuild extends Build {
 
@@ -25,6 +26,7 @@ object ApplicationBuild extends Build {
     /** Add the new dependencies to support the salat-Play plugin*/
     routesImport += "se.radley.plugin.salat.Binders._",
     templatesImport += "org.bson.types.ObjectId"
+
   )
 
 }
