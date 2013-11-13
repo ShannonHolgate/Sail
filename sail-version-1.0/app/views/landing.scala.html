@@ -1,0 +1,49 @@
+@(title:String, errors:List[Option[String]], success:List[Option[String]])(content:Html)
+
+@main(title) {
+  <div class="login">
+    <div class="centre-container">
+      <div>
+        <aside> 
+         <div class="row">
+            <img src="@routes.Assets.at("images/Sail logo long.png")" alt="Sail">
+         </div> 
+         <div class="row">
+            <p class="tagline">
+              Eventually, there will be a really nice tagline here about how Sail guides your investments
+            </p>
+         </div> 
+        </aside>
+        <article>
+            @content
+        </article>
+      </div>
+    </div>
+    <a href="#x" class="overlay" id="message"></a>
+    <div class="popup modal">
+      <p id="error">
+        #{list items:errors, as:'error'}
+            #{if error.isDefined}
+              ${error}
+            #{/if}
+        #{/list}
+      </p>
+      <p id="success">
+        #{list items:success, as:'success'}
+            #{if success.isDefined}
+              ${success}
+            #{/if}
+        #{/list}
+      </p>
+      <a class="close" href="#close"></a>
+    </div>
+    <script> 
+      var errorP = document.getElementById("error"); 
+      var successP = document.getElementById("success"); 
+      if (errorP.innerHTML.replace(/^\s*/, "").replace(/\s*$/, "") != "" ||
+          successP.innerHTML.replace(/^\s*/, "").replace(/\s*$/, "") != "") {
+            window.location.hash = '#message';
+      } 
+      </script>
+  </div>
+}
