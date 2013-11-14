@@ -1,25 +1,27 @@
 @(form: Form[(String,String,String)], key: String)(implicit flash: Flash)
 
-@landing("Sail - Reset Password", "Reset Password", {
+@landing(Messages("view.reset.pagetitle"), Messages("view.reset.title"), {
+  // Add each possible error to a sequence
   form.globalError.map { error => error.message } :: 
   Nil
 },Nil) {
 <div class="span-11">
+  <!-- reset form -->
   @helper.form(routes.Reset.reset(key), 'class -> "login", 'id -> "reset-form") {
   <div class="row">
-      Email address:
+      @Messages("view.emaillabel")
   </div>  
   <div class="row">
       <input type="email" name="email" id="email" value="@form("email").value">
   </div>  
   <div class="row">
-      Password:
+      @Messages("view.passwordlabel")
   </div>
   <div class="row">
     <input type="password" name="password" id="password">
   </div>  
   <div class="row">
-      Re-type Password:
+      @Messages("view.reset.confirmlabel")
   </div>
   <div class="row">
     <input type="password" name="confirm" id="confirm">
@@ -29,10 +31,11 @@
       &nbsp;
     </div>
     <div class="span-4 omega">
-      <button type="submit" class="right" id="reset-button">Reset</button>
+      <button type="submit" class="right" id="reset-button">@Messages("view.reset.submit")</button>
     </div>
   </div>
   }
 </div>
+<!-- Include the validation for the reset form -->
 <script src="@routes.Assets.at("javascripts/validation/reset.validation.js")" type="text/javascript"></script>
 }

@@ -20,6 +20,7 @@ body {
 .reset {
   display: none!important;
 }
+
 .span-1 { @include span-columns(1); }
 .span-2 { @include span-columns(2); }
 .span-3 { @include span-columns(3); }

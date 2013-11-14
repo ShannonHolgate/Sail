@@ -10,13 +10,16 @@
   Login Specific styles
 ------------------------------------- */
 
+html, body { padding: 0px; margin: 0px; width: 100%; height: 100%; }
+
 div.login {
+  @include box-sizing(border-box);
   @include outer-container; 
+  min-height: 100%;
 
   .centre-container {
     @include outer-container; 
     margin-top: $margin-above-modal;
-    margin-bottom: $margin-above-modal;
     margin-left: auto;
     margin-right: auto;
     width: $login-container-width;  

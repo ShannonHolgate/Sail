@@ -11,6 +11,7 @@ import java.util.Date
 import org.bson.types.ObjectId
 import org.joda.time.DateTime
 import play.api.test.FakeApplication
+import org.mindrot.jbcrypt.BCrypt
 
 /**
  * A simple User class to be mapped for testing purposes only
@@ -56,7 +57,7 @@ trait TestUser{
         MongoDBObject("_id" -> new ObjectId,
           "name" -> testUser.username,
           "email" -> testUser.email,
-          "password" -> testUser.password,
+          "password" -> BCrypt.hashpw(testUser.password, BCrypt.gensalt()),
           "added" -> new Date()))
     }
   }
@@ -89,7 +90,7 @@ trait TestUser{
       MongoDBObject("_id" -> new ObjectId,
         "name" -> testUser.username,
         "email" -> testUser.email,
-        "password" -> testUser.password,
+        "password" -> BCrypt.hashpw(testUser.password, BCrypt.gensalt()),
         "added" -> new Date(),
         "reset" -> objectId1,
         "expire" -> tomorrow))
@@ -99,7 +100,7 @@ trait TestUser{
       MongoDBObject("_id" -> new ObjectId,
         "name" -> testUser2.username,
         "email" -> testUser2.email,
-        "password" -> testUser2.password,
+        "password" -> BCrypt.hashpw(testUser2.password, BCrypt.gensalt()),
         "added" -> new Date(),
         "reset" -> objectId2,
         "expire" -> tomorrow))
@@ -124,7 +125,7 @@ trait TestUser{
       MongoDBObject("_id" -> new ObjectId,
         "name" -> testUser.username,
         "email" -> testUser.email,
-        "password" -> testUser.password,
+        "password" -> BCrypt.hashpw(testUser.password, BCrypt.gensalt()),
         "added" -> new Date(),
         "reset" -> objectId1,
         "expire" -> yesterday))

@@ -17,6 +17,7 @@ import models.MongoContext._
 import org.joda.time.{DateTime, Days}
 import play.api.Play
 import play.i18n.Messages
+import org.mindrot.jbcrypt.BCrypt
 
 /**
  * User class to be mapped from MongoDB with use of the Salat library
@@ -62,7 +63,7 @@ object User extends ModelCompanion[User, ObjectId] {
    * @param password  String password of the new user
    */
   def create(name: String, email: String, password: String) {
-    dao.insert(User(name = name, email = email, password = password))
+    dao.insert(User(name = name, email = email, password = BCrypt.hashpw(password, BCrypt.gensalt())))
   }
 
   /**
@@ -84,7 +85,15 @@ object User extends ModelCompanion[User, ObjectId] {
    * @return          Option[User] the User object to be returned or empty
    */
   def authenticate(email: String, password: String): Option[User] = {
-    dao.findOne(MongoDBObject("email" -> email, "password" -> password))
+    val user = findByEmail(email)
+    if (user.isEmpty)
+      return None
+    else {
+      if (BCrypt.checkpw(password, user.get.password))
+         return user
+      else
+        return None
+    }
   }
 
   /**
@@ -161,7 +170,7 @@ object User extends ModelCompanion[User, ObjectId] {
     val user: Option[User] = Option(dao.findOne(MongoDBObject("email" -> email,"reset" -> new ObjectId(key))).getOrElse({
       return(None,Option(Messages.get("error.email.incorrect")))
     }))
-    dao.update(MongoDBObject("email" -> email),MongoDBObject("name" -> user.get.name, "email" -> user.get.email, "password" -> password),false)
+    dao.update(MongoDBObject("email" -> email),MongoDBObject("name" -> user.get.name, "email" -> user.get.email, "password" -> BCrypt.hashpw(password, BCrypt.gensalt())),false)
     return (Option(user.get.name),None)
   }
 }

@@ -19,7 +19,9 @@ object ApplicationBuild extends Build {
     /** Add the salat-Play plugin*/
     "se.radley" %% "play-plugins-salat" % "1.3.0",
     /** Add the emailer plugin*/
-    "com.typesafe" %% "play-plugins-mailer" % "2.2.0"
+    "com.typesafe" %% "play-plugins-mailer" % "2.2.0",
+    /** Add the BCrypt encryption plugin*/
+    "org.mindrot" % "jbcrypt" % "0.3m"
   )
 
   val main = play.Project(appName, appVersion, appDependencies).settings(

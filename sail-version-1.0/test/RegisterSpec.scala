@@ -89,5 +89,20 @@ class RegisterSpec extends Specification with TestUser with controllers.Secured{
       status(result) must equalTo(BAD_REQUEST)
       contentAsString(result) must contain(Messages.get("error.user.exists"))
     }
+
+    "respond to the register action - invalid form" in new WithApplication(currentApplication){
+      /** The Json form object*/
+      val jsonObject = toJson(
+        Map(
+          "email" -> "this is not an email",
+          "name" -> "to",
+          "password" -> "pass"
+        )
+      )
+      val result= controllers.Register.register()(FakeRequest().withJsonBody(jsonObject))
+
+      status(result) must equalTo(BAD_REQUEST)
+      contentAsString(result) must contain(Messages.get("error.email.invalid"))
+    }
   }
 }

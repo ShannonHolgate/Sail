@@ -9,5 +9,3 @@ libraryDependencies ++= Seq(
 )     
 
 play.Project.playScalaSettings
-
-net.litola.SassPlugin.sassOptions := Seq("--compass","-r", "compass", "-r", "zurb-foundation")

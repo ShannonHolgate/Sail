@@ -13,7 +13,10 @@ error.user.invalid=Invalid user
 error.login.invalid=Incorrect email or password
 error.user.none=User does not exist, please Register first
 error.email.incorrect=Incorrect email
+error.email.invalid=Please enter a valid email address
 error.password.nomatch=Passwords do not match
+error.name.length=Name must contain at least {0} letters
+
 
 # Success Messages
 success.logout=You are now logged out
@@ -34,6 +37,7 @@ email.admin.address=noreply@sail.com
 # Global
 view.emaillabel=Email Address
 view.passwordlabel=Password
+view.namelabel=Name
 
 # Langing page
 view.landing.tagline=Eventually, there will be a really nice tagline here about how Sail guides your investments
@@ -50,3 +54,14 @@ view.login.resettitle=Reset Password
 view.login.resetmessage=Please enter your email address and we'll send you a reset activation link:
 view.login.resetsubmit=Reset
 
+# Register page
+view.register.pagetitle=Sail - Register
+view.register.title=Register
+view.register.login=Login
+view.register.submit=Register
+
+# Reset password page
+view.reset.pagetitle=Sail - Reset password
+view.reset.title=Reset Password
+view.reset.confirmlabel=Re-type Password
+view.reset.submit=Reset
