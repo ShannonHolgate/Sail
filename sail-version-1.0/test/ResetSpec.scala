@@ -69,7 +69,7 @@ class ResetSpec extends Specification with TestUser with controllers.Secured{
 
       val result = controllers.Reset.reset(stringKey)(FakeRequest().withJsonBody(jsonObject))
       status(result) must equalTo(BAD_REQUEST)
-      contentAsString(result) must contain(Messages.get("passwordsDontMatchMessage"))
+      contentAsString(result) must contain(Messages.get("error.password.nomatch"))
     }
 
     "respond to the reset Action - email does not exist" in  new WithApplication(currentApplication) {
@@ -86,7 +86,7 @@ class ResetSpec extends Specification with TestUser with controllers.Secured{
 
       val result = controllers.Reset.reset(stringKey)(FakeRequest().withJsonBody(jsonObject))
       status(result) must equalTo(BAD_REQUEST)
-      contentAsString(result) must contain(Messages.get("incorrectEmailMessage"))
+      contentAsString(result) must contain(Messages.get("error.email.incorrect"))
     }
 
     "respond to the reset Action - email matches a different reset key" in  new WithApplication(currentApplication) {
@@ -103,7 +103,7 @@ class ResetSpec extends Specification with TestUser with controllers.Secured{
 
       val result = controllers.Reset.reset(stringKey)(FakeRequest().withJsonBody(jsonObject))
       status(result) must equalTo(BAD_REQUEST)
-      contentAsString(result) must contain(Messages.get("incorrectEmailMessage"))
+      contentAsString(result) must contain(Messages.get("error.email.incorrect"))
     }
 
   }

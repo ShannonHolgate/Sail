@@ -22,7 +22,7 @@ import play.api.Play
  */
 trait Mailer {
   /** The Sail email address */
-  val adminEmail: String = Messages.get("adminEmailAddress")
+  val adminEmail: String = Messages.get("email.admin.address")
 
   /**
    * Creates and sends an email to the newly created user.
@@ -37,9 +37,9 @@ trait Mailer {
     
     try {
       val mail = use[MailerPlugin].email
-      mail.setSubject(Messages.get("registerSubject"))
+      mail.setSubject(Messages.get("email.register.subject"))
       mail.setRecipient(name + " <"+ email +">",email)
-      mail.setFrom(Messages.get("sailAdminName") + "<"+adminEmail+">")
+      mail.setFrom(Messages.get("email.admin.name") + "<"+adminEmail+">")
       mail.sendHtml(views.html.email.register.render(name,request).toString())
     } catch {
       case eme: EmailException => eme.printStackTrace
@@ -61,13 +61,13 @@ trait Mailer {
    * @see           views.html.reset
    */
   def sendResetEmail(email:String, name:String, key:String, expire:Date, request:Request[AnyContent]) = {
-    val dateFormatter = new SimpleDateFormat(Messages.get("dateFormat"))
+    val dateFormatter = new SimpleDateFormat(Messages.get("date.format"))
     
     try {
       val mail = use[MailerPlugin].email
-      mail.setSubject(Messages.get("resetSubject"))
+      mail.setSubject(Messages.get("email.reset.subject"))
       mail.setRecipient(name + " <"+ email +">",email)
-      mail.setFrom(Messages.get("sailAdminName") + "<"+adminEmail+">")
+      mail.setFrom(Messages.get("email.admin.name") + "<"+adminEmail+">")
       mail.sendHtml(views.html.email.reset.render(name,key,request,dateFormatter.format(expire)).toString())
     } catch {
       case eme: EmailException => eme.printStackTrace

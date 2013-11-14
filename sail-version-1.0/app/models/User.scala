@@ -159,7 +159,7 @@ object User extends ModelCompanion[User, ObjectId] {
    */
   def resetPassword(email: String, password: String, key: String):(Option[String],Option[String]) = {
     val user: Option[User] = Option(dao.findOne(MongoDBObject("email" -> email,"reset" -> new ObjectId(key))).getOrElse({
-      return(None,Option(Messages.get("incorrectEmailMessage")))
+      return(None,Option(Messages.get("error.email.incorrect")))
     }))
     dao.update(MongoDBObject("email" -> email),MongoDBObject("name" -> user.get.name, "email" -> user.get.email, "password" -> password),false)
     return (Option(user.get.name),None)

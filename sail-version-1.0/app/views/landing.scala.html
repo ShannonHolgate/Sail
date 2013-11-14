@@ -4,13 +4,14 @@
   <div class="login">
     <div class="centre-container">
       <div>
-        <aside> 
+        <aside>
+         <!-- Sail branding for left hand side of landing page -->
          <div class="row">
             <img src="@routes.Assets.at("images/Sail logo long.png")" alt="Sail">
          </div> 
          <div class="row">
             <p class="tagline">
-              Eventually, there will be a really nice tagline here about how Sail guides your investments
+              @Messages("view.landing.tagline")
             </p>
          </div> 
         </aside>
@@ -20,38 +21,46 @@
               <h3>@header<span class="arrow"></span></h3>
             </div>
           </div>
+          <!-- Content for the right hand side of the landing page -->
           @content
         </article>
       </div>
     </div>
-    @for(error <- errors) {
-      @if(error.isDefined) {
-          <a href="#x" class="overlay" id="message"></a>
-          <div class="popup modal error">
-            <p id="error">
+
+      <!-- Iterate over the error messages to make a popup for each -->
+      <a href="#x" class="overlay" id="error-message"></a>
+      <div class="popup modal error">
+        <p id="error">
+          @for(error <- errors) {
+            @if(error.isDefined) {
               @error.get
-            </p>
-            <a class="close" href="#close"></a>
-          </div>
-        }
-    } 
-    @for(successMessage <- success) {
-      @if(successMessage.isDefined) {
-          <a href="#x" class="overlay" id="message"></a>
-          <div class="popup modal success">
-            <p id="success">
+            }
+          }    
+        </p>
+        <a class="close" href="#close"></a>
+      </div>
+
+      <!-- Iterate over the error messages to make a popup for each -->
+      <a href="#x" class="overlay" id="success-message"></a>
+      <div class="popup modal success">
+        <p id="success">
+          @for(successMessage <- success) {
+            @if(successMessage.isDefined) {
               @successMessage.get
-            </p>
-            <a class="close" href="#close"></a>
-          </div>
-        }
-    } 
+              }
+            } 
+        </p>
+        <a class="close" href="#close"></a>
+      </div>
     <script> 
+      //Checks to see if any error/success popups have been created and sets the browser to them
       var errorP = document.getElementById("error"); 
       var successP = document.getElementById("success"); 
-      if (errorP && errorP.innerHTML.replace(/^\s*/, "").replace(/\s*$/, "") != "" ||
-          successP && successP.innerHTML.replace(/^\s*/, "").replace(/\s*$/, "") != "") {
-          window.location.hash = '#message';
+      if (successP && successP.innerHTML.replace(/^\s*/, "").replace(/\s*$/, "") != "") {
+        window.location.hash = '#success-message';  
+      }
+      if (errorP && errorP.innerHTML.replace(/^\s*/, "").replace(/\s*$/, "") != "") {
+        window.location.hash = '#error-message';
       } 
       </script>
       <link rel="stylesheet" href="@routes.Assets.at("stylesheets/login.css")">

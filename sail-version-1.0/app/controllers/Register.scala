@@ -29,7 +29,7 @@ object Register extends Controller with Secured with Mailer{
       "name" -> text,
       "email" -> text,
       "password" -> text
-    ) verifying (Messages.get("userExistsMessage"), result => result match {
+    ) verifying (Messages.get("error.user.exists"), result => result match {
       case (name,email,password) => User.findByEmail(email).isEmpty
     })
   )

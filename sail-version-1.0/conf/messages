@@ -7,20 +7,46 @@
 #
 
 # Error Messages
-userExistsMessage=User Already exists
-inactivityMessage=You have been inactive for over {0} days
-invalidUserMessage=Invalid user
-incorrectLoginMessage=Incorrect email or password
-noUserMessage=User does not exist, please Register first
-logoutSuccess=You are now logged out
-incorrectEmailMessage=Incorrect email
-passwordsDontMatchMessage=Passwords do not match
+error.user.exists=User Already exists
+error.user.inactive=You have been inactive for over {0} days
+error.user.invalid=Invalid user
+error.login.invalid=Incorrect email or password
+error.user.none=User does not exist, please Register first
+error.email.incorrect=Incorrect email
+error.password.nomatch=Passwords do not match
+
+# Success Messages
+success.logout=You are now logged out
 
 # Date Format
-dateFormat=dd/MM/yyyy
+date.format=dd/MM/yyyy
 
 # Email settings
-sailAdminName=Sail Admin
-registerSubject=Welcome to Sail
-resetSubject=Password reset request
-adminEmailAddress=noreply@sail.com
+email.admin.name=Sail Admin
+email.register.subject=Welcome to Sail
+email.reset.subject=Password reset request
+email.admin.address=noreply@sail.com
+
+#
+# Template messages
+#
+
+# Global
+view.emaillabel=Email Address
+view.passwordlabel=Password
+
+# Langing page
+view.landing.tagline=Eventually, there will be a really nice tagline here about how Sail guides your investments
+
+# Login page
+view.login.pagetitle=Sail - Login
+view.login.title=Login
+view.login.resetsuccess=Success, {0}, your password has been changed.
+view.login.resetrequest=An email has been sent to {0}, please follow the link to change your password.
+view.login.forgotlabel=forgot?
+view.login.register=Register
+view.login.submit=Login
+view.login.resettitle=Reset Password
+view.login.resetmessage=Please enter your email address and we'll send you a reset activation link:
+view.login.resetsubmit=Reset
+

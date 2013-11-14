@@ -29,7 +29,7 @@ object  Login extends Controller with Secured with Mailer{
     tuple(
       "email" -> text,
       "password" -> text
-    ) verifying (Messages.get("incorrectLoginMessage"), result => result match {
+    ) verifying (Messages.get("error.login.invalid"), result => result match {
       case (email, password) => User.authenticate(email, password).isDefined
     })
   )
@@ -38,7 +38,7 @@ object  Login extends Controller with Secured with Mailer{
   val resetRequestForm = Form(
     single(
       "email" -> text
-    )verifying (Messages.get("noUserMessage"), result => result match {
+    )verifying (Messages.get("error.user.none"), result => result match {
       case (email) => User.findByEmail(email).isDefined
     })
   )
@@ -77,7 +77,7 @@ object  Login extends Controller with Secured with Mailer{
    */
   def logout = Action {
     Redirect(routes.Login.index).withNewSession.flashing(
-      configValues.logoutSuccess -> Messages.get("logoutSuccess")
+      configValues.logoutSuccess -> Messages.get("success.logout")
     )
   }
 
@@ -98,7 +98,7 @@ object  Login extends Controller with Secured with Mailer{
         val (key,expire,name) = User.requestReset(email)
         if (key.isEmpty || expire.isEmpty || name.isEmpty) {
           /** In the very strange event of an ObjectId not being distinct, throw an error */
-          val formWithErrors = resetRequestForm.fill(email).withGlobalError(Messages.get("noUserMessage"))
+          val formWithErrors = resetRequestForm.fill(email).withGlobalError(Messages.get("error.user.none"))
           BadRequest(html.login(loginForm,formWithErrors))
         }
         else {

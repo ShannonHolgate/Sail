@@ -27,9 +27,9 @@ object Reset extends Controller with Secured{
       "email" -> text,
       "password" -> text,
       "confirm" -> text
-    ) verifying (Messages.get("incorrectEmailMessage"),result => result._1 match {
+    ) verifying (Messages.get("error.email.incorrect"),result => result._1 match {
       case (email) => User.resetRequested(email)
-    }) verifying(Messages.get("passwordsDontMatchMessage"),result => result match {
+    }) verifying(Messages.get("error.password.nomatch"),result => result match {
       case (email,password,confirm) => {
         password.equals(confirm)
       }
@@ -70,7 +70,7 @@ object Reset extends Controller with Secured{
         if (username.isDefined) Results.Redirect(routes.Login.index).flashing(configValues.resetSuccess -> username.get)
         else {
           /** The email address does not match the url key */
-          val formWithErrors = resetForm.fill(reset).withGlobalError(resetResult._2.getOrElse(Messages.get("incorrectEmailMessage")))
+          val formWithErrors = resetForm.fill(reset).withGlobalError(resetResult._2.getOrElse(Messages.get("error.email.incorrect")))
           BadRequest(html.reset(formWithErrors,key))
         }
       }

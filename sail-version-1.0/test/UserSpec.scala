@@ -110,7 +110,7 @@ class UserSpec extends Specification with TestUser{
         val (name,errorMessage) = User.resetPassword(testUser.email,"password",stringKey2)
 
         name.isDefined must beFalse
-        errorMessage.get must equalTo(Messages.get("incorrectEmailMessage"))
+        errorMessage.get must equalTo(Messages.get("error.email.incorrect"))
       }
     }
 }

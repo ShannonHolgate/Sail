@@ -148,7 +148,7 @@ trait Secured extends Controller{
     request.session.get(configValues.timeoutSession).map ({
       connected =>
         if (Days.daysBetween(DateTime.parse(connected), DateTime.now()).getDays.>(timeout)) {
-          val inactivityString = Messages.get("inactivityMessage",timeout.toString)
+          val inactivityString = Messages.get("error.user.inactive",timeout.toString)
           return Option(Redirect(routes.Login.index).withNewSession.flashing( configValues.timeoutFlash -> inactivityString))
         }
     })
@@ -183,7 +183,7 @@ trait Secured extends Controller{
       }
       else
         /** No user was found on the MongoDB */
-        result.flashing(configValues.invalidUser -> Messages.get("invalidUserMessage"))
+        result.flashing(configValues.invalidUser -> Messages.get("error.user.invalid"))
     }
     else
       /** No email exists in the session, User is not logged in */

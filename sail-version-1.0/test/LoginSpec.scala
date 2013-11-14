@@ -111,7 +111,7 @@ class LoginSpec extends Specification with TestUser with controllers.Secured{
       val result= controllers.Login.authenticate()(FakeRequest().withJsonBody(jsonObject))
 
       status(result) must equalTo(BAD_REQUEST)
-      contentAsString(result) must contain(Messages.get("incorrectLoginMessage"))
+      contentAsString(result) must contain(Messages.get("error.login.invalid"))
     }
 
     "respond to the logout Action via route" in new WithApplication{
@@ -176,7 +176,7 @@ class LoginSpec extends Specification with TestUser with controllers.Secured{
 
       val result = controllers.Login.requestReset()(FakeRequest(POST,"/reset").withJsonBody(jsonObject))
       status(result) must equalTo(BAD_REQUEST)
-      contentAsString(result) must contain(Messages.get("noUserMessage"))
+      contentAsString(result) must contain(Messages.get("error.user.none"))
     }
   }
 }

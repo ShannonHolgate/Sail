@@ -87,7 +87,7 @@ class RegisterSpec extends Specification with TestUser with controllers.Secured{
       val result= controllers.Register.register()(FakeRequest().withJsonBody(jsonObject))
 
       status(result) must equalTo(BAD_REQUEST)
-      contentAsString(result) must contain(Messages.get("userExistsMessage"))
+      contentAsString(result) must contain(Messages.get("error.user.exists"))
     }
   }
 }
