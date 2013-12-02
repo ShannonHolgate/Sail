@@ -1,0 +1,3 @@
+{"value": 5000.43,"assetclass": "BankAccount","name": "Cash","user": ObjectId("5283e32d03649c00127432d7")}
+{"value": 23334.23,"assetclass": "BankAccount","name": "Current Account","user": ObjectId("5283e32d03649c00127432d7")}
+{"value": 100.35,"assetclass": "BankAccount","name": "Credit Card","user": ObjectId("5283e32d03649c00127432d7")}
