@@ -19,7 +19,7 @@ import scala.concurrent.Future
 
 object DashboardController extends Controller with Risker with Secured{
 
-  def index = withUser{
+/**  def index = withUser{
     user => implicit request => {
       val investments = Investment.getInvestmentForUser(user)
       val assetClassValues = ListBuffer[(String,BigDecimal)]()
@@ -59,5 +59,5 @@ object DashboardController extends Controller with Risker with Secured{
 
     }
   }
-
+**/
 }

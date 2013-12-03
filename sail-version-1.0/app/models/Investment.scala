@@ -15,6 +15,7 @@ import se.radley.plugin.salat._
 import models.MongoContext._
 import com.mongodb.casbah.commons.TypeImports.ObjectId
 import java.util.Date
+import play.Logger
 
 case class Investment(
                       id: ObjectId = new ObjectId,

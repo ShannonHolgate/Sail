@@ -1,6 +1,14 @@
+/*
+ * Copyright (c) 2013. Shannon Holgate.
+ *
+ * Sail - A personal fund management web application.
+ *
+ * Makes use of the Play web framework for scala, MongoDB and the salat-Play plugin
+ */
+
 import java.util
 import java.util.{GregorianCalendar, Date}
-import models.InvestmentHistory
+import models.{Investment, User, InvestmentHistory}
 import org.bson.types.ObjectId
 import org.junit.runner.RunWith
 import org.specs2.mutable.Specification
@@ -17,18 +25,65 @@ class InvestmentHistorySpec extends Specification with TestUser{
       val objectid1 = new ObjectId()
       val objectid2 = new ObjectId()
 
-      val history = new InvestmentHistory(new ObjectId,None,BigDecimal(100.00), BigDecimal(100.00),sevenDay, objectid1 , objectid1, new Date(), None, None)
-      val history1 = new InvestmentHistory(new ObjectId,None,BigDecimal(200.00), BigDecimal(300.00),threeDay, objectid1, objectid1, new Date(), None, None)
-      val history2 = new InvestmentHistory(new ObjectId,None,BigDecimal(600.00), BigDecimal(-40.00),new Date(), objectid1,objectid1, new Date(), None, None)
-      val history3 = new InvestmentHistory(new ObjectId,None,BigDecimal(400.00), BigDecimal(220.00),sevenDay, objectid2,objectid2, new Date(), None, None)
-      val history4 = new InvestmentHistory(new ObjectId,None,BigDecimal(1200.00), BigDecimal(2100.00),new Date(), objectid2,objectid2, new Date(), None, None)
+      val history = new InvestmentHistory(new ObjectId,None,BigDecimal(100.00), BigDecimal(100.00),sevenDay, objectid1 , Some(objectid1), new Date(), None, None)
+      val history1 = new InvestmentHistory(new ObjectId,None,BigDecimal(200.00), BigDecimal(300.00),threeDay, objectid1, Some(objectid1), new Date(), None, None)
+      val history2 = new InvestmentHistory(new ObjectId,None,BigDecimal(600.00), BigDecimal(-40.00),new Date(), objectid1,Some(objectid1), new Date(), None, None)
+      val history3 = new InvestmentHistory(new ObjectId,None,BigDecimal(400.00), BigDecimal(220.00),sevenDay, objectid2,Some(objectid2), new Date(), None, None)
+      val history4 = new InvestmentHistory(new ObjectId,None,BigDecimal(1200.00), BigDecimal(2100.00),new Date(), objectid2, Some(objectid2), new Date(), None, None)
       val histories = List[InvestmentHistory](history,history1,history2,history3,history4)
 
       val timeSeries = InvestmentHistory.getTimeSeriesForInvestmentHistories(histories)
 
-      Logger.info(timeSeries.toString())
-
       timeSeries.isEmpty must beFalse
+    }
+
+    "get histories for a list of bank accounts" in new WithApplication(currentApplication){
+      confirmTestUserExists
+      val user = User.findByEmail(testUser.email)
+      val investments = Investment.getInvestmentForAssetClass(user.get,"Bank Account")
+
+      val histories = InvestmentHistory.getHistoryForInvestments(investments,None,None)
+
+      histories.size must be_>(0)
+
+      for(history <- histories.sortBy(hist => (hist.date))) {
+        Logger.info("B/A histories: " + history.date + " " + history.valuechanged)
+      }
+    }
+
+    "get histories for all investments" in new WithApplication(currentApplication){
+      confirmTestUserExists
+      val user = User.findByEmail(testUser.email)
+      val investments = Investment.getInvestmentForUser(user.get)
+
+      val histories = InvestmentHistory.getHistoryForInvestments(investments,None,None)
+
+      histories.size must be_>(0)
+
+      for(history <- histories.sortBy(hist => (hist.date))) {
+        Logger.info("All histories: " + history.date + " " +history.valuechanged)
+      }
+    }
+
+    "create a time series from a set of investments" in new WithApplication(currentApplication){
+      confirmTestUserExists
+      val user = User.findByEmail(testUser.email)
+      val investments = Investment.getInvestmentForUser(user.get)
+
+      val histories = InvestmentHistory.getHistoryForInvestments(investments,None,None)
+
+      val timeSeries = InvestmentHistory.getTimeSeriesForInvestmentHistories(histories)
+
+      for(entry <- timeSeries.get) {
+        Logger.info("time series: " + entry)
+      }
+
+      var tempHistoriesTotal:BigDecimal = 0
+      for (history <- histories) {
+        tempHistoriesTotal += history.valuechanged
+      }
+
+      timeSeries.get.last._2 must be equalTo(tempHistoriesTotal)
     }
   }
 

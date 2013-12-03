@@ -15,7 +15,7 @@ case class Share(
 
 trait Shares {
 
-  def getSharesForSymbols(symbols: List[String]): List[Share] = {
+/**  def getSharesForSymbols(symbols: List[String]): List[Share] = {
 
     implicit val context = scala.concurrent.ExecutionContext.Implicits.global
 
@@ -31,5 +31,5 @@ trait Shares {
 
 
   }
-
+**/
 }

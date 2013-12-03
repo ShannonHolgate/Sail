@@ -1,0 +1,12 @@
+{"_id": ObjectId("5283e32d03649c70127432d7"),"value": 5000.43,"assetclass": "Bank Account","name": "Cash","user": ObjectId("5283e32d03649c00127432d7")}
+{"_id": ObjectId("5283e32d03649c02127432d7"),"value": 23334.23,"assetclass": "Bank Account","name": "Current Account","user": ObjectId("5283e32d03649c00127432d7")}
+{"_id": ObjectId("5283e67d03649c00127432d7"),"value": 100.35,"assetclass": "Bank Account","name": "Credit Card","user": ObjectId("5283e32d03649c00127432d7")}
+{"_id": ObjectId("5213e32d03649c00127432d7"),"quantity": 200,"assetclass": "Shares","name": "Apple","symbol": "AAPL","user": ObjectId("5283e32d03649c00127432d7")}
+{"_id": ObjectId("5283e32d03649c00127532d7"),"quantity": 10,"assetclass": "Shares","name": "Google","symbol": "GOOG","user": ObjectId("5283e32d03649c00127432d7")}
+{"_id": ObjectId("5283e32d03649c00127433d7"),"quantity": 15,"assetclass": "Shares","name": "BP","symbol": "BP","user": ObjectId("5283e32d03649c00127432d7")}
+{"_id": ObjectId("5283e32d03649c00127432d1"),"quantity": 203,"assetclass": "Shares","name": "HSBC","symbol": "HBC","user": ObjectId("5283e32d03649c00127432d7")}
+{"_id": ObjectId("5283e32d03649c00127232d7"),"value": 500000,"assetclass": "Collectibles","name": "Ferrari GTO","user": ObjectId("5283e32d03649c00127432d7")}
+{"_id": ObjectId("5283e32d03639c00127432d7"),"value": 500000,"assetclass": "Commodities","name": "Gold","user": ObjectId("5283e32d03649c00127432d7")}
+{"_id": ObjectId("5283e32d03649c00117432d7"),"value": 2300000,"assetclass": "Property","name": "My house","user": ObjectId("5283e32d03649c00127432d7")}
+{"_id": ObjectId("5283e32d03689c00127432d7"),"value": 2000,"assetclass": "Bonds","name": "3 Year bond","user": ObjectId("5283e32d03649c00127432d7")}
+{"_id": ObjectId("5283e02d03649c00127432d7"),"value": 15000,"assetclass": "Bonds","name": "10 Year bond","user": ObjectId("5283e32d03649c00127432d7")}

@@ -54,7 +54,7 @@ trait TestUser{
   def confirmTestUserExists = {
     if (MongoConnection().getDB("test").getCollection("users").find(MongoDBObject("email" -> testUser.email)).count().<(1)) {
       MongoConnection().getDB("test").getCollection("users").insert(
-        MongoDBObject("_id" -> new ObjectId,
+        MongoDBObject("_id" -> new ObjectId("5283e32d03649c00127432d7"),
           "name" -> testUser.username,
           "email" -> testUser.email,
           "password" -> BCrypt.hashpw(testUser.password, BCrypt.gensalt()),
@@ -87,7 +87,7 @@ trait TestUser{
 
     /** Add the first reset request */
     MongoConnection().getDB("test").getCollection("users").insert(
-      MongoDBObject("_id" -> new ObjectId,
+      MongoDBObject("_id" -> new ObjectId("5283e32d03649c00127432d7"),
         "name" -> testUser.username,
         "email" -> testUser.email,
         "password" -> BCrypt.hashpw(testUser.password, BCrypt.gensalt()),
@@ -122,7 +122,7 @@ trait TestUser{
 
     /** Add the first reset request */
     MongoConnection().getDB("test").getCollection("users").insert(
-      MongoDBObject("_id" -> new ObjectId,
+      MongoDBObject("_id" -> new ObjectId("5283e32d03649c00127432d7"),
         "name" -> testUser.username,
         "email" -> testUser.email,
         "password" -> BCrypt.hashpw(testUser.password, BCrypt.gensalt()),

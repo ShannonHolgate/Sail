@@ -31,7 +31,7 @@ case class InvestmentHistory(
 
 object InvestmentHistory extends ModelCompanion[InvestmentHistory, ObjectId] {
 
-  val dao = new SalatDAO[InvestmentHistory, ObjectId](collection = mongoCollection("investmentHistorys")) {}
+  val dao = new SalatDAO[InvestmentHistory, ObjectId](collection = mongoCollection("investmenthistorys")) {}
 
   def getHistoryForInvestments(investments:List[Investment], dateFrom:Option[Date], dateTo:Option[Date]) : List[InvestmentHistory] = {
     var histories = List[InvestmentHistory]()
