@@ -29,8 +29,8 @@ object TargetFund extends ModelCompanion[TargetFund, ObjectId] {
 
   val dao = new SalatDAO[TargetFund, ObjectId](collection = mongoCollection("targetfund")) {}
 
-  def getTargetFundForUser(user:User) : Option[List[BigDecimal]] = {
-    val targetFund: Option[TargetFund] = dao.findOne(MongoDBObject("user" -> user.id))
+  def getTargetFundForUser(user:ObjectId) : Option[List[BigDecimal]] = {
+    val targetFund: Option[TargetFund] = dao.findOne(MongoDBObject("user" -> user))
     if (targetFund.isDefined) {
       return  Option(targetFund.get.assetClassPercentages)
     }

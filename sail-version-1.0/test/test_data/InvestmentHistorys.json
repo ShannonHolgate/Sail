@@ -3,14 +3,14 @@
 {"value":20000,"valuechanged":20000,"date": {"$date":1384291994000},"investment": ObjectId("5283e32d03649c02127432d7")}
 {"value":21000.25,"valuechanged":1000.25,"date": {"$date":1384205594000},"investment": ObjectId("5283e32d03649c02127432d7")}
 {"value":200.32,"valuechanged":200.32,"date": {"$date":1371328380000},"investment": ObjectId("5283e67d03649c00127432d7")}
-{"quantity": 100,"value":50000,"valuechanged":0,"date": {"$date":1318537980000},"investment": ObjectId("5213e32d03649c00127432d7")}
-{"quantity": 200,"value":100000,"valuechanged":50000,"date": {"$date":1350333194000},"investment": ObjectId("5213e32d03649c00127432d7")}
-{"quantity": 10,"value":100,"valuechanged":0,"date": {"$date":1355607180000},"investment": ObjectId("5283e32d03649c00127532d7")}
+{"quantity": 100,"value":50000,"valuechanged":50000,"date": {"$date":1318537980000},"investment": ObjectId("5213e32d03649c00127432d7")}
+{"quantity": 200,"value":500000,"valuechanged":450000,"date": {"$date":1350333194000},"investment": ObjectId("5213e32d03649c00127432d7")}
+{"quantity": 10,"value":100,"valuechanged":100,"date": {"$date":1355607180000},"investment": ObjectId("5283e32d03649c00127532d7")}
 {"quantity": 15,"value":150,"valuechanged":50,"date": {"$date":1376598794000},"investment": ObjectId("5283e32d03649c00127532d7")}
 {"quantity": 20,"value":200,"valuechanged":50,"date": {"$date":1379277194000},"investment": ObjectId("5283e32d03649c00127532d7")}
-{"quantity": 12,"value":1500.25,"valuechanged":0,"date": {"$date":1381609994000},"investment": ObjectId("5283e32d03649c00127433d7")}
+{"quantity": 12,"value":1500.25,"valuechanged":1500.25,"date": {"$date":1381609994000},"investment": ObjectId("5283e32d03649c00127433d7")}
 {"quantity": 14,"value":1299.25,"valuechanged":-201,"date": {"$date":1381869194000},"investment": ObjectId("5283e32d03649c00127433d7")}
-{"quantity": 500,"value":50000.52,"valuechanged":0,"date": {"$date":1321392794000},"investment": ObjectId("5283e32d03649c00127432d1")}
+{"quantity": 500,"value":50000.52,"valuechanged":50000.52,"date": {"$date":1321392794000},"investment": ObjectId("5283e32d03649c00127432d1")}
 {"quantity": 250,"value":20152,"valuechanged":-29848.52,"date": {"$date":1350333194000},"investment": ObjectId("5283e32d03649c00127432d1")}
 {"quantity": 240,"value":19000,"valuechanged":-1152,"date": {"$date":1381869194000},"investment": ObjectId("5283e32d03649c00127432d1")}
 {"value":400000,"valuechanged":400000,"date": {"$date":1318537994000},"investment": ObjectId("5283e32d03649c00127232d7")}

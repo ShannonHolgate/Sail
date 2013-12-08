@@ -1,3 +1,5 @@
+package test_data
+
 /*
  * Copyright (c) 2013. Shannon Holgate.
  *
@@ -52,7 +54,7 @@ trait TestUser{
    * Creates the Test User in the MongoDB if needed
    */
   def confirmTestUserExists = {
-    if (MongoConnection().getDB("test").getCollection("users").find(MongoDBObject("email" -> testUser.email)).count().<(1)) {
+    if (MongoConnection().getDB("test").getCollection("users").find(MongoDBObject("_id" -> new ObjectId("5283e32d03649c00127432d7"))).count().<(1)) {
       MongoConnection().getDB("test").getCollection("users").insert(
         MongoDBObject("_id" -> new ObjectId("5283e32d03649c00127432d7"),
           "name" -> testUser.username,

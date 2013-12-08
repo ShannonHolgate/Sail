@@ -1,3 +1,5 @@
+package Controllers
+
 /*
  * Copyright (c) 2013. Shannon Holgate.
  *
@@ -14,6 +16,7 @@ import play.api.test.Helpers._
 import play.api.test._
 import play.api.test.{FakeRequest, WithApplication}
 import play.i18n.Messages
+import test_data.TestUser
 
 /**
  * Tests the reset controller

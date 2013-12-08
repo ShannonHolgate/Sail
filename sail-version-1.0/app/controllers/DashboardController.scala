@@ -8,16 +8,13 @@
 
 package controllers
 
-import play.api.mvc.{Security, Action, Controller}
-import helpers.Risker
+import play.api.mvc._
+import helpers.{Valuation, Risker}
 import views.html
-import models.{RecentChange, AlertHistory, TargetFund, Investment}
-import scala.collection.mutable.ListBuffer
-import com.github.nscala_time.time.Imports._
-import play.api.libs.ws._
-import scala.concurrent.Future
+import play.api.libs.json.Json
 
-object DashboardController extends Controller with Risker with Secured{
+
+object DashboardController extends Controller with Risker with Secured with Valuation{
 
 /**  def index = withUser{
     user => implicit request => {
@@ -58,6 +55,5 @@ object DashboardController extends Controller with Risker with Secured{
       Ok(html.index())
 
     }
-  }
-**/
+  }   **/
 }

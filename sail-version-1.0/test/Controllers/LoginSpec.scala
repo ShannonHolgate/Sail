@@ -1,3 +1,5 @@
+package Controllers
+
 /*
  * Copyright (c) 2013. Shannon Holgate.
  *
@@ -15,6 +17,7 @@ import play.api.test._
 import play.api.test.WithApplication
 import org.joda.time.DateTime
 import play.i18n.Messages
+import test_data.TestUser
 
 /**
  * Tests the login controller

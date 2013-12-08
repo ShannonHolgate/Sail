@@ -1,3 +1,5 @@
+package Models
+
 /*
  * Copyright (c) 2013. Shannon Holgate.
  *
@@ -15,6 +17,7 @@ import org.specs2.mutable.Specification
 import org.specs2.runner.JUnitRunner
 import play.api.test.WithApplication
 import play.Logger
+import test_data.TestUser
 
 @RunWith(classOf[JUnitRunner])
 class InvestmentHistorySpec extends Specification with TestUser{
@@ -38,48 +41,53 @@ class InvestmentHistorySpec extends Specification with TestUser{
     }
 
     "get histories for a list of bank accounts" in new WithApplication(currentApplication){
+      removeTestUsers
       confirmTestUserExists
       val user = User.findByEmail(testUser.email)
-      val investments = Investment.getInvestmentForAssetClass(user.get,"Bank Account")
+      val investments = Investment.getInvestmentForAssetClass(user.get.id,"Bank Account")
 
-      val histories = InvestmentHistory.getHistoryForInvestments(investments,None,None)
+      val histories = InvestmentHistory.getHistoryForInvestments(investments.getOrElse(List[Investment]()))
 
-      histories.size must be_>(0)
+      histories.isDefined must beTrue
+      histories.get.size must be_>(0)
 
-      for(history <- histories.sortBy(hist => (hist.date))) {
+      for(history <- histories.get.sortBy(hist => (hist.date))) {
         Logger.info("B/A histories: " + history.date + " " + history.valuechanged)
       }
     }
 
     "get histories for all investments" in new WithApplication(currentApplication){
+      removeTestUsers
       confirmTestUserExists
       val user = User.findByEmail(testUser.email)
-      val investments = Investment.getInvestmentForUser(user.get)
+      val investments = Investment.getInvestmentForUser(user.get.id)
 
-      val histories = InvestmentHistory.getHistoryForInvestments(investments,None,None)
+      val histories = InvestmentHistory.getHistoryForInvestments(investments.getOrElse(List[Investment]()))
 
-      histories.size must be_>(0)
+      histories.isDefined must beTrue
+      histories.get.size must be_>(0)
 
-      for(history <- histories.sortBy(hist => (hist.date))) {
+      for(history <- histories.get.sortBy(hist => (hist.date))) {
         Logger.info("All histories: " + history.date + " " +history.valuechanged)
       }
     }
 
     "create a time series from a set of investments" in new WithApplication(currentApplication){
+      removeTestUsers
       confirmTestUserExists
       val user = User.findByEmail(testUser.email)
-      val investments = Investment.getInvestmentForUser(user.get)
+      val investments = Investment.getInvestmentForUser(user.get.id)
 
-      val histories = InvestmentHistory.getHistoryForInvestments(investments,None,None)
+      val histories = InvestmentHistory.getHistoryForInvestments(investments.getOrElse(List[Investment]()))
 
-      val timeSeries = InvestmentHistory.getTimeSeriesForInvestmentHistories(histories)
+      val timeSeries = InvestmentHistory.getTimeSeriesForInvestmentHistories(histories.get)
 
       for(entry <- timeSeries.get) {
         Logger.info("time series: " + entry)
       }
 
       var tempHistoriesTotal:BigDecimal = 0
-      for (history <- histories) {
+      for (history <- histories.get) {
         tempHistoriesTotal += history.valuechanged
       }
 

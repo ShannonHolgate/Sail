@@ -20,7 +20,7 @@ import play.Logger
 case class Investment(
                       id: ObjectId = new ObjectId,
                       quantity: Option[Int] = None,
-                      value: Option[BigDecimal] = None,
+                      value: BigDecimal,
                       assetclass: String,
                       name: String,
                       symbol: Option[String] = None,
@@ -34,12 +34,36 @@ object Investment extends ModelCompanion[Investment, ObjectId] {
 
   val dao = new SalatDAO[Investment, ObjectId](collection = mongoCollection("investments")) {}
 
-  def getInvestmentForUser(user:User) : List[Investment] = {
-    dao.find(MongoDBObject("user" -> user.id)).toList
+  def getInvestmentForUser(user:ObjectId) : Option[List[Investment]] = {
+    val investments = dao.find(MongoDBObject("user" -> user))
+    if (!investments.isEmpty) Some(investments.toList)
+    else None
   }
 
-  def getInvestmentForAssetClass(user:User, assetClass:String) : List[Investment] = {
-    dao.find(MongoDBObject("user" -> user.id, "assetclass" -> assetClass)).toList
+  def getInvestmentForAssetClass(user:ObjectId, assetClass:String) : Option[List[Investment]] = {
+    val investments = dao.find(MongoDBObject("user" -> user, "assetclass" -> assetClass))
+    if (!investments.isEmpty) Some(investments.toList)
+    else None
   }
 
+  def getInvestmentsWithSymbols(user:ObjectId) : Option[List[Investment]] = {
+    val investments = dao.find(MongoDBObject("user" -> user, "quantity" -> MongoDBObject("$exists" -> true)))
+    if (!investments.isEmpty) Some(investments.toList)
+    else None
+  }
+
+  def getOne(investmentId:ObjectId) : Option[Investment] = {
+    val investment = dao.findOne(MongoDBObject("_id" -> investmentId))
+    if (investment.isDefined) Some(investment.get)
+    else None
+  }
+
+  def updateInvestmentValue(investment:Investment) : Boolean = {
+    dao.update(MongoDBObject("_id" -> investment.id),investment,false, false, new WriteConcern)
+    val newInvestment = getOne(investment.id)
+    if (newInvestment.isDefined) {
+      newInvestment.get.value == investment.value
+    }
+    else false
+  }
 }

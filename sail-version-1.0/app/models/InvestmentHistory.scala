@@ -15,10 +15,12 @@ import se.radley.plugin.salat._
 import models.MongoContext._
 import scala.collection.mutable.ListBuffer
 import play.api.Play.current
+import org.joda.time.DateTime
+import java.text.SimpleDateFormat
 
 case class InvestmentHistory(
                        id: ObjectId = new ObjectId,
-                       quantity: Option[Double] = None,
+                       quantity: Option[Int] = None,
                        value: BigDecimal,
                        valuechanged: BigDecimal,
                        date: Date,
@@ -33,33 +35,49 @@ object InvestmentHistory extends ModelCompanion[InvestmentHistory, ObjectId] {
 
   val dao = new SalatDAO[InvestmentHistory, ObjectId](collection = mongoCollection("investmenthistorys")) {}
 
-  def getHistoryForInvestments(investments:List[Investment], dateFrom:Option[Date], dateTo:Option[Date]) : List[InvestmentHistory] = {
+  def getHistoryForInvestments(investments:List[Investment]) : Option[List[InvestmentHistory]] = {
     var histories = List[InvestmentHistory]()
-    if (dateFrom.isEmpty || dateTo.isEmpty) {
-      for( investment <- investments) {
-        histories = histories ++ dao.find(MongoDBObject("investment" -> investment.id)).toList
-      }
+    for( investment <- investments) {
+      val investmentHistories = dao.find(MongoDBObject("investment" -> investment.id))
+      if (!investmentHistories.isEmpty) histories = histories ++ investmentHistories.toList
     }
-    else {
-      for( investment <- investments) {
-        histories = histories ++ dao.find(MongoDBObject("investment" -> investment.id, "date" -> MongoDBObject("$gte" -> dateFrom.get, "$lte" -> dateTo.get))).toList
-      }
-    }
-    histories
+    if (histories.size.>(0)) Some(histories)
+    else None
   }
 
   def getTimeSeriesForInvestmentHistories(histories:List[InvestmentHistory]) : Option[List[(Date,BigDecimal)]]= {
     var timeSeries = ListBuffer[(Date,BigDecimal)]()
+    val dateFormat = new SimpleDateFormat("dd-MM-yyyy")
 
     for ((history, index) <- histories.sortBy(history => (history.date, history.investment)).zipWithIndex) {
       if (index == 0)
         timeSeries.+=((history.date,history.valuechanged))
-      else if (history.date.equals(timeSeries.last._1))
+      else if (dateFormat.format(history.date).equals(dateFormat.format(timeSeries.last._1)))
         timeSeries.update(timeSeries.size-1, (history.date, timeSeries.last._2 + history.valuechanged))
       else
         timeSeries.+=((history.date, timeSeries.last._2 + history.valuechanged))
     }
     Option(timeSeries.toList)
+  }
+
+  def getOne(investmentHistoryId:ObjectId) : Option[InvestmentHistory] = {
+    val investmentHistory = dao.findOne(MongoDBObject("_id" -> investmentHistoryId))
+    if (investmentHistory.isDefined) Some(investmentHistory.get)
+    else None
+  }
+
+  def create(investmentHistory: InvestmentHistory) : Boolean = {
+    dao.insert(investmentHistory)
+    val newHistory = getOne(investmentHistory.id)
+    if (newHistory.isDefined) {
+      newHistory.get.value == investmentHistory.value
+    }
+    else false
+  }
+
+  def createToday(value:BigDecimal, valueChanged:BigDecimal, investmentId:ObjectId, quantity:Option[Int]) : Boolean = {
+    val history = new InvestmentHistory(value = value, valuechanged = valueChanged, investment = investmentId, quantity = quantity,date = DateTime.now().toDate, recentchange = None)
+    create(history)
   }
 
   def removeForRecentChange(recentChangeId:ObjectId): Boolean = {

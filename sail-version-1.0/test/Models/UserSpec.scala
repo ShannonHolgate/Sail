@@ -1,3 +1,5 @@
+package Models
+
 /*
  * Copyright (c) 2013. Shannon Holgate.
  *
@@ -17,6 +19,7 @@ import play.api.Play.current
 import play.api.test._
 import play.i18n.Messages
 import se.radley.plugin.salat.Binders.ObjectId
+import test_data.TestUser
 
 /**
  * Tests the User Model, DAO and Integration
