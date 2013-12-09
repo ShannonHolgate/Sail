@@ -1,0 +1,98 @@
+@import "modules/colours";
+@import "modules/font";
+@import "modules/sizes";
+@import "modules/border";
+@import "vendor/bourbon/bourbon";
+
+/* -------------------------------------
+  Nav bar styles
+------------------------------------- */
+body.nav-bar-push {
+    overflow-x: hidden;
+    position: relative;
+    left: 0;
+    @include transition(all 0.3s ease);
+}
+	 
+body.nav-bar-push-toright {
+    left: $nav-width;
+}
+
+
+.nav-bar{
+    background: $nav-bar-colour;
+    position: fixed;
+    width: $nav-width;
+    height: 100%;
+    top: 0;
+    z-index: 1000;
+    left: 0;
+    @include transition(all 0.3s ease);
+
+    h3 {
+	    color: $nav-title-colour;
+	    font-size: golden-ratio($font-base-size, 2);
+	    padding: 20px;
+	    margin: 0;
+	    font-weight: 100;
+	    background: $nav-bar-bg;
+	    cursor: pointer;
+
+	    margin-top: $top-margin; 
+		line-height: 0.5;
+		margin-left: $nav-bar-banner-margin;
+		margin-right: -$nav-bar-banner-margin;
+		margin-bottom: 30px;
+	}
+
+	a {
+	    display: block;
+	    color: $nav-link-colour;
+	    font-size: $font-base-size;
+	    font-weight: 900;
+	    text-decoration: none;
+	    margin-left: 20px;
+	    margin-right: 20px;
+	    padding: 1em;
+	    padding-left: 20px;
+	} 
+
+	a:hover {
+    	background: $nav-link-active-bg;
+    	color: $nav-link-click;
+	}
+
+	a:active {
+	    background: $nav-link-click-bg;
+	    color: $nav-link-click;
+	}	
+}
+
+.nav-bar.nav-bar-closed {
+    left: -$nav-width;
+}
+
+@media screen and (max-height: 26.375em){
+ 
+    .nav-bar {
+        font-size: 90%;
+        width: $nav-width-mobile;
+        left: -$nav-width-mobile;
+
+        h3 {
+        	margin-top: $top-margin-mobile;
+        }
+    }
+
+    .nav-bar.nav-bar-closed {
+    	left: 0;
+	}
+
+    body.nav-bar-push {
+    	left: $nav-width-mobile;
+    }
+
+    body.nav-bar-push-toright {
+    	left: 0;
+    }
+}

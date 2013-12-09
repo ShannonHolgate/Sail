@@ -1,0 +1,43 @@
+@import "modules/colours";
+@import "modules/font";
+@import "modules/sizes";
+@import "modules/border";
+@import "vendor/bourbon/bourbon";
+
+/* -------------------------------------
+  Title bar styles
+------------------------------------- */
+div.header {
+	margin-top: $top-margin;
+	margin-bottom: 30px;
+
+	.title {
+		display: table-cell;
+
+		h3 {
+			font-size: 50px;
+			font-weight: 100;
+			margin-top: 0;
+			margin-bottom: 0;
+			line-height: 0.8;
+		}
+	}
+
+	.user-holder {
+		display: table-cell;
+		text-align: right;
+		font-size: 25px;
+		padding-right: 60px;
+		span {
+			font-size: 15px;
+			line-height: 25px;
+			vertical-align: middle;
+		}
+	}
+}
+
+@media screen and (max-height: 26.375em){
+  div.header {
+    margin-top: $top-margin-mobile;
+  }
+}

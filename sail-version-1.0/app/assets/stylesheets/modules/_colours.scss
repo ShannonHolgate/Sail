@@ -1,23 +1,35 @@
 //Global colours
 $light-orange:#f95;
-$dark-orange:#d85; 
+$plot-orange:#f2eae1;
+$plot-title-orange:	#fedcb2;
+$plot-grey: #f6f6f6;
+$dark-orange:#362614; 
 $dark-grey:#333;
-$light-grey:#444;
+$light-grey:#888;
 $light-red:#CA4848;
 $highlight-red:#FFA9A9;
 
 //Layout colours
-$background-colour:$dark-grey;
+$background-colour:white;
 $primary-content-colour: $light-grey;
+$nav-bar-colour: black;
+$nav-bar-bg: $light-orange; 
 
-//Font coloyurs
+//Font colours
 $font-link-colour: $light-orange; 
-$font-main-colour: white; 
+$font-main-colour: black; 
 $font-input-colour: $dark-grey; 
+$nav-title-colour: white;
+$nav-link-colour: $light-grey;
+$nav-link-click: white;
 
 //Border colours
 $default-border-colour: black;  
-$light-border-colour: white;
+$light-border-colour: $dark-grey;
 
 //Shadow colours
 $default-shadow-colour: black;
+
+//Highlight colours
+$nav-link-active-bg: $dark-orange;
+$nav-link-click-bg: $light-grey; 

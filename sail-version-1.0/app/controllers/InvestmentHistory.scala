@@ -30,8 +30,8 @@ object InvestmentHistory extends Controller with Secured {
             implicit val timeSeriesWrites = new Writes[(Date,BigDecimal)] {
               def writes(timeSeries: (Date,BigDecimal)) = {
                 Json.obj(
-                  "date" -> JsString(dateFormat.format(timeSeries._1)),
-                  "value" -> JsNumber(timeSeries._2)
+                  "name" -> JsString(dateFormat.format(timeSeries._1)),
+                  "y" -> JsNumber(timeSeries._2)
                 )
               }
             }

@@ -10,7 +10,7 @@
   Global Input Styles
 ------------------------------------- */
 input {
-  font-size: 15px;
+  font-size: 12px;
   color: #333333;
   border: 1px solid black;
   border-radius: 3px;
@@ -33,9 +33,10 @@ label.error {
 ------------------------------------- */
 body {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  color: white;
-  font-size: 15px;
-  background-color: #333333; }
+  color: black;
+  font-size: 12px;
+  font-weight: lighter;
+  background-color: white; }
 
 .reset {
   display: none !important; }
@@ -62,6 +63,14 @@ body {
   margin-right: 2.35765%;
   width: 23.23176%; }
   .span-3:last-child {
+    margin-right: 0; }
+
+.span-4 {
+  display: block;
+  float: left;
+  margin-right: 2.35765%;
+  width: 31.76157%; }
+  .span-4:last-child {
     margin-right: 0; }
 
 .span-6 {
@@ -164,9 +173,31 @@ body {
 .row.end a {
   line-height: 33px; }
 
+.content-row {
+  display: table;
+  margin-left: 30px; }
+
+.push-left {
+  padding-right: 230px;
+  -webkit-transition: all 0.3s ease;
+  -moz-transition: all 0.3s ease;
+  transition: all 0.3s ease; }
+
+.push-left-open {
+  padding-right: 30px; }
+
 .right {
   float: right; }
 
+.no-margin {
+  margin: 0; }
+
+@media screen and (max-height: 26.375em) {
+  .push-left {
+    padding-right: 30px; }
+
+  .push-left-open {
+    padding-right: 220px; } }
 * {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
@@ -179,34 +210,34 @@ a {
   color: #ff9955; }
 
 a.a-button {
-  border: 1px solid #ce5f1d;
+  border: 1px solid #020101;
   border-radius: 3px;
-  box-shadow: inset 0 1px 0 0 #e5b69a;
+  box-shadow: inset 0 1px 0 0 #684d2f;
   color: white;
   display: inline-block;
   font-size: 11px;
   font-weight: bold;
-  background-color: #dd8855;
-  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #dd8855), color-stop(100%, #db651e));
-  background-image: -webkit-linear-gradient(#dd8855, #db651e);
-  background-image: linear-gradient(#dd8855, #db651e);
+  background-color: #362614;
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #362614), color-stop(100%, #0e0904));
+  background-image: -webkit-linear-gradient(#362614, #0e0904);
+  background-image: linear-gradient(#362614, #0e0904);
   padding: 7px 18px;
   text-decoration: none;
-  text-shadow: 0 1px 0 #c35514;
+  text-shadow: 0 1px 0 black;
   background-clip: padding-box; }
   a.a-button:hover:not(:disabled) {
-    box-shadow: inset 0 1px 0 0 #db9870;
+    box-shadow: inset 0 1px 0 0 #45331e;
     cursor: pointer;
-    background-color: #d47a44;
-    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #d47a44), color-stop(100%, #cd5f1e));
-    background-image: -webkit-linear-gradient(#d47a44, #cd5f1e);
-    background-image: linear-gradient(#d47a44, #cd5f1e); }
+    background-color: #22190e;
+    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #22190e), color-stop(100%, #020101));
+    background-image: -webkit-linear-gradient(#22190e, #020101);
+    background-image: linear-gradient(#22190e, #020101); }
   a.a-button:active:not(:disabled) {
-    border: 1px solid #ce5f1d;
-    box-shadow: inset 0 0 8px 4px #be591d, inset 0 0 8px 4px #be591d, 0 1px 1px 0 #eeeeee; }
+    border: 1px solid #020101;
+    box-shadow: inset 0 0 8px 4px black, inset 0 0 8px 4px black, 0 1px 1px 0 #eeeeee; }
   a.a-button:disabled {
     opacity: 0.5;
     cursor: not-allowed; }
 
 .small-font {
-  font-size: 9.2707px; }
+  font-size: 7.41656px; }

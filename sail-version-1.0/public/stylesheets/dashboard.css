@@ -1,0 +1,210 @@
+/* -------------------------------------
+  Dashboard global styles
+------------------------------------- */
+/* -------------------------------------
+  Nav bar styles
+------------------------------------- */
+body.nav-bar-push {
+  overflow-x: hidden;
+  position: relative;
+  left: 0;
+  -webkit-transition: all 0.3s ease;
+  -moz-transition: all 0.3s ease;
+  transition: all 0.3s ease; }
+
+body.nav-bar-push-toright {
+  left: 200px; }
+
+.nav-bar {
+  background: black;
+  position: fixed;
+  width: 200px;
+  height: 100%;
+  top: 0;
+  z-index: 1000;
+  left: 0;
+  -webkit-transition: all 0.3s ease;
+  -moz-transition: all 0.3s ease;
+  transition: all 0.3s ease; }
+  .nav-bar h3 {
+    color: white;
+    font-size: 31.41509px;
+    padding: 20px;
+    margin: 0;
+    font-weight: 100;
+    background: #ff9955;
+    cursor: pointer;
+    margin-top: 60px;
+    line-height: 0.5;
+    margin-left: 20px;
+    margin-right: -20px;
+    margin-bottom: 30px; }
+  .nav-bar a {
+    display: block;
+    color: #888888;
+    font-size: 12px;
+    font-weight: 900;
+    text-decoration: none;
+    margin-left: 20px;
+    margin-right: 20px;
+    padding: 1em;
+    padding-left: 20px; }
+  .nav-bar a:hover {
+    background: #362614;
+    color: white; }
+  .nav-bar a:active {
+    background: #888888;
+    color: white; }
+
+.nav-bar.nav-bar-closed {
+  left: -200px; }
+
+@media screen and (max-height: 26.375em) {
+  .nav-bar {
+    font-size: 90%;
+    width: 190px;
+    left: -190px; }
+    .nav-bar h3 {
+      margin-top: 10px; }
+
+  .nav-bar.nav-bar-closed {
+    left: 0; }
+
+  body.nav-bar-push {
+    left: 190px; }
+
+  body.nav-bar-push-toright {
+    left: 0; } }
+/* -------------------------------------
+  Title bar styles
+------------------------------------- */
+div.header {
+  margin-top: 60px;
+  margin-bottom: 30px; }
+  div.header .title {
+    display: table-cell; }
+    div.header .title h3 {
+      font-size: 50px;
+      font-weight: 100;
+      margin-top: 0;
+      margin-bottom: 0;
+      line-height: 0.8; }
+  div.header .user-holder {
+    display: table-cell;
+    text-align: right;
+    font-size: 25px;
+    padding-right: 60px; }
+    div.header .user-holder span {
+      font-size: 15px;
+      line-height: 25px;
+      vertical-align: middle; }
+
+@media screen and (max-height: 26.375em) {
+  div.header {
+    margin-top: 10px; } }
+* {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box; }
+
+/* -------------------------------------
+  Dashboard styles
+------------------------------------- */
+div.dashboard h5 {
+  height: 40px;
+  margin: 0;
+  vertical-align: middle;
+  line-height: 40px;
+  text-align: center;
+  font-size: 1.2em;
+  background-color: #fedcb2; }
+div.dashboard h5.risk {
+  background-color: #f2eae1; }
+div.dashboard #fund-holder {
+  height: 400px;
+  min-width: 800px; }
+div.dashboard #history-holder, div.dashboard #target-holder {
+  height: 160px; }
+div.dashboard .other-chart {
+  background-color: #f2eae1; }
+div.dashboard div.row {
+  padding: 0;
+  background-color: #f6f6f6; }
+div.dashboard div.risk-holder {
+  height: 60px;
+  padding: 0;
+  background-color: #f6f6f6; }
+div.dashboard .current-risk-holder {
+  width: 300px;
+  margin-top: 0;
+  margin-left: auto;
+  margin-right: auto; }
+  div.dashboard .current-risk-holder h5 {
+    background-color: #f6f6f6; }
+div.dashboard .target-risk-holder {
+  background-color: #f2eae1;
+  height: 60px;
+  width: 100%;
+  padding-left: 5px;
+  padding-right: 5px; }
+div.dashboard div.row.summary {
+  background-color: white; }
+div.dashboard .summary .span-4 {
+  text-align: center; }
+div.dashboard .summary h5 {
+  background-color: white; }
+div.dashboard .summary p {
+  margin-top: 5px;
+  font-size: 1.5em; }
+
+.rating-bar {
+  background: white;
+  padding: 3px; }
+
+.rating-bar span {
+  display: block;
+  height: 15px; }
+
+.rating-bar, .rating-bar span {
+  border-radius: 4px; }
+
+/* Used to color the bars */
+.green {
+  background: green; }
+
+.yellow {
+  background: yellow; }
+
+.red {
+  background: red; }
+
+/* .rate-n, n being the rating from 1 to 10 */
+.rate-1 {
+  width: 10%; }
+
+.rate-2 {
+  width: 20%; }
+
+.rate-3 {
+  width: 30%; }
+
+.rate-4 {
+  width: 40%; }
+
+.rate-5 {
+  width: 50%; }
+
+.rate-6 {
+  width: 60%; }
+
+.rate-7 {
+  width: 70%; }
+
+.rate-8 {
+  width: 80%; }
+
+.rate-9 {
+  width: 90%; }
+
+.rate-10 {
+  width: 100%; }

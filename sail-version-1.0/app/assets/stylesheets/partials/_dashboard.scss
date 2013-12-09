@@ -1,0 +1,87 @@
+@import "modules/colours";
+@import "modules/font";
+@import "modules/sizes";
+@import "modules/border";
+@import "vendor/bourbon/bourbon";
+@import "vendor/neat/neat";
+
+/* -------------------------------------
+  Dashboard styles
+------------------------------------- */
+div.dashboard {
+
+	h5 {
+		height:40px;
+		margin: 0;
+		vertical-align: middle;
+		line-height:40px;
+		text-align: center;
+		font-size: 1.2em;
+		background-color: $plot-title-orange;
+	}
+	h5.risk {
+		background-color: $plot-orange;	
+	}
+
+	#fund-holder {
+		height: 400px;
+		min-width: 800px;
+	}
+
+	#history-holder,#target-holder {
+		height: 160px;
+	}
+
+	.other-chart {
+		background-color: $plot-orange;
+	}
+
+	div.row {
+		padding:0;
+		background-color: $plot-grey;
+	}
+
+	div.risk-holder {
+		height: 60px;
+		padding: 0;	
+		background-color: $plot-grey;
+	}
+
+	.current-risk-holder {
+		width: 300px;
+		margin-top: 0;
+		margin-left: auto;
+		margin-right: auto;
+
+		h5 {
+			background-color: $plot-grey;	
+		}
+	}
+
+	.target-risk-holder {
+		background-color: $plot-orange;
+		height: 60px;
+		width: 100%;	
+		padding-left:5px;
+		padding-right:5px;
+	}
+
+	div.row.summary {
+		background-color: $background-colour;	
+	}
+
+	.summary {
+		.span-4 {
+			text-align: center;
+		}
+
+		h5 {
+			background-color: $background-colour;		
+		}
+
+		p {
+			margin-top: 5px;
+			font-size: 1.5em;
+		}
+	}
+}

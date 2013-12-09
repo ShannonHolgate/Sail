@@ -14,6 +14,7 @@ body {
   font-family: $helvetica;
   color: $font-main-colour;
   font-size: $font-base-size;
+  font-weight: lighter;
   background-color: $background-colour;
 }
 
@@ -24,6 +25,7 @@ body {
 .span-1 { @include span-columns(1); }
 .span-2 { @include span-columns(2); }
 .span-3 { @include span-columns(3); }
+.span-4 { @include span-columns(4); }
 .span-6 { @include span-columns(6); }
 .span-7 { @include span-columns(7); }
 .span-8 { @include span-columns(8); }
@@ -58,6 +60,34 @@ body {
   line-height: $end-row-height;
 }
 
+.content-row {
+  display: table;
+  margin-left: $nav-bar-banner-margin + 10px;
+}
+
+.push-left {
+  padding-right: $nav-width + $nav-bar-banner-margin + 10px;
+  @include transition(all 0.3s ease);
+}
+
+.push-left-open {
+  padding-right: $nav-bar-banner-margin + 10px;
+}
+
 .right {
   float:right;
+}
+
+.no-margin {
+  margin: 0;
+}
+
+@media screen and (max-height: 26.375em){
+  .push-left {
+    padding-right: $nav-bar-banner-margin + 10px;
+  }
+
+  .push-left-open {
+      padding-right: $nav-width-mobile + $nav-bar-banner-margin + 10px;
+  } 
 }

@@ -1,7 +1,26 @@
-@(message: String)
-
-@main("Welcome to Play") {
-
-    @play20.welcome(message)
-
+@(title:String, header:String, name:String)(content:Html)
+@main(title) {
+<nav class="nav-bar" id="nav-bar">
+    <h3 id="showLeft">Sail</h3>
+    <a href="#">Celery seakale</a>
+    <a href="#">Dulse daikon</a>
+    <a href="#">Zucchini garlic</a>
+    <a href="#">Catsear azuki bean</a>
+    <a href="#">Dandelion bunya</a>
+    <a href="#">Rutabaga</a>
+</nav>
+<div class="content">
+	<div class="span-12 content-row header">
+		<div class="title">
+			<h3>@header</h3>
+		</div>
+		<div class="user-holder" id="user-holder">
+			@name <span>&#9660;</span>
+		</div>
+	</div>
+	@content
+</div>
+<script src="@routes.Assets.at("javascripts/nav-bar.js")" type="text/javascript"></script>
+<script src="@routes.Assets.at("javascripts/jquery.formatCurrency-1.4.0.min.js")" type="text/javascript"></script>
+<link rel="stylesheet" href="@routes.Assets.at("stylesheets/dashboard.css")">
 }
