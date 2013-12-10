@@ -5,7 +5,7 @@
   form.globalError.map { error => error.message } :: 
   Nil
 },Nil) {
-<div class="span-11">
+<div class="span-12 landing-content">
   <!-- reset form -->
   @helper.form(routes.Reset.reset(key), 'class -> "login", 'id -> "reset-form") {
   <div class="row">
@@ -31,7 +31,7 @@
       &nbsp;
     </div>
     <div class="span-4 omega">
-      <button type="submit" class="right" id="reset-button">@Messages("view.reset.submit")</button>
+      <input type="submit" value="@Messages("view.reset.submit")" class="flat-grey small right"></input>
     </div>
   </div>
   }

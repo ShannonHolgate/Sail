@@ -5,7 +5,7 @@
   form.globalError.map { error => error.message } :: 
   Nil
 },Nil) {
-<div class="span-11">
+<div class="span-12 landing-content">
   <!-- register form -->
   @helper.form(routes.Register.register, 'class -> "login", 'id -> "register-form", 'novalidate -> "novalidate") {
   <div class="row">
@@ -31,7 +31,7 @@
       <a href="/login">@Messages("view.register.login")</a>
     </div>
     <div class="span-4 omega">
-      <button type="submit" class="right" id="register-button">@Messages("view.register.submit")</button>
+      <input type="submit" value="@Messages("view.register.submit")" class="flat-grey small right"></input>
     </div>
   </div>
   }

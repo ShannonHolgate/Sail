@@ -15,6 +15,9 @@ import play.api.libs.json.Json._
 import play.api.test.Helpers._
 import play.Logger
 
+/**
+ * Tests the InvestmentHistory controller
+ */
 class InvestmentHistorySpec extends Specification with TestUser{
 
   "InvestmentHistory" should {
@@ -40,9 +43,9 @@ class InvestmentHistorySpec extends Specification with TestUser{
         FakeRequest(GET, "/service/timeseries").withCookies(sessionCookies)
       )
 
-      Logger.info(contentAsString(result.get))
-      contentAsJson(result.get).\\("date").seq.size must be_>(0)
-      contentAsString(result.get) must find("date.*value")
+      //Logger.info(contentAsString(result.get))
+      contentAsJson(result.get).\\("name").seq.size must be_>(0)
+      contentAsString(result.get) must find("name.*y")
     }
   }
 }

@@ -1,246 +1,424 @@
-@(title:String, header:String, name:String)
-@index(title,header,name) {
-<div class="span-12 dashboard">
-	<div class="row">
-		<div class="span-9 no-margin" id="fund-holder">
+@(name:String, symbolInvestments:List[(String,String,Int,BigDecimal)], assetClassValues: List[(String,BigDecimal)], runningTotal: BigDecimal)
+@index("Dashboard - Sail","Dashboard",name) {
+    <div class="span-12 dashboard">
+        <div class="row">
+            <!-- Holder for the Highchart fund -->
+            <div class="span-9 no-margin" id="fund-holder">
 
-		</div>
-		<div class="span-3">
-			<div class="other-chart">
-				<h5>Cash</h5>
-				<div id="history-holder">
-					&nbsp;
-				</div>
-			</div>
-		</div> 
-		<div class="span-3">
-			<div class="other-chart">
-				<h5>Target Fund</h5>
-				<div id="target-holder">
-					&nbsp;	
-				</div>
-			</div>
-		</div>
-	</div>
-	<div class="row risk-holder">
-		<div class="span-9 no-margin">
-			<div class="current-risk-holder">
-				<div class="rating-bar">
-		    		<div class="rate-2">
-						<span class="green"></span>
-					</div>
-				</div>
-				<h5 class="risk">Low Risk</h5>
-			</div>	
-		</div>	
-		<div class="span-3">
-			<div class="target-risk-holder">
-			  <div class="rating-bar">
-			    <div class="rate-2">
-			      <span class="green"></span>
-			    </div>
-			  </div>
-			  <h5 class="risk">Low Risk</h5>
-			</div>
-		</div>
-	</div>
-	<div class="summary row">
-		<div class="span-4">
-			<div class="summary-value">
-				<h5>Asset Class Selected</h5>
-				<p class="asset-label">
-				</p>
-			</div>
-		</div>
-		<div class="span-4">
-			<div class="summary-value">
-				<h5>Value</h5>
-				<p class="currency-label currency">
-				</p>
-			</div>
-		</div>
-		<div class="span-4">
-			<div class="summary-value">
-				<h5>Percentage of Fund</h5>
-				<p class="percentage-label">
-				</p>
-			</div>
-		</div>
-	</div>
-</div>
-<script src="http://code.highcharts.com/highcharts.js"></script>
-<script src="http://code.highcharts.com/modules/exporting.js"></script>
-<script type="text/javascript">
-$(function () { 
-	$(document).ready(function(){
-		updateSummaryLabels();
-		updateHistoryGraph();
-		getTargetFund();
-	});
+            </div>
+            <div class="span-3">
+                <div class="other-chart">
+                    <!-- Holder for the Highchart history -->
+                    <h5>Asset Class History</h5>
+                    <div id="history-holder">
+                        &nbsp;
+                    </div>
+                </div>
+            </div>
+            <div class="span-3">
+                    <!-- Holder for the Highchart target fund -->
+                <div class="other-chart">
+                    <h5>Target Fund</h5>
+                    <div id="target-holder">
+                        &nbsp;
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Risk related to current and target fund -->
+        <div class="row risk-holder" style="display:none;">
+            <div class="span-9 no-margin">
+                <div class="current-risk-holder" style="display:none;">
+                    <div class="rating-bar">
+                        <div class="rate-2">
+                            <span class="green"></span>
+                        </div>
+                    </div>
+                    <h5 class="risk">Low Risk</h5>
+                </div>
+            </div>
+            <div class="span-3">
+                <div class="target-risk-holder" style="display:none;">
+                  <div class="rating-bar">
+                    <div class="rate-2">
+                      <span class="green"></span>
+                    </div>
+                  </div>
+                  <h5 class="risk">Low Risk</h5>
+                </div>
+            </div>
+        </div>
+        <!-- Summary values of the fund -->
+        <div class="summary row">
+            <div class="span-4">
+                <div class="summary-value">
+                    <h5>Asset Class Selected</h5>
+                    <p class="asset-label">
+                    </p>
+                </div>
+            </div>
+            <div class="span-4">
+                <div class="summary-value">
+                    <h5>Value</h5>
+                    <p class="currency-label currency">
+                    </p>
+                </div>
+            </div>
+            <div class="span-4">
+                <div class="summary-value">
+                    <h5>Percentage of Fund</h5>
+                    <p class="percentage-label">
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="http://code.highcharts.com/highcharts.js"></script>
+    <script src="http://code.highcharts.com/modules/exporting.js"></script>
+    <script type="text/javascript">
+    $(function () {
+        $(document).ready(function(){
+            /**
+            * Make the Ajax calls to update each graph
+            **/
+            updateSummaryLabels();
+            updateHistoryGraph();
+            getTargetFund();
+            getRealTimeInvestments();
+        });
 
-	var assetLabel = $('.asset-label')[0],
-		valueLabel = $('.currency-label')[0],
-		percentageLabel = $('.percentage-label')[0],
-		currencyLabels = $('.currency');
+        /**
+        * Get a handle on each of the Summary labels
+        **/
+        var assetLabel = $('.asset-label')[0],
+            valueLabel = $('.currency-label')[0],
+            percentageLabel = $('.percentage-label')[0];
 
-	var timeSeriesUrl = "http://localhost:9000/service/timeseries/",
-		targetFundUrl = "http://localhost:9000/service/targetfund";
+        /**
+        * Create the Ajax URLs
+        **/
+        var timeSeriesUrl = "http://localhost:9000/service/timeseries/",
+            targetFundUrl = "http://localhost:9000/service/targetfund",
+            realTimeUrl = "http://localhost:9000/service/realtimeinvestments";
 
-	var assetClasses = [{name:'Bank Account',y:2000,percentage:3.41},
-						{name:'Shares',y:3000,percentage:5.11},
-						{name:'Bonds',y:21122,percentage:36.0},
-						{name:'Collectibles',y:123.23,percentage:0.21},
-						{name:'Commodities',y:21312.22,percentage:36.3},
-						{name:'Property',y:11122,percentage:18.95}];
-	var runningTotal = 58679.49;
+        /**
+        * Build up the fund value data to be used by Highcharts
+        **/
+        var assetClasses = [];
+        var symbolInvestments = [];
 
-	var symbolInvestments = [{symbol: "GOOG",assetClass:"Shares",quantity:5,value:5000},
-								{symbol: "AAPL",assetClass:"Shares",quantity:5,value:5000},
-								{symbol: "HBC",assetClass:"Shares",quantity:5,value:5000},
-								{symbol: "AMD",assetClass:"Shares",quantity:5,value:5000}];
+        @for(assetClass <- assetClassValues) {
+            var asset = new Object();
+            asset.name = "@assetClass._1";
+            asset.y = @assetClass._2;
+            asset.percentage = @((assetClass._2./(runningTotal)).*(100));
+            asset.percentage = asset.percentage.toFixed(2);
+            assetClasses.push(asset);
+        }
 
-	function updateSummaryLabels(assetClass) {
-		if (assetClass) {
-			assetLabel.innerHTML = assetClass.name;
-			valueLabel.innerHTML = assetClass.y;
-			percentageLabel.innerHTML = assetClass.percentage.toFixed(2) + '%';	
-		}
-		else {
-			assetLabel.innerHTML = "Net Worth";
-			valueLabel.innerHTML = runningTotal;
-			percentageLabel.innerHTML = '100' + '%';	
-		}
-		currencyLabels.formatCurrency({symbol:'£'});
-	}
+        @for(symbolInvestment <- symbolInvestments) {
+            var symbol = new Object();
+            symbol.name = "@symbolInvestment._1";
+            symbol.assetClass = "@symbolInvestment._2";
+            symbol.quantity = @symbolInvestment._3;
+            symbol.value = @symbolInvestment._4;
+            symbolInvestments.push(symbol);
+        }
 
-	function updateHistoryGraph(assetClass) {
-		var url = timeSeriesUrl;
-		var title = "Net Worth"
-		if (!assetClass) {
-			url = url.slice(0, - 1);
-		}
-		else {
-			url = url + assetClass.name;
-			title = assetClass.name;
-		}
+        var runningTotal = @runningTotal;
 
-		$.getJSON( url, function( data ) {
-			$('.other-chart h5')[0].innerHTML = title;
-			$('#history-holder').highcharts({
-			    chart: {
-			        backgroundColor: '#f2eae1',
-			        plotShadow: false
-			    },
-			    title: {
-			        text: null
-			    },
-			    legend: {
-			    	enabled: false
-			    },
-			    xAxis: {
-			        labels: {
-			            enabled: false
-			        }
-			    },
-			    tooltip: {
-				    valuePrefix: '£'
-			    },
-			    yAxis: {
-			    	title: {
-			    		text: "values (£)"
-			    	}
-			    },
-			    exporting: { enabled: false },
-			    series: [{  
-			        data: data,
-			        name: title
-			    }]
-			});
-		});
-	}
-
-	function getTargetFund(){
-		$.getJSON( targetFundUrl, function( data ) {
-			$('#target-holder').highcharts({
-		        chart: {
-		            backgroundColor: '#f2eae1',
-		            plotShadow: false
-		        },
-		        title: {
-		            text: null
-		        },
-		        exporting: { enabled: false },
-		        plotOptions: {
-		            pie: {
-		                allowPointSelect: false,
-		                cursor: 'pointer',
-		                dataLabels: {
-		                    enabled: false
-		                },
-		                center: ['50%', '50%']
-		            }
-		        },
-		        series: [{
-		            name: 'Target Fund',
-		            data: data,
-		            innerSize: '30%',
-		            size: '80%'
-		        }]
-		    });
-		});
-	}
-
-    // Create the chart
-    $('#fund-holder').highcharts({
-        chart: {
-            backgroundColor: '#f6f6f6',
-            type: 'pie',
-            plotBorderWidth: null,
-        	plotShadow: false
-        },
-        title: {
-            text: 'Net Worth £' + runningTotal
-        },
-        exporting: { enabled: false },
-        plotOptions: {
-            pie: {
-                allowPointSelect: true,
-                shadow: false,
-                center: ['50%', '50%']
+        /**
+        * Update the summary labels with the assetClass object
+        **/
+        function updateSummaryLabels(assetClass) {
+            if (assetClass) {
+                assetLabel.innerHTML = assetClass.name;
+                valueLabel.innerHTML = assetClass.y;
+                percentageLabel.innerHTML = assetClass.percentage.toFixed(2) + '%';
             }
-        },
-        tooltip: {
-    	    valuePrefix: '£'
-        },
-        series: [{
-            name: 'Asset Classes',
-            data: assetClasses,
-            innerSize: '30%',
-            size: '80%',
-            dataLabels: {
-                formatter: function() {
-                    return this.y > 1 ? '<b>'+ this.point.name +':</b> £'+ this.y : null;
+            else {
+                assetLabel.innerHTML = "Net Worth";
+                valueLabel.innerHTML = runningTotal;
+                percentageLabel.innerHTML = '100' + '%';
+            }
+            currencyLabels.formatCurrency({symbol:'£'});
+        }
+
+        /**
+        * Update the history time series for the assetClass object
+        **/
+        function updateHistoryGraph(assetClass) {
+            var url = timeSeriesUrl;
+            var title = "Net Worth"
+
+            /**
+            * If no AssetClass is passed in, update the Ajax URL for all asset classes
+            **/
+            if (!assetClass) {
+                url = url.slice(0, - 1);
+            }
+            else {
+                url = url + assetClass.name;
+                title = assetClass.name;
+            }
+
+            /**
+             * Do the Ajax call to get the time series of histories
+             * Then create the Highcharts graph based on the data
+             **/
+            $.getJSON( url, function( data ) {
+                $('.other-chart h5')[0].innerHTML = title;
+                $('#history-holder').highcharts({
+                    chart: {
+                        backgroundColor: '#f2eae1',
+                        plotShadow: false
+                    },
+                    title: {
+                        text: null
+                    },
+                    legend: {
+                        enabled: false
+                    },
+                    xAxis: {
+                        labels: {
+                            enabled: false
+                        }
+                    },
+                    tooltip: {
+                        valuePrefix: '£'
+                    },
+                    yAxis: {
+                        title: {
+                            text: "values (£)"
+                        }
+                    },
+                    exporting: { enabled: false },
+                    series: [{
+                        data: data,
+                        name: title
+                    }]
+                });
+            }).fail( function(d, textStatus, error) {
+                /**
+                * Upon failure, the user likely has no history, provide a link to add a new fund
+                **/
+                $('#history-holder').html('<p>Looks like you need to make history first</p><a class="flat-grey" href="#">New Fund</a>');
+            });
+        }
+
+        /**
+        * Get the target fund for the User and add the Highcharts graph
+        **/
+        function getTargetFund(){
+
+            /**
+            * Do the Ajax call to get the target fund
+            * Then create the Highcharts graph based on the data
+            **/
+            $.getJSON( targetFundUrl, function( data ) {
+                $('#target-holder').highcharts({
+                    chart: {
+                        backgroundColor: '#f2eae1',
+                        plotShadow: false
+                    },
+                    title: {
+                        text: null
+                    },
+                    exporting: { enabled: false },
+                    plotOptions: {
+                        pie: {
+                            allowPointSelect: false,
+                            cursor: 'pointer',
+                            dataLabels: {
+                                enabled: false
+                            },
+                            center: ['50%', '50%']
+                        }
+                    },
+                    series: [{
+                        name: 'Target Fund',
+                        data: data,
+                        innerSize: '30%',
+                        size: '80%'
+                    }]
+                });
+
+                $('div.risk-holder').removeAttr('style')
+                $('div.target-risk-holder').removeAttr('style')
+
+            }).fail( function(d, textStatus, error) {
+                /**
+                * Upon failure, the user likely has no target fund set, provide a link to add a get a target fund
+                **/
+                $('#target-holder').html('<p>Why not find your risk appetite?</p><a class="flat-grey" href="#">Risk Profile</a>');
+            });
+        }
+
+        /**
+        * Get real time investment values of the automated investments
+        * Update the Current Fund chart if values have changed
+        **/
+        function getRealTimeInvestments() {
+
+            /**
+            * Do the Ajax call to get the real time investments
+            **/
+            $.getJSON( realTimeUrl, function( data ) {
+                var updateChart = false;
+
+                /**
+                 * Compare each retrieved automated investment with values currently owned, to update the values
+                 **/
+                for (var i=0;i++;i<data.length) {
+                    var tempIndex = 0;
+                    do {
+                        if (symbolInvestments[tempIndex].name == data[i].symbol) {
+                            if (symbolInvestments[tempIndex].value.toFixed(2) != data[i].value.toFixed(2)) {
+                                symbolInvestments[tempIndex].value = data[i].value.toFixed(2);
+
+                                /**
+                                 * The values have changed, set a flag to update the current fund chart
+                                 **/
+                                updateChart = true;
+                            }
+                        }
+                        tempIndex++;
+                    }
+                    while (tempIndex < symbolInvestments.length || symbolInvestments[tempIndex-1].name != data[i].symbol)
+                }
+
+                /**
+                * Values have changed, setup the new investment values so the chart can be updated
+                **/
+                if (updateChart) {
+                    var symbolAssetClass = "";
+                    var symbolArray = [];
+                    for (var i=0; i++; i<symbolInvestments.length) {
+                        if (symbolInvestments[i].assetClass != symbolAssetClass) {
+                            var newClass = new Object();
+                            newClass.name = symbolInvestments[i].assetClass;
+                            newClass.y = symbolInvestments[i].value;
+                            symbolArray.push(newClass);
+                        }
+                        else {
+                            symbolArray[i-1].y = symbolArray[i-1].y + symbolInvestments[i].value;
+                        }
+                        symbolAssetClass = symbolInvestments[i].assetClass;
+                    }
+
+                    for (var i=0;i++; i<symbolArray.length) {
+                        var tempIndex = 0;
+                        do {
+                            if (assetClasses[tempIndex].name == symbolArray[i].name) {
+                                assetClasses[tempIndex].y = symbolArray[i].y;
+                            }
+                            tempIndex++;
+                        }
+                        while (tempIndex < assetClasses.length || assetClasses[tempIndex-1].name != symbolArray[i].name)
+                    }
+
+                    for (var i=0; i++;i<assetClasses.length) {
+                        runningTotal+=assetClasses[i].y;
+                    }
+                    runningTotal = runningTotal.toFixed(2);
+
+                    for (var i=0; i++;i<assetClasses.length) {
+                        assetClasses[i].percentage = (assetClasses[i].y/runningTotal)*100;
+                        assetClasses[i].percentage = assetClasses[i].percentage.toFixed(2);
+                    }
+
+                    /**
+                     * Update all the charts
+                     **/
+                    $('#fund-holder').highcharts().redraw();
+                    updateSummaryLabels();
+                    updateHistoryGraph();
+
+                }
+
+                /**
+                 * Update the handles on each of the changed elements
+                 **/
+                currencyLabels = $('.currency');
+                fundTitleName = $('#fundTitleName');
+                fundTitleValue = $('#fundTitleValue');
+            });
+        }
+
+        /**
+         * If there is no current fund the user must be provided with a link to create their fund
+         **/
+        if (assetClasses.length < 1) {
+            $('#fund-holder').html('<p>Add your fund to Sail to start tracking</p><a class="flat-grey" href="#">New Fund</a>');
+        }
+        else {
+            /**
+            * Create the current fund chart
+            **/
+            $('#fund-holder').highcharts({
+                chart: {
+                    backgroundColor: '#f6f6f6',
+                    type: 'pie',
+                    plotBorderWidth: null,
+                    plotShadow: false
                 },
-            },
-            point:{
-          		events:{
-                  	click: function (event) {
-                      	var chart = $('#fund-holder').highcharts();
-                      	if (!this.selected) {
-	                      	chart.setTitle({text: this.name + "  £" + this.y});
-	                      	updateSummaryLabels(this);
-	                      	updateHistoryGraph(this);
-	                    }
-	                    else {
-	                    	chart.setTitle({text: "Net Worth £" + runningTotal});
-	                    	updateSummaryLabels();
-	                      	updateHistoryGraph();	
-	                    }
-                  	}
-          		}
-        	}, 
-        }]
+                title: {
+                    useHTML: true,
+                    text: '<span id=\"fundTitleName\">Net Worth</span> <span id=\"fundTitleValue" class=\"currency\">' + runningTotal + '</span>'
+                },
+                exporting: { enabled: false },
+                plotOptions: {
+                    pie: {
+                        allowPointSelect: true,
+                        shadow: false,
+                        center: ['50%', '50%']
+                    }
+                },
+                tooltip: {
+                    valuePrefix: '£'
+                },
+                series: [{
+                    name: 'Asset Classes',
+                    data: assetClasses,
+                    innerSize: '30%',
+                    size: '80%',
+                    dataLabels: {
+                        align: 'right',
+                        formatter: function() {
+                            return this.y > 1 ? '<b>'+ this.point.name +':</b> '+ this.percentage.toFixed(2) +'%': null;
+                        },
+                    },
+                    point:{
+                        events:{
+                            click: function (event) {
+                                if (!this.selected) {
+                                    fundTitleName.html(this.name);
+                                    fundTitleValue.html(this.y);
+                                    updateSummaryLabels(this);
+                                    updateHistoryGraph(this);
+                                }
+                                else {
+                                    fundTitleName.html('Net Worth');
+                                    fundTitleValue.html(runningTotal);
+                                    updateSummaryLabels();
+                                    updateHistoryGraph();
+                                }
+                            }
+                        }
+                    },
+                }]
+            });
+
+            $('div.risk-holder').removeAttr('style')
+            $('div.current-risk-holder').removeAttr('style')
+        }
+
+        /**
+         * Get a handle on the currency and dynamic fields
+         **/
+        var currencyLabels = $('.currency');
+        var fundTitleName = $('#fundTitleName');
+        var fundTitleValue = $('#fundTitleValue');
     });
-});
-</script>
+    </script>
 }

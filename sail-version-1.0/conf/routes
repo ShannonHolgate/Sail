@@ -22,10 +22,12 @@ POST        /reset/:key                         controllers.Reset.reset(key: Str
 GET         /register                           controllers.Register.index
 POST        /register                           controllers.Register.register
 
+# dashboard
+GET         /dash                               controllers.Dashboard.index
+
 # services
 GET         /service/realtimeinvestments        controllers.Investment.getAutomatedInvestmentValues
 GET         /service/timeseries                 controllers.InvestmentHistory.getInvestmentHistoryForAssetClass(asset = "")
 GET         /service/timeseries/:asset          controllers.InvestmentHistory.getInvestmentHistoryForAssetClass(asset)
 GET         /service/risk                       controllers.RiskFinder.getRisksForUser
 GET         /service/targetfund                 controllers.TargetFund.getTargetFund
-

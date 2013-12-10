@@ -15,6 +15,9 @@ import org.specs2.runner.JUnitRunner
 import play.api.test.WithApplication
 import test_data.TestUser
 
+/**
+ * Tests the Investment model
+ */
 @RunWith(classOf[JUnitRunner])
 class InvestmentSpec extends Specification with TestUser{
   "Investment" should {

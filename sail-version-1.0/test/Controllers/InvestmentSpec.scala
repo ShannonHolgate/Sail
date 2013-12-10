@@ -14,6 +14,9 @@ import play.api.test.{FakeRequest, WithApplication}
 import play.api.test.Helpers._
 import play.api.libs.json.Json._
 
+/**
+ * Tests the Investment controller
+ */
 class InvestmentSpec extends Specification with TestUser{
 
   "Investment" should {

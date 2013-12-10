@@ -4,24 +4,13 @@
   <div class="login">
     <div class="centre-container">
       <div>
-        <aside>
-         <!-- Sail branding for left hand side of landing page -->
-         <div class="row">
-            <img src="@routes.Assets.at("images/Sail logo long.png")" alt="Sail">
-         </div> 
-         <div class="row">
-            <p class="tagline">
-              @Messages("view.landing.tagline")
-            </p>
-         </div> 
-        </aside>
         <article>
           <div class="row container">
             <div class="span-12 banner">
-              <h3>@header<span class="arrow"></span></h3>
+              <h3>Sail - @header</h3>
             </div>
           </div>
-          <!-- Content for the right hand side of the landing page -->
+          <!-- Content for the landing page -->
           @content
         </article>
       </div>
@@ -37,7 +26,7 @@
             }
           }    
         </p>
-        <a class="close" href="#close"></a>
+        <a class="flat-grey small right" href="#close">Continue</a>
       </div>
 
       <!-- Iterate over the error messages to make a popup for each -->
@@ -50,7 +39,7 @@
               }
             } 
         </p>
-        <a class="close" href="#close"></a>
+        <a class="flat-grey small right" href="#close">Continue</a>
       </div>
     <script> 
       //Checks to see if any error/success popups have been created and sets the browser to them

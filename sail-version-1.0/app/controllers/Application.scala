@@ -38,7 +38,7 @@ object Application extends Controller with Secured {
     user => implicit request => {
       val username = user.name
       /** Update the connected session cookie */
-      Ok(views.html.dashboard("Dashboard","Dashboard",username)).withSession(session - configValues.timeoutSession + (configValues.timeoutSession -> DateTime.now().toString()))
+      Redirect("/dash").withSession(session - configValues.timeoutSession + (configValues.timeoutSession -> DateTime.now().toString()))
     }
   }
 }

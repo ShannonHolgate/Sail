@@ -10,7 +10,8 @@ body.nav-bar-push {
   left: 0;
   -webkit-transition: all 0.3s ease;
   -moz-transition: all 0.3s ease;
-  transition: all 0.3s ease; }
+  transition: all 0.3s ease;
+  overflow: scroll; }
 
 body.nav-bar-push-toright {
   left: 200px; }
@@ -110,6 +111,10 @@ div.header {
 /* -------------------------------------
   Dashboard styles
 ------------------------------------- */
+div.dashboard p {
+  font-size: 1.3em;
+  padding-top: 30px;
+  text-align: center; }
 div.dashboard h5 {
   height: 40px;
   margin: 0;
@@ -122,9 +127,11 @@ div.dashboard h5.risk {
   background-color: #f2eae1; }
 div.dashboard #fund-holder {
   height: 400px;
-  min-width: 800px; }
+  min-width: 800px;
+  margin: 0 auto; }
 div.dashboard #history-holder, div.dashboard #target-holder {
-  height: 160px; }
+  height: 160px;
+  width: 100%; }
 div.dashboard .other-chart {
   background-color: #f2eae1; }
 div.dashboard div.row {
@@ -155,8 +162,12 @@ div.dashboard .summary h5 {
   background-color: white; }
 div.dashboard .summary p {
   margin-top: 5px;
-  font-size: 1.5em; }
+  font-size: 1.5em;
+  padding-top: 0; }
 
+/* -------------------------------------
+  Risk rating bar Styles
+------------------------------------- */
 .rating-bar {
   background: white;
   padding: 3px; }
@@ -168,7 +179,6 @@ div.dashboard .summary p {
 .rating-bar, .rating-bar span {
   border-radius: 4px; }
 
-/* Used to color the bars */
 .green {
   background: green; }
 
@@ -178,7 +188,6 @@ div.dashboard .summary p {
 .red {
   background: red; }
 
-/* .rate-n, n being the rating from 1 to 10 */
 .rate-1 {
   width: 10%; }
 

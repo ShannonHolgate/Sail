@@ -16,6 +16,9 @@ import play.api.test.Helpers._
 import play.Logger
 import play.api.libs.json.{JsNumber, JsString, Json, Reads}
 
+/**
+ * Tests the RiskFinder trait
+ */
 class RiskFinderSpec extends Specification with TestUser{
 
   "RiskFinder" should {
@@ -41,7 +44,7 @@ class RiskFinderSpec extends Specification with TestUser{
         FakeRequest(GET, "/service/risk").withCookies(sessionCookies)
       )
 
-      Logger.info(contentAsString(result.get))
+      //Logger.info(contentAsString(result.get))
       contentAsString(result.get) must find("label.*Fund.*risk")
     }
   }

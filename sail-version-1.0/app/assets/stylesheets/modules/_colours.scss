@@ -11,7 +11,7 @@ $highlight-red:#FFA9A9;
 
 //Layout colours
 $background-colour:white;
-$primary-content-colour: $light-grey;
+$primary-content-colour: black;
 $nav-bar-colour: black;
 $nav-bar-bg: $light-orange; 
 
@@ -22,6 +22,7 @@ $font-input-colour: $dark-grey;
 $nav-title-colour: white;
 $nav-link-colour: $light-grey;
 $nav-link-click: white;
+$main-button-font-colour: white;
 
 //Border colours
 $default-border-colour: black;  
@@ -33,3 +34,6 @@ $default-shadow-colour: black;
 //Highlight colours
 $nav-link-active-bg: $dark-orange;
 $nav-link-click-bg: $light-grey; 
+
+//Button colours
+$main-button-colour: $light-grey;

@@ -19,6 +19,9 @@ import play.api.test.WithApplication
 import play.Logger
 import test_data.TestUser
 
+/**
+ * Tests the InvestmentHistory model
+ */
 @RunWith(classOf[JUnitRunner])
 class InvestmentHistorySpec extends Specification with TestUser{
   "InvestmentHistory" should {
@@ -52,7 +55,7 @@ class InvestmentHistorySpec extends Specification with TestUser{
       histories.get.size must be_>(0)
 
       for(history <- histories.get.sortBy(hist => (hist.date))) {
-        Logger.info("B/A histories: " + history.date + " " + history.valuechanged)
+        //Logger.info("B/A histories: " + history.date + " " + history.valuechanged)
       }
     }
 
@@ -68,7 +71,7 @@ class InvestmentHistorySpec extends Specification with TestUser{
       histories.get.size must be_>(0)
 
       for(history <- histories.get.sortBy(hist => (hist.date))) {
-        Logger.info("All histories: " + history.date + " " +history.valuechanged)
+        //Logger.info("All histories: " + history.date + " " +history.valuechanged)
       }
     }
 
@@ -83,7 +86,7 @@ class InvestmentHistorySpec extends Specification with TestUser{
       val timeSeries = InvestmentHistory.getTimeSeriesForInvestmentHistories(histories.get)
 
       for(entry <- timeSeries.get) {
-        Logger.info("time series: " + entry)
+        //Logger.info("time series: " + entry)
       }
 
       var tempHistoriesTotal:BigDecimal = 0

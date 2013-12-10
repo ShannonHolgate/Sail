@@ -12,8 +12,7 @@
 input {
   font-size: 12px;
   color: #333333;
-  border: 1px solid black;
-  border-radius: 3px;
+  border: none;
   padding: 5px 5px 5px;
   width: 100%; }
 
@@ -35,7 +34,7 @@ body {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   color: black;
   font-size: 12px;
-  font-weight: lighter;
+  font-weight: 100;
   background-color: white; }
 
 .reset {
@@ -170,9 +169,6 @@ body {
   .row.end:after {
     clear: both; }
 
-.row.end a {
-  line-height: 33px; }
-
 .content-row {
   display: table;
   margin-left: 30px; }
@@ -188,6 +184,9 @@ body {
 
 .right {
   float: right; }
+
+.left {
+  float: left; }
 
 .no-margin {
   margin: 0; }
@@ -241,3 +240,34 @@ a.a-button {
 
 .small-font {
   font-size: 7.41656px; }
+
+/* -------------------------------------
+  Button styles
+------------------------------------- */
+.flat-grey {
+  width: 100px;
+  display: block;
+  color: white;
+  font-size: 12px;
+  font-weight: 900;
+  text-decoration: none;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 1em;
+  padding-left: 20px;
+  background-color: #888888;
+  cursor: pointer; }
+
+.flat-grey:hover {
+  background: #362614;
+  color: white; }
+
+.flat-grey:active {
+  background: #888888;
+  color: white; }
+
+.flat-grey.small {
+  width: 80px;
+  text-align: center;
+  padding-left: 0;
+  padding: 0.6em; }

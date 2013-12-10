@@ -1,0 +1,38 @@
+@import "modules/colours";
+@import "modules/font";
+@import "modules/sizes";
+
+/* -------------------------------------
+  Button styles
+------------------------------------- */
+.flat-grey {
+	width: 100px;
+    display: block;
+    color: $main-button-font-colour;
+    font-size: $font-base-size;
+    font-weight: 900;
+    text-decoration: none;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 1em;
+    padding-left: 20px;
+    background-color: $main-button-colour;
+    cursor: pointer;
+} 
+
+.flat-grey:hover {
+	background: $nav-link-active-bg;
+	color: $nav-link-click;
+}
+
+.flat-grey:active {
+    background: $nav-link-click-bg;
+    color: $nav-link-click;
+}	
+
+.flat-grey.small {
+    width: 80px;
+    text-align: center;
+    padding-left:0;
+    padding: 0.6em;
+}

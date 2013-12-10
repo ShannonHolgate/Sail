@@ -16,6 +16,8 @@ div.login {
   @include box-sizing(border-box);
   @include outer-container; 
   min-height: 100%;
+  color: $light-grey;
+  font-weight: 900;
 
   .centre-container {
     @include outer-container; 
@@ -26,46 +28,24 @@ div.login {
 
     background-color: $primary-content-colour;
     padding: $small-margin; 
-    border-radius: $default-border-radius;
-    box-shadow: 0 0 $default-border-radius $default-shadow-colour; 
-
-    aside {
-      @include span-columns(4.5);
-      @include pad();
-
-      height:100%;
-
-      img {
-        @include span-columns(12);
-      }
-
-      .tagline {
-        font-size: $tag-line-font-size;
-        font-style: italic;
-        line-height: 1.3; 
-        text-align: center;
-      }
-    }
 
     article {
       margin-top:5px;
       margin-bottom:5px;
 
-      border-left: $default-border-weight solid $light-border-colour;
-      box-shadow: 10px 0 $default-border-radius -10px $default-shadow-colour inset; 
-
-      @include span-columns(7.5);
       @include reset-display;
       @include pad(); 
 
       vertical-align: baseline;
 
       .banner h3 { 
-        @include linear-gradient($dark-orange, $light-orange);
+        font-weight: 100;
+        margin-top: 10px;
+        margin-bottom: 20px;
+        background-color: $light-orange;
         padding: 10px 20px;
-        margin-left: 20px; 
-        border-bottom-left-radius: $default-border-radius;
-        border-top-left-radius: $default-border-radius;
+        color: $nav-title-colour;
+        font-size: 30px;
       }
 
       .banner {
@@ -73,21 +53,10 @@ div.login {
         margin-right:-30px;
         position:relative;
       }
-
-      .arrow {  
-        width: 0; height: 0;  
-        line-height: 0;  
-        border-right: 12px solid transparent;  
-        border-top: 10px solid $dark-orange;  
-        top: 104%;  
-        right: 0;  
-        position: absolute;  
-        margin-top:-20.5px;
-      }  
     }
   } 
 
-  button {
-    @include button($dark-orange);
+  .landing-content {
+    padding: 5px 15px;
   }
 }

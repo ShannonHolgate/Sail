@@ -1,3 +1,7 @@
+/**
+ * The JS to push the nav bar onto and off the screen
+ **/
+
 var navBar = $('#nav-bar'),
         showLeft = $('#showLeft'),
         body = $('body');

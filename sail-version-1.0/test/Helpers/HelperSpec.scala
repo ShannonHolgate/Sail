@@ -15,8 +15,15 @@ import org.specs2.runner.JUnitRunner
 import play.api.test.WithApplication
 import test_data.TestUser
 
+/**
+ * Tests the Helper traits
+ */
 @RunWith(classOf[JUnitRunner])
 class HelperSpec extends Specification with TestUser with Valuation{
+
+  /**
+   * Test the Valuation Helper trait
+   */
   "Valuation" should {
     "get current investment values for symbols" in new WithApplication(currentApplication){
       val symbolList = getSymbolValues(List[String]("GOOG","AAPL"))

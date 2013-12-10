@@ -1,3 +1,7 @@
+/* -------------------------------------
+  Risk rating bar Styles
+------------------------------------- */
+
 .rating-bar{
   background:white;
   padding:3px;
@@ -10,12 +14,10 @@
   border-radius:4px; 
 }
 
-/* Used to color the bars */
 .green{ background:green; }
 .yellow{ background:yellow; }
 .red{ background:red;}
 
-/* .rate-n, n being the rating from 1 to 10 */
 .rate-1{ width:10%; }
 .rate-2{ width:20%; }
 .rate-3{ width:30%; }

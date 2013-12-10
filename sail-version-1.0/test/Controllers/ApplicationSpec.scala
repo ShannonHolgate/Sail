@@ -35,13 +35,6 @@ class ApplicationSpec extends Specification with TestUser{
       redirectLocation(home) must some("/login")
     }
 
-    "render to the index template" in {
-      val html = views.html.index(testUser.username)
-
-      contentType(html) must equalTo("text/html")
-      contentAsString(html) must contain(testUser.username)
-    }
-
     "respond to the index Action" in new WithApplication(currentApplication){
       /** The Json form object*/
       val jsonObject = toJson(
@@ -57,8 +50,8 @@ class ApplicationSpec extends Specification with TestUser{
 
       val result = route(FakeRequest(GET,"/").withCookies(sessionCookies)).get
 
-      status(result) must equalTo(OK)
-      contentAsString(result) must contain(testUser.username)
+      status(result) must equalTo(SEE_OTHER)
+      redirectLocation(result) must some("/dash")
     }
   }
 }

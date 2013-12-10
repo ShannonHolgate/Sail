@@ -12,6 +12,7 @@ body.nav-bar-push {
     position: relative;
     left: 0;
     @include transition(all 0.3s ease);
+    overflow: scroll;
 }
 	 
 body.nav-bar-push-toright {

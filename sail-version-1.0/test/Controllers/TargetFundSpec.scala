@@ -15,6 +15,9 @@ import play.api.libs.json.Json._
 import play.api.test.Helpers._
 import play.Logger
 
+/**
+ * Tests the TargetFund controller
+ */
 class TargetFundSpec extends Specification with TestUser{
 
   "TargetFund" should {

@@ -13,33 +13,73 @@ import scala.collection.mutable.ListBuffer
 import helpers.{InvestmentWithValue, Risker}
 import play.api.libs.json.{JsNumber, JsString, Writes, Json}
 
+/**
+ *  Controller for the Risk Web Services
+ *  Holds the web services to be consumed on the dashboard view
+ */
 object RiskFinder extends Controller with Secured with Risker{
 
+  /**
+   * Web Service getting the risks related to the Current fund and the Target Fund.
+   * Utilises the Risker trait to analyse risk based on asset class quantities.
+   * Uses the cookie to retrieve the user.
+   *
+   * @return Result Json result containing a Key value pair of which fund and the risk related
+   */
   def getRisksForUser = withUser {
     user => implicit request => {
+
+      /** Get a list of investments for the user to be processed by the Risker */
       val investments = models.Investment.getInvestmentForUser(user.id)
+
+      /** Create an empty listbuffer which will hold the calculated percentages */
       val percentageList = ListBuffer[BigDecimal]()
+
+      /** Create temporary values to assist */
       var tempClass = ""
       var runningTotal:BigDecimal = 0
       val risks = ListBuffer[(String,Int)]()
+
+      /** If the user holds investments we can continue */
       if (investments.isDefined) {
+
+        /** For each asset class, build the value */
         for (investment <- investments.get.sortBy(_.assetclass)) {
+
+          /** If the assetClass is different from the previous investment, append the value */
           if (percentageList.isEmpty || !investment.assetclass.equals(tempClass)) percentageList.append(investment.value)
+
+          /** Otherwise add the value to the current assetClass */
           else percentageList.update(percentageList.size-1,percentageList.last+investment.value)
+
+          /** Update the temporary values */
           tempClass = investment.assetclass
           runningTotal+=investment.value
         }
+
+        /** Use the new aggregated investment values to calculate the percentages relating to the running total */
         for ((value, index) <- percentageList.zipWithIndex) {
+
+          /** Calculate the percentage */
           val percentageOfTotal = (value/runningTotal)*100
+
+          /** Update the percentage from the value to the percent */
           percentageList.update(index,percentageOfTotal)
         }
+
+        /** Analyse the risk and add it to the Risk List */
         risks.append(("Fund",analyseRiskAppetite(percentageList.toList)))
       }
+
+      /** Retrieve the target fund percentage breakdown from the database */
       val targetFundBreakdown = models.TargetFund.getTargetFundForUser(user.id)
+
+      /** If the user hase a target fund we should retrieve the risk related to it and add it to the risk list */
       if (targetFundBreakdown.isDefined) {
         risks.append(("Target",analyseRiskAppetite(targetFundBreakdown.get)))
       }
 
+      /** Create the Json Risk parser which will format the Risk list into Json to be returned */
       implicit val riskWriter = new Writes[(String,Int)] {
         def writes(risk: (String,Int)) = {
           Json.obj(
@@ -49,7 +89,10 @@ object RiskFinder extends Controller with Secured with Risker{
         }
       }
 
+      /** If there is analysed risks, return them as a Json result */
       if (risks.size.>(0)) Ok(Json.toJson(risks.toList))
+
+      /** No Risk analysis was performed */
       else BadRequest("Risk appetite not found")
     }
 
