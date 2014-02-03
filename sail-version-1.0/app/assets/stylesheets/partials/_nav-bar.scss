@@ -58,15 +58,58 @@ body.nav-bar-push-toright {
 	    padding-left: 20px;
 	} 
 
-	a:hover {
-    	background: $nav-link-active-bg;
-    	color: $nav-link-click;
-	}
+    a:hover {
+        background: $nav-link-active-bg;
+        color: $nav-link-click;
+    }
 
-	a:active {
-	    background: $nav-link-click-bg;
-	    color: $nav-link-click;
-	}	
+    a:active {
+        background: $nav-link-click-bg;
+        color: $nav-link-click;
+    }
+
+    div.menu-item {
+        a:hover {
+            background: inherit;
+            color: $nav-link-colour;
+        }
+
+        a:active {
+            background: inherit;
+            color: $nav-link-colour;
+        }
+
+        ul {
+            margin-top:0;
+            margin-bottom: 0;
+            overflow: hidden;
+            height: 0px;
+            @include transition(height 1s ease);
+
+            a {
+                border-left: 2px solid $nav-link-colour;
+                padding: 0.6em;
+                margin-top: 4px;
+                margin-bottom: 4px;
+                margin-left: 10px;
+            }
+
+            a:hover {
+                background: $nav-link-active-bg;
+                color: $nav-link-click;
+            }
+
+            a:active {
+                background: $nav-link-click-bg;
+                color: $nav-link-click;
+            }
+
+        }
+    }
+
+    div.menu-item:hover ul{
+        height: 70px;
+    }	
 }
 
 .nav-bar.nav-bar-closed {

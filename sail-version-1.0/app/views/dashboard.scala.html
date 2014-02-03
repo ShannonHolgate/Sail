@@ -1,4 +1,4 @@
-@(name:String, symbolInvestments:List[(String,String,Int,BigDecimal)], assetClassValues: List[(String,BigDecimal)], runningTotal: BigDecimal)
+@(name:String, symbolInvestments:List[(String,String,Int,BigDecimal)], assetClassValues: List[(String,BigDecimal)], runningTotal: BigDecimal)(implicit request: play.api.mvc.Request[Any])
 @index("Dashboard - Sail","Dashboard",name) {
     <div class="span-12 dashboard">
         <div class="row">
@@ -73,6 +73,23 @@
             </div>
         </div>
     </div>
+    <!-- TODO - Implement this properly and back it up! -->
+    <!-- Modal reset password form -->
+    <a href="#x" class="overlay" id="reset-form"></a>
+    <div class="popup modal">
+        <h3>Add Shares to your fund</h3>
+
+        <p>Enter the ticker symbol below of the shares you would like to add</p>
+
+        @helper.form(routes.Login.requestReset, 'id -> "reset-request-form", 'novalidate -> "novalidate") {
+            <!-- login form -->
+            <div class="row">
+                <input type="email" name="email" id="email-reset" value="">
+            </div>
+            <a class="flat-grey small left" href="#close">Cancel</a>
+            <input type="submit" value="@Messages("view.login.resetsubmit")" class="flat-grey small right" id="reset-button"></input>
+        }
+    </div>
     <script src="http://code.highcharts.com/highcharts.js"></script>
     <script src="http://code.highcharts.com/modules/exporting.js"></script>
     <script type="text/javascript">
@@ -97,9 +114,9 @@
         /**
         * Create the Ajax URLs
         **/
-        var timeSeriesUrl = "http://localhost:9000/service/timeseries/",
-            targetFundUrl = "http://localhost:9000/service/targetfund",
-            realTimeUrl = "http://localhost:9000/service/realtimeinvestments";
+        var timeSeriesUrl = "http://@request.host/service/timeseries/",
+            targetFundUrl = "http://@request.host/service/targetfund",
+            realTimeUrl = "http://@request.host/service/realtimeinvestments";
 
         /**
         * Build up the fund value data to be used by Highcharts
@@ -269,12 +286,12 @@
                 /**
                  * Compare each retrieved automated investment with values currently owned, to update the values
                  **/
-                for (var i=0;i++;i<data.length) {
+                for (var i=0;i<data.length;i++) {
                     var tempIndex = 0;
                     do {
                         if (symbolInvestments[tempIndex].name == data[i].symbol) {
                             if (symbolInvestments[tempIndex].value.toFixed(2) != data[i].value.toFixed(2)) {
-                                symbolInvestments[tempIndex].value = data[i].value.toFixed(2);
+                                symbolInvestments[tempIndex].value = data[i].value;
 
                                 /**
                                  * The values have changed, set a flag to update the current fund chart
@@ -284,7 +301,7 @@
                         }
                         tempIndex++;
                     }
-                    while (tempIndex < symbolInvestments.length || symbolInvestments[tempIndex-1].name != data[i].symbol)
+                    while (tempIndex < symbolInvestments.length && symbolInvestments[tempIndex-1].name != data[i].symbol)
                 }
 
                 /**
@@ -293,7 +310,8 @@
                 if (updateChart) {
                     var symbolAssetClass = "";
                     var symbolArray = [];
-                    for (var i=0; i++; i<symbolInvestments.length) {
+                    runningTotal = 0;
+                    for (var i=0; i<symbolInvestments.length; i++) {
                         if (symbolInvestments[i].assetClass != symbolAssetClass) {
                             var newClass = new Object();
                             newClass.name = symbolInvestments[i].assetClass;
@@ -301,28 +319,28 @@
                             symbolArray.push(newClass);
                         }
                         else {
-                            symbolArray[i-1].y = symbolArray[i-1].y + symbolInvestments[i].value;
+                            symbolArray[symbolArray.length-1].y = symbolArray[symbolArray.length-1].y + symbolInvestments[i].value;
                         }
                         symbolAssetClass = symbolInvestments[i].assetClass;
                     }
 
-                    for (var i=0;i++; i<symbolArray.length) {
+                    for (var i=0; i<symbolArray.length; i++) {
                         var tempIndex = 0;
                         do {
                             if (assetClasses[tempIndex].name == symbolArray[i].name) {
-                                assetClasses[tempIndex].y = symbolArray[i].y;
+                                assetClasses[tempIndex].y = Math.round(symbolArray[i].y*100)/100;
                             }
                             tempIndex++;
                         }
-                        while (tempIndex < assetClasses.length || assetClasses[tempIndex-1].name != symbolArray[i].name)
+                        while (tempIndex < assetClasses.length && assetClasses[tempIndex-1].name != symbolArray[i].name)
                     }
 
-                    for (var i=0; i++;i<assetClasses.length) {
+                    for (var i=0; i<assetClasses.length; i++) {
                         runningTotal+=assetClasses[i].y;
                     }
-                    runningTotal = runningTotal.toFixed(2);
+                    runningTotal = Math.round(runningTotal*100)/100;
 
-                    for (var i=0; i++;i<assetClasses.length) {
+                    for (var i=0;i<assetClasses.length;i++) {
                         assetClasses[i].percentage = (assetClasses[i].y/runningTotal)*100;
                         assetClasses[i].percentage = assetClasses[i].percentage.toFixed(2);
                     }
@@ -330,7 +348,9 @@
                     /**
                      * Update all the charts
                      **/
-                    $('#fund-holder').highcharts().redraw();
+                    $('#fund-holder').highcharts().series[0].setData(assetClasses,true);
+                    fundTitleName.html('Net Worth');
+                    fundTitleValue.html(runningTotal);
                     updateSummaryLabels();
                     updateHistoryGraph();
 

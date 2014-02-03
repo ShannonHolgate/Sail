@@ -15,7 +15,7 @@ import se.radley.plugin.salat._
 import models.MongoContext._
 import scala.collection.mutable.ListBuffer
 import play.api.Play.current
-import org.joda.time.DateTime
+import org.joda.time.{LocalDate, DateTime}
 import java.text.SimpleDateFormat
 
 /**
@@ -97,23 +97,60 @@ object InvestmentHistory extends ModelCompanion[InvestmentHistory, ObjectId] {
     /** For each history get build up a time series, sorted by date to ensure the values are in the correct order
       * relies on the dates of each history being correct
       */
-    for ((history, index) <- histories.sortBy(history => (history.date, history.investment)).zipWithIndex) {
+
+    val sortedHistory = histories.sortBy(history => (history.date, history.investment))
+
+    /** Get each distinct Investment ID to ensure ensure all investments are counted at each date */
+    val investmentIds = histories.map(history => history.investment).distinct
+
+    /** Get each distinct Date to allow values to be totalled */
+    val dates = sortedHistory.map(history => LocalDate.fromDateFields(history.date).toDateTimeAtStartOfDay).distinct
+
+    /** Store a list of each date stored so far */
+    var investmentHistoriesRecorded = ListBuffer[InvestmentHistory]()
+    /** Store a list of each investment ID recorded so far on a single date */
+    var investmentsRecorded = ListBuffer[ObjectId]()
+
+    dates.foreach(date => {
+      var runningTotal = BigDecimal(0)
+      sortedHistory.foreach(history => if (LocalDate.fromDateFields(history.date).toDateTimeAtStartOfDay.equals(date)){
+        runningTotal+=history.value
+        investmentHistoriesRecorded.+=(history)
+        investmentsRecorded.+=(history.investment)
+      })
+      if (investmentIds.length != investmentsRecorded.length) {
+        val investmentsLeft = (investmentIds++investmentsRecorded).groupBy(id => id).filter(_._2.lengthCompare(1) == 0)
+        investmentsLeft.foreach(id => {
+          val pastHistory = investmentHistoriesRecorded.reverse.find(_.investment == id._1)
+          if (pastHistory.isDefined) {
+            runningTotal+=pastHistory.get.value
+          }
+        })
+      }
+      timeSeries.+=((date.toDate(),runningTotal))
+      investmentsRecorded.clear()
+    })
+
+   /** for ((history, index) <- histories.sortBy(history => (history.date, history.investment)).zipWithIndex) {
 
       /** The first index must append the first tuple */
-      if (index == 0)
-        timeSeries.+=((history.date,history.valuechanged))
+      if (index == 0) {
+        timeSeries.+=((history.date,history.value))
+        investmentsRecorded.+=(history.investment)
+      }
 
       /** If the date is the same as the last date, add the value to the previous value */
-      else if (dateFormat.format(history.date).equals(dateFormat.format(timeSeries.last._1)))
+      else if (dateFormat.format(history.date).equals(dateFormat.format(timeSeries.last._1))) {
         timeSeries.update(timeSeries.size-1, (history.date, timeSeries.last._2 + history.valuechanged))
-
+        investmentsRecorded.+=(history.investment)
+      }
       /** Otherwise, add a new tuple */
       else
-        timeSeries.+=((history.date, timeSeries.last._2 + history.valuechanged))
-    }
+        timeSeries.+=((history.date, history.value))
+    }     */
 
     /** Return the time series */
-    Option(timeSeries.toList)
+    if (timeSeries.length > 0) Option(timeSeries.toList) else None
   }
 
   /**
@@ -163,10 +200,27 @@ object InvestmentHistory extends ModelCompanion[InvestmentHistory, ObjectId] {
   def createToday(value:BigDecimal, valueChanged:BigDecimal, investmentId:ObjectId, quantity:Option[Int]) : Boolean = {
 
     /** Create a new InvestmentHistory object for today */
-    val history = new InvestmentHistory(value = value, valuechanged = valueChanged, investment = investmentId, quantity = quantity,date = DateTime.now().toDate, recentchange = None)
+    val thisMorning = LocalDate.now().toDateTimeAtStartOfDay.toDate()
+    val midnight = LocalDate.now().plusDays(1).toDateTimeAtStartOfDay().toDate()
+    val alreadyRecorded = dao.findOne(MongoDBObject("investment" -> investmentId, "date" -> MongoDBObject("$gte" -> thisMorning, "$lte" -> midnight)))
 
-    /** Insert the created history into the database and return true or false*/
-    create(history)
+    val recordedHistory = alreadyRecorded.getOrElse({
+      val history = new InvestmentHistory(value = value, valuechanged = valueChanged, investment = investmentId, quantity = quantity,date = DateTime.now().toDate, recentchange = None)
+      /** Insert the created history into the database and return true or false*/
+      create(history)
+    })
+    if (recordedHistory.isInstanceOf[InvestmentHistory]) {
+      /** Update the InvestmentHistory for the Investment id in the database */
+      dao.save(recordedHistory.asInstanceOf[InvestmentHistory].copy(value = value))
+
+      val updatedHistory = getOne(recordedHistory.asInstanceOf[InvestmentHistory].id).getOrElse(false)
+      if (updatedHistory.isInstanceOf[InvestmentHistory])
+        updatedHistory.asInstanceOf[InvestmentHistory].value.equals(value)
+      else
+        updatedHistory.asInstanceOf[Boolean]
+    }
+    else
+      recordedHistory.asInstanceOf[Boolean]
   }
 
   /**

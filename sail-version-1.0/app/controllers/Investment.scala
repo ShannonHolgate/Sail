@@ -88,7 +88,7 @@ object Investment extends Controller with Secured with Valuation{
             def writes(investmentWithValue: InvestmentWithValue) = {
               Json.obj(
                 "symbol" -> JsString(investmentWithValue.formattedInvestment.symbol),
-                "value" -> JsNumber(investmentWithValue.value),
+                "value" -> JsNumber(investmentWithValue.value.setScale(2, RoundingMode.CEILING)),
                 "quantity" -> JsNumber(investmentWithValue.quantity),
                 "price" -> JsNumber(investmentWithValue.formattedInvestment.closingPrice),
                 "exchange" -> JsString(investmentWithValue.formattedInvestment.exchange)

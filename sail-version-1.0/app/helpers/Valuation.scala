@@ -13,6 +13,7 @@ import scala.concurrent.Await
 import scala.concurrent.duration._
 import play.api.libs.json._
 import scala.collection.mutable.ListBuffer
+import scala.math.BigDecimal.RoundingMode
 
 /**
  * GoogleFinance class to be mapped from the Json returned from the URL
@@ -119,7 +120,7 @@ trait Valuation {
         val quantity = quantities.find{item => item._1.equals(gFinance.t)}
         if (quantity.isDefined) {
           val formattedInvestment = new FormattedInvestment(gFinance.t,BigDecimal(gFinance.l.replace(",","")),gFinance.e)
-          val investmentWithValue = new InvestmentWithValue(formattedInvestment,formattedInvestment.closingPrice.*(quantity.get._2),quantity.get._2)
+          val investmentWithValue = new InvestmentWithValue(formattedInvestment,formattedInvestment.closingPrice.*(quantity.get._2).setScale(2, RoundingMode.CEILING),quantity.get._2)
           investmentsWithValues.append(investmentWithValue)
         }
       }
