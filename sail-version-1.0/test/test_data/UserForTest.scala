@@ -37,10 +37,10 @@ trait TestUser{
   val currentApplication = FakeApplication(additionalConfiguration =Map("mongodb.default.db" -> "test", "user.timeout.days" -> "1"))
 
   /** The default Test User to be used across the test Specs */
-  val testUser:UserForTest = UserForTest("tester", "sailTestUser@gmail.com", "password")
+  val testUser:UserForTest = UserForTest("tester", "sailTestUser@gmail.com", "password1234")
 
   /** Second Test User for use with password token tests */
-  val testUser2:UserForTest = UserForTest("tester 2", "sailTestUser2@gmail.com", "password")
+  val testUser2:UserForTest = UserForTest("tester 2", "sailTestUser2@gmail.com", "password1234")
 
   /**
    * Removes the Test Users from the test MongoDB
