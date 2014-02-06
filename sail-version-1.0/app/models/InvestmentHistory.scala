@@ -91,13 +91,8 @@ object InvestmentHistory extends ModelCompanion[InvestmentHistory, ObjectId] {
 
     /** Create an empty listholder to build the time series into */
     var timeSeries = ListBuffer[(Date,BigDecimal)]()
-    /** The date format to create a readable date for presentation on a view */
-    val dateFormat = new SimpleDateFormat("dd-MM-yyyy")
 
-    /** For each history get build up a time series, sorted by date to ensure the values are in the correct order
-      * relies on the dates of each history being correct
-      */
-
+    /** Create a sorted array of investment histories to iterate over */
     val sortedHistory = histories.sortBy(history => (history.date, history.investment))
 
     /** Get each distinct Investment ID to ensure ensure all investments are counted at each date */
@@ -108,48 +103,55 @@ object InvestmentHistory extends ModelCompanion[InvestmentHistory, ObjectId] {
 
     /** Store a list of each date stored so far */
     var investmentHistoriesRecorded = ListBuffer[InvestmentHistory]()
+
     /** Store a list of each investment ID recorded so far on a single date */
     var investmentsRecorded = ListBuffer[ObjectId]()
 
+    /** For each history get build up a time series, sorted by date to ensure the values are in the correct order
+      * relies on the dates of each history being correct
+      */
     dates.foreach(date => {
+      /** set up a running total for this date */
       var runningTotal = BigDecimal(0)
+
+      /** iterate over the histories at this date */
       sortedHistory.foreach(history => if (LocalDate.fromDateFields(history.date).toDateTimeAtStartOfDay.equals(date)){
+
+        /** Add the value of any history at this date */
         runningTotal+=history.value
+
+        /** Add this history to the recorded history array to be used later */
         investmentHistoriesRecorded.+=(history)
+
+        /** Mark this investment as being recorded for this date to be used later */
         investmentsRecorded.+=(history.investment)
       })
+
+      /** Check if all Investments have been recorded for this date */
       if (investmentIds.length != investmentsRecorded.length) {
+
+        /** Find the ID's of theinvestments which have not been recorded yet */
         val investmentsLeft = (investmentIds++investmentsRecorded).groupBy(id => id).filter(_._2.lengthCompare(1) == 0)
+
+        /** Iterate over each investment left to find the most recent value */
         investmentsLeft.foreach(id => {
+          /** Reverse the recorded history array to find the last history with this ID */
           val pastHistory = investmentHistoriesRecorded.reverse.find(_.investment == id._1)
+
+          /** Ensure the recorded history value exists and add it to this dates running total */
           if (pastHistory.isDefined) {
             runningTotal+=pastHistory.get.value
           }
         })
       }
+
+      /** The running total is now complete for this date - add append it to the time series array */
       timeSeries.+=((date.toDate(),runningTotal))
+
+      /** Clear the investments recorded array to use in the next iteration */
       investmentsRecorded.clear()
     })
 
-   /** for ((history, index) <- histories.sortBy(history => (history.date, history.investment)).zipWithIndex) {
-
-      /** The first index must append the first tuple */
-      if (index == 0) {
-        timeSeries.+=((history.date,history.value))
-        investmentsRecorded.+=(history.investment)
-      }
-
-      /** If the date is the same as the last date, add the value to the previous value */
-      else if (dateFormat.format(history.date).equals(dateFormat.format(timeSeries.last._1))) {
-        timeSeries.update(timeSeries.size-1, (history.date, timeSeries.last._2 + history.valuechanged))
-        investmentsRecorded.+=(history.investment)
-      }
-      /** Otherwise, add a new tuple */
-      else
-        timeSeries.+=((history.date, history.value))
-    }     */
-
-    /** Return the time series */
     if (timeSeries.length > 0) Option(timeSeries.toList) else None
   }
 
@@ -199,20 +201,28 @@ object InvestmentHistory extends ModelCompanion[InvestmentHistory, ObjectId] {
    */
   def createToday(value:BigDecimal, valueChanged:BigDecimal, investmentId:ObjectId, quantity:Option[Int]) : Boolean = {
 
-    /** Create a new InvestmentHistory object for today */
+    /** Find the start of the day and the end of the day to provide a date range */
     val thisMorning = LocalDate.now().toDateTimeAtStartOfDay.toDate()
     val midnight = LocalDate.now().plusDays(1).toDateTimeAtStartOfDay().toDate()
+
+    /** Check if a history has been recorded for this investment today */
     val alreadyRecorded = dao.findOne(MongoDBObject("investment" -> investmentId, "date" -> MongoDBObject("$gte" -> thisMorning, "$lte" -> midnight)))
 
+    /** If the history has been not been recorded add it as a new date to the investmenthistorys table */
     val recordedHistory = alreadyRecorded.getOrElse({
+      /** Create the history to add */
       val history = new InvestmentHistory(value = value, valuechanged = valueChanged, investment = investmentId, quantity = quantity,date = DateTime.now().toDate, recentchange = None)
       /** Insert the created history into the database and return true or false*/
       create(history)
     })
+
+    /** If the history has already been recorded for today - update it's value */
     if (recordedHistory.isInstanceOf[InvestmentHistory]) {
+
       /** Update the InvestmentHistory for the Investment id in the database */
       dao.save(recordedHistory.asInstanceOf[InvestmentHistory].copy(value = value))
 
+      /** Ensure the update was successful and return */
       val updatedHistory = getOne(recordedHistory.asInstanceOf[InvestmentHistory].id).getOrElse(false)
       if (updatedHistory.isInstanceOf[InvestmentHistory])
         updatedHistory.asInstanceOf[InvestmentHistory].value.equals(value)

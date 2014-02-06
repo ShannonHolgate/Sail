@@ -22,6 +22,12 @@ input.error {
 label.error {
   color: #ca4848; }
 
+select {
+  font-size: 12px;
+  color: #333333;
+  border: none;
+  margin-top: 6px; }
+
 * {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;

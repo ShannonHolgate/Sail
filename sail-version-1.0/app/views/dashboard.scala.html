@@ -73,22 +73,31 @@
             </div>
         </div>
     </div>
-    <!-- TODO - Implement this properly and back it up! -->
-    <!-- Modal reset password form -->
-    <a href="#x" class="overlay" id="reset-form"></a>
+
+    <!-- Modal add asset form -->
+    <a href="#x" class="overlay" id="share-form"></a>
     <div class="popup modal">
         <h3>Add Shares to your fund</h3>
 
         <p>Enter the ticker symbol below of the shares you would like to add</p>
 
-        @helper.form(routes.Login.requestReset, 'id -> "reset-request-form", 'novalidate -> "novalidate") {
-            <!-- login form -->
+        <!-- ticker search area -->
+        <div class="row">
+            <input type="text" name="ticker" id="ticker-search" class="span-9"> 
+            <a class="flat-grey small right" href="#share-form">Search</a>
+        </div>
+        <div class="search-results" style="display:none">
             <div class="row">
-                <input type="email" name="email" id="email-reset" value="">
+                <span class="span-9" name="results">Results</span> <span class="right" style="margin-right:37px;">Quantity</span>
+            </div>
+            <div class="row">
+                <select id="equity-list" class="span-9"></select>
+                <input type="text" name="quantity" class="right" style="width: 80px;">
             </div>
             <a class="flat-grey small left" href="#close">Cancel</a>
-            <input type="submit" value="@Messages("view.login.resetsubmit")" class="flat-grey small right" id="reset-button"></input>
-        }
+            <input type="submit" value="Add" class="flat-grey small right" id="add-button"></input>
+        </div>
+        <a class="flat-grey small left" class="add-hide" href="#close">Cancel</a>
     </div>
     <script src="http://code.highcharts.com/highcharts.js"></script>
     <script src="http://code.highcharts.com/modules/exporting.js"></script>
