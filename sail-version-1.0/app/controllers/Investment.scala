@@ -108,4 +108,23 @@ object Investment extends Controller with Secured with Valuation{
       else BadRequest("No data available")
     }
   }
+
+  def getTickerSymbolService(query:String) = withUser {
+    user => implicit request => {
+      /** Find the Json string of results */
+      Ok(findTickerSymbols(query).get)
+    }
+  }
+
+  def addManual = withUser {
+    user => implicit request => {
+      Ok("hey")
+    }
+  }
+
+  def addAuto = withUser {
+    user => implicit request => {
+      Ok("hey")
+    }
+  }
 }

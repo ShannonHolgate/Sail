@@ -190,10 +190,25 @@ trait Valuation {
     /** Setup the Json parser to write the Json to */
     implicit val exchangeRateFormat = Json.format[ExchangeRate]
 
-    /** Make a synchronous call to the exchange rate api and retriece a json string of results */
+    /** Make a synchronous call to the exchange rate api and retrieve a json string of results */
     val response = WS.url("http://rate-exchange.appspot.com/currency?from=USD&to=GBP").get()
     val result = Await.result(response, 10.seconds)
     Json.fromJson[ExchangeRate](Json.parse(result.body)).asOpt
+  }
+
+  /**
+   * Helper method to retrieve a Json String array of ticker symbols and descriptions from Yahoo Finance
+   *
+   * @param query String the ticker symbol or name to query Yahoo for
+   * @return      Option[String] the Json String of results
+   */
+  def findTickerSymbols(query:String): Option[String] = {
+    /** Make a synchronous call to the yahoo finance and retrieve a json string of investment results */
+    val response = WS.url("http://d.yimg.com/autoc.finance.yahoo.com/autoc?query=" + query + "&callback=YAHOO.Finance.SymbolSuggest.ssCallback").get();
+    val result = Await.result(response, 10.seconds)
+    val cleanResult = result.body.split("\"Result\":").last.dropRight(3)
+    /** Return the un-formatted Json String */
+    Some(cleanResult)
   }
 
 }

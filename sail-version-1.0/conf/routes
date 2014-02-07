@@ -25,9 +25,14 @@ POST        /register                           controllers.Register.register
 # dashboard
 GET         /dash                               controllers.Dashboard.index
 
+# Investment
+POST        /addmanualinvestment                controllers.Investment.addManual
+POST        /addautoinvestment                  controllers.Investment.addAuto
+
 # services
 GET         /service/realtimeinvestments        controllers.Investment.getAutomatedInvestmentValues
 GET         /service/timeseries                 controllers.InvestmentHistory.getInvestmentHistoryForAssetClass(asset = "")
 GET         /service/timeseries/:asset          controllers.InvestmentHistory.getInvestmentHistoryForAssetClass(asset)
 GET         /service/risk                       controllers.RiskFinder.getRisksForUser
 GET         /service/targetfund                 controllers.TargetFund.getTargetFund
+GET         /service/findsymbols/:query         controllers.Investment.getTickerSymbolService(query)
