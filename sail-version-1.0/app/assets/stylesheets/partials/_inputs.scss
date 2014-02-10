@@ -18,18 +18,29 @@ input {
   width:100%
 }
 
+input[type=checkbox] {
+  width: initial;
+  margin-top: $default-input-padding*1.5;
+}
+
+input:disabled, select:disabled
+{
+  background:$light-grey;
+}
+
 input.error {
   border: $heavy-border-weight solid red;
 }
 
 label.error {
+  display: block;
   color: $light-red;
+  padding-bottom:$default-input-padding;
 }
 
 select {
 	font-size: $font-base-size;
 	color: $font-input-colour;
 	border: none;
-	margin-top: $font-base-size/2;
-  
+	margin-top: $font-base-size/2; 
 }

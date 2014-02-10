@@ -150,6 +150,10 @@ trait Valuation {
     /** Make a synchronous call to the Google finance URL and retrieve the Json String of results */
     val response = WS.url(googleFinanceURL).get()
     val result = Await.result(response, 10.seconds)
+
+    /** Check if the symbol exists */
+    if (result.body.isEmpty) return None
+
     val gFinances = Json.parse(result.body.replace("/",""))
 
     /** Get the USD to GBP exchange rate to setup the Google Finance Values as GBP */

@@ -16,11 +16,20 @@ input {
   padding: 5px 5px 5px;
   width: 100%; }
 
+input[type=checkbox] {
+  width: initial;
+  margin-top: 7.5px; }
+
+input:disabled, select:disabled {
+  background: #888888; }
+
 input.error {
   border: 2px solid red; }
 
 label.error {
-  color: #ca4848; }
+  display: block;
+  color: #ca4848;
+  padding-bottom: 5px; }
 
 select {
   font-size: 12px;

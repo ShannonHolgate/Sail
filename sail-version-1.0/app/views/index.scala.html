@@ -1,5 +1,5 @@
-@(title:String, header:String, name:String)(content:Html)
-@main(title) {
+@(title:String, header:String, name:String,errors:List[Option[String]], success:List[Option[String]])(content:Html)(implicit request: play.api.mvc.Request[Any])
+@main(title,errors,success) {
     <!-- The Navigation bar -->
     <nav class="nav-bar" id="nav-bar">
         <h3 id="showLeft">Sail</h3>
@@ -7,43 +7,43 @@
         <div class="menu-item">
             <a href="#">Shares</a>
             <ul>
-                <li><a href="#auto-form" id="reset_pop" class="auto-pop">Buy</a></li>
-                <li><a href="#">Sell</a></li>
+                <li><a href="#auto-form" class="auto-pop">Buy</a></li>
+                <li><a href="#remove-form" class="remove-pop">Sell</a></li>
             </ul>
         </div>
         <div class="menu-item">
             <a href="#">Bonds</a>
             <ul>
-                <li><a href="#auto-form" id="reset_pop" class="auto-pop">Buy</a></li>
-                <li><a href="#">Sell</a></li>
+                <li><a href="#auto-form" class="auto-pop">Buy</a></li>
+                <li><a href="#remove-form" class="remove-pop">Sell</a></li>
             </ul>
         </div>
         <div class="menu-item">
             <a href="#">Bank Accounts</a>
             <ul>
-                <li><a href="#manual-form" id="reset_pop" class="manual-pop">Add</a></li>
-                <li><a href="#">Remove</a></li>
+                <li><a href="#manual-form" class="manual-pop">Add</a></li>
+                <li><a href="#remove-form" class="remove-pop">Update</a></li>
             </ul>
         </div>
         <div class="menu-item">
             <a href="#">Commodities</a>
             <ul>
-                <li><a href="#manual-form" id="reset_pop" class="manual-pop">Add</a></li>
-                <li><a href="#">Remove</a></li>
+                <li><a href="#manual-form" class="manual-pop">Add</a></li>
+                <li><a href="#remove-form" class="remove-pop">Update</a></li>
             </ul>
         </div>
         <div class="menu-item">
             <a href="#">Collectibles</a>
             <ul>
-                <li><a href="#manual-form" id="reset_pop" class="manual-pop">Add</a></li>
-                <li><a href="#">Remove</a></li>
+                <li><a href="#manual-form" class="manual-pop">Add</a></li>
+                <li><a href="#remove-form" class="remove-pop">Update</a></li>
             </ul>
         </div>
         <div class="menu-item">
             <a href="#">Property</a>
             <ul>
-                <li><a href="#manual-form" id="reset_pop" class="manual-pop">Add</a></li>
-                <li><a href="#">Remove</a></li>
+                <li><a href="#manual-form" class="manual-pop">Add</a></li>
+                <li><a href="#remove-form" class="remove-pop">Update</a></li>
             </ul>
         </div>
         <a href="#">Risk Profile</a>
@@ -63,7 +63,111 @@
         <!-- The content for the main site -->
         @content
     </div>
+
+    <!-- Modal add asset form -->
+    <a href="#close" class="overlay close-modal" id="auto-form"></a>
+    <div class="popup modal">
+        <div id="auto-details">
+            <h3>Add Investestment</h3>
+
+            <p>Please choose an investment to add in the menu on the left</p>
+        </div>
+        <!-- ticker search area -->
+        <div class="row" style="display:none;">
+            <input type="text" name="ticker" id="ticker-search" class="span-9"> 
+            <a class="flat-grey small right" id="ticker-search-submit" href="#auto-form">Search</a>
+        </div>
+        <div class="search-results" style="display:none">
+            @helper.form(routes.Investment.addAuto, 'id -> "add-auto-form", 'novalidate -> "novalidate") {
+                <div class="row">
+                    <span class="span-9" name="results">Results</span> <span class="right" style="margin-right:37px;">Quantity</span>
+                </div>
+                <div class="row">
+                    <select id="result-list" class="span-9" name="investmentresults"></select>
+                    <input id="quantity" type="text" name="quantity" class="right" style="width: 80px;">
+                </div>
+                <a class="flat-grey small left close-modal" href="#close">Cancel</a>
+                <input type="button" value="Add" class="flat-grey small right" id="add-button"></input>
+            }
+        </div>
+        <div class="no-results" style="display:none;">
+            <p>No Results found, please try again or add a <a href="#manual-form" class="temp-investment">manual investment</a></p>
+        </div>
+        <a class="flat-grey small left add-hide close-modal" href="#close">Cancel</a>
+    </div>
+
+    <!-- Modal add asset form -->
+    <a href="#close" class="overlay close-modal" id="manual-form"></a>
+    <div class="popup modal">
+        <div id="manual-details">
+            <h3>Add Investestment</h3>
+
+            <p>Please choose an investment to add in the menu on the left</p>
+        </div>
+        <div class="row" style="display:none;">
+            @helper.form(routes.Investment.addManual, 'id -> "add-manual-form", 'novalidate -> "novalidate") {
+                <div class="row">
+                    <span class="span-9">Name</span> <span class="right" style="margin-right:8px;">Current Value</span>
+                </div>
+                <div class="row">
+                    <input type="text" id="manual-name" name="name" class="span-9">
+                    <input type="text" id="manual-value" name="currentvalue" class="right menu-currency" style="width: 80px;">
+                </div>
+                <a class="flat-grey small left close-modal" href="#close">Cancel</a>
+                <input type="button" value="Add" class="flat-grey small right" id="add-manual-button"></input> 
+            }
+        </div>
+        <a class="flat-grey small left add-hide close-modal" href="#close">Cancel</a>
+    </div>
+
+    <!-- Modal remove asset form -->
+    <a href="#close" class="overlay close-modal" id="remove-form"></a>
+    <div class="popup modal">
+        <div id="remove-details">
+            <h3>Edit Investment Value</h3>
+
+            <p>Please choose an investment to edit in the menu on the left</p>
+        </div>
+        <div class="row" style="display:none;">
+            @helper.form(routes.Investment.remove, 'id -> "remove-inv-form", 'novalidate -> "novalidate") {
+                <div class="row">
+                    <span class="span-6">Name</span> 
+                    <span class="left span-3 quantity-hidden" style="display:none;">Quantity</span>
+                    <span class="left span-3 value-hidden" style="display:none;">Value</span>
+                    <span class="right remove-label" style="margin-right: 14px;">Remove all?</span>
+                </div>
+                <div class="row">
+                    <select id="remove-name-select" name="investment" class="span-6"></select>
+                    <select id="remove-quantity-select" name="quantity" class="left span-3 quantity-hidden" style="display:none;"></select>
+                    <input type="text" id="remove-value-input" name="value" class="menu-currency left span-3 value-hidden" style="display:none;">
+                    <input type="checkbox" id="remove-checkbox" name="removeall" class="right"  style="margin-right: 68px;">
+                </div>
+                <div class="row">
+                    @Messages("view.passwordlabel")
+                </div>
+                <div class="row">
+                    <input type="password" name="password" id="password">
+                </div>  
+                <a class="flat-grey small left close-remove" href="#close">Cancel</a>
+                <input type="button" value="Remove" class="flat-grey small right" id="remove-button"></input> 
+            }
+        </div>
+        <a class="flat-grey small left remove-hide close-remove" href="#close">Cancel</a>
+    </div>
+
     <script src="@routes.Assets.at("javascripts/nav-bar.js")" type="text/javascript"></script>
     <script src="@routes.Assets.at("javascripts/jquery.formatCurrency-1.4.0.min.js")" type="text/javascript"></script>
+    <script type="text/javascript">
+        var requestHost = "@request.host";
+        var menuCurrencyInputs = $('.menu-currency');
+        menuCurrencyInputs.focusout(function() {
+            menuCurrencyInputs.formatCurrency({symbol:'£'});
+        }).blur(function() {
+            menuCurrencyInputs.formatCurrency({symbol:'£'});
+        });
+    </script>
+    <script src="@routes.Assets.at("javascripts/add-investment-modal.js")" type="text/javascript"></script>
+    <script src="@routes.Assets.at("javascripts/remove-investment-modal.js")" type="text/javascript"></script>
+    <script src="@routes.Assets.at("javascripts/validation/menu.validation.js")" type="text/javascript"></script> 
     <link rel="stylesheet" href="@routes.Assets.at("stylesheets/dashboard.css")">
 }

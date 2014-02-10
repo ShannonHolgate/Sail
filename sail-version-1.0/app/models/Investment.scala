@@ -121,6 +121,38 @@ object Investment extends ModelCompanion[Investment, ObjectId] {
   }
 
   /**
+   * Get a single investment for a given user and investment name
+   *
+   * @param name  String the name of the investment
+   * @param user  User the user who owns the investment
+   * @return      Option[Investment]  the investment relating to the name and user
+   */
+  def getOneFromName(name: String, user: User) : Option[Investment] = {
+    /** Get the Investment from the database */
+    val investment = dao.findOne((MongoDBObject("name" -> name, "user" -> user.id)))
+
+    /** Return the investment */
+    if (investment.isDefined) Some(investment.get)
+    else None
+  }
+
+  /**
+   * Get a single investment for a given user and investment symbol
+   *
+   * @param symbol  String the symbol of the investment
+   * @param user    User the user who owns the investment
+   * @return        Option[Investment]  the investment relating to the symbol and user
+   */
+  def getOneFromSymbol(symbol: String, user: User) : Option[Investment] = {
+    /** Get the Investment from the database */
+    val investment = dao.findOne((MongoDBObject("symbol" -> symbol, "user" -> user.id)))
+
+    /** Return the investment */
+    if (investment.isDefined) Some(investment.get)
+    else None
+  }
+
+  /**
    * Update the Investment in the database when the value has been updated
    *
    * @param investment  Investment the Investment to be updated in the database
@@ -141,5 +173,25 @@ object Investment extends ModelCompanion[Investment, ObjectId] {
 
     /** the new Investment does not exist */
     else false
+  }
+
+  /**
+   * Create and insert a new investment into the database
+   *
+   * @param quantity    Optional quantity of automated investments
+   * @param value       Current value of the investment
+   * @param assetClass  The asset class to insert the investment into
+   * @param name        The name of the investment
+   * @param symbol      Optional ticker symbol of the investment
+   * @param user        The user who owns the investment
+   * @return            Boolean whether the insert was successful
+   */
+  def createOne(quantity:Option[Int],value:BigDecimal, assetClass:String, name:String,symbol:Option[String],user:User) : Option[ObjectId] = {
+
+    /** Createt the investment object */
+    val investment = Investment(quantity=quantity,value=value,assetclass=assetClass,name=name,symbol=symbol,user=user.id)
+
+    /** Insert the investment into the database and ensure the returned id exists */
+    dao.insert(investment)
   }
 }

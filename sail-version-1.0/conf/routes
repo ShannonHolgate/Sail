@@ -28,6 +28,7 @@ GET         /dash                               controllers.Dashboard.index
 # Investment
 POST        /addmanualinvestment                controllers.Investment.addManual
 POST        /addautoinvestment                  controllers.Investment.addAuto
+POST        /removeinvestment                   controllers.Investment.remove
 
 # services
 GET         /service/realtimeinvestments        controllers.Investment.getAutomatedInvestmentValues
@@ -36,3 +37,4 @@ GET         /service/timeseries/:asset          controllers.InvestmentHistory.ge
 GET         /service/risk                       controllers.RiskFinder.getRisksForUser
 GET         /service/targetfund                 controllers.TargetFund.getTargetFund
 GET         /service/findsymbols/:query         controllers.Investment.getTickerSymbolService(query)
+GET         /service/investments/:assetClass    controllers.Investment.getInvestmentList(assetClass)

@@ -4,9 +4,16 @@
 var validationM = {
 	emailRequired:"An email address is required",
 	emailInvalid:"Please enter a valid email address",
-	nameRequired:"Please enter your name",
+	nameRequired:"A Name is required",
 	nameMinLength:"Name must contain at least {0} letters",
+	nameMaxLength:"Name must contain less than {0} letters",
 	passwordRequired:"A password is required",
 	passwordMinLength:"Password must contain at least {0} letters",
-	passwordMustMatch:"Both passwords must match"
+	passwordMustMatch:"Both passwords must match",
+
+	quantityRequired:"A quantity is required",
+
+	invalidInteger:"Please enter a valid integer number",
+	invalidCurrency:"Please enter a valid currency value",
+	valueRequired:"A value is required"
 }

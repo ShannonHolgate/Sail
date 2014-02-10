@@ -13,6 +13,9 @@ import helpers.{Valuation}
 import views.html
 import scala.collection.mutable.ListBuffer
 import scala.math.BigDecimal.RoundingMode
+import play.api.data.Form
+import play.api.data.Forms._
+import scala.Some
 
 
 /**
@@ -20,6 +23,34 @@ import scala.math.BigDecimal.RoundingMode
  */
 object Dashboard extends Controller with Secured with Valuation{
 
+  /** Empty auto add form to render the dashboard view */
+  val addAutoForm = Form(
+    tuple(
+      "investmentresults" -> text,
+      "quantity" -> number,
+      "assetclass" -> text
+    )
+  )
+
+  /** Empty manual add form to render the dashboard view */
+  val addManualForm = Form(
+    tuple(
+      "name" -> text,
+      "currentvalue" -> bigDecimal,
+      "assetclass" -> text
+    )
+  )
+
+  /** Empty remove form to render the dashboard view */
+  val removeForm = Form(
+    tuple(
+      "id" -> text,
+      "quantity" -> number,
+      "value" -> bigDecimal,
+      "removeall" -> boolean,
+      "password" -> text
+    )
+  )
   /**
    * Renders the dashboard page by getting all the current investments related
    * to the user.
@@ -67,7 +98,7 @@ object Dashboard extends Controller with Secured with Valuation{
       }
 
       /** Render the dashboard view, now that the data is ready for it */
-      Ok(html.dashboard(user.name,symbolInvestments.toList,assetClassValues.toList,runningTotal))
+      Ok(html.dashboard(user.name,symbolInvestments.toList,assetClassValues.toList,runningTotal,addAutoForm,addManualForm,removeForm)).flashing(request.flash)
     }
   }
 }

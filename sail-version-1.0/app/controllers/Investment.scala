@@ -13,12 +13,60 @@ import helpers.{InvestmentWithValue, Valuation}
 import scala.collection.mutable.ListBuffer
 import scala.math.BigDecimal.RoundingMode
 import play.api.libs.json._
+import play.api.data.Form
+import play.api.data.Forms._
+import helpers.InvestmentWithValue
+import play.api.libs.json.JsString
+import play.api.libs.json.JsNumber
 
 /**
  *  Controller for the Investment Model
  *  Holds the web services to be consumed on the dashboard view
  */
 object Investment extends Controller with Secured with Valuation{
+
+  /** auto add form to bind the dashboard view */
+  val addAutoForm = Form(
+    tuple(
+      "investmentresults" -> text,
+      "quantity" -> number,
+      "assetclass" -> text
+    ) verifying ("Quantity must be greater than 0", result => result._2 match {
+      case (quantity) => quantity.>(0)
+    }) verifying("Something went wrong, that asset class does not exist", result => result._3 match {
+      case (assetClass) => matchAssetClass(assetClass)
+    })
+  )
+
+  def matchAssetClass(x: String): Boolean = x match {
+    case "Shares" => true
+    case "Bonds" => true
+    case "Commodities" => true
+    case "Bank Accounts"  => true
+    case "Collectibles"  => true
+    case "Property"  => true
+    case _ => false
+  }
+
+  /** manual add form to bind the dashboard view */
+  val addManualForm = Form(
+    tuple(
+      "name" -> text,
+      "currentvalue" -> bigDecimal,
+      "assetclass" -> text
+    )
+  )
+
+  /** remove form to bind the dashboard view */
+  val removeForm = Form(
+    tuple(
+      "id" -> text,
+      "quantity" -> number,
+      "value" -> bigDecimal,
+      "removeall" -> boolean,
+      "password" -> text
+    )
+  )
 
   /**
    * Web Service getting the automated investments.
@@ -116,13 +164,70 @@ object Investment extends Controller with Secured with Valuation{
     }
   }
 
+  def getInvestmentList(assetClass:String) = withUser {
+    user => implicit request => {
+      val investments = models.Investment.getInvestmentForAssetClass(user.id,assetClass)
+      if (investments.isDefined) {
+        /** Create the Json parser which will write the realtime investments in a stock format */
+        implicit val investmentWrites = new Writes[models.Investment] {
+          def writes(investment: models.Investment) = {
+            Json.obj(
+              "id" -> JsString(investment.id.toString),
+              "name" -> JsString(investment.name),
+              "symbol" -> JsString(investment.symbol.getOrElse("")),
+              "quantity" -> JsNumber({if (investment.quantity.isDefined) investment.quantity.get.toDouble else 1.0})
+            )
+          }
+        }
+
+        /** Return the Json string to the browser */
+        Ok(Json.toJson(investments.get))
+      }
+      else
+        Ok("No Results")
+    }
+  }
+
+  def addAuto = withUser {
+    user => implicit request => {
+      addAutoForm.bindFromRequest().fold(
+        formWithErrors => Redirect(routes.Dashboard.index).flashing(configValues.genericError -> formWithErrors.errors(0).message),
+        autoBound => {
+          val investmentName = autoBound._1.split("~").last
+          val investmentSymbol = autoBound._1.split("~").head
+          val existingInvestment = models.Investment.getOneFromSymbol(investmentSymbol,user)
+          if (existingInvestment.isDefined) {
+            if (models.Investment.updateInvestmentValue(existingInvestment.get.copy(quantity = Some(autoBound._2)))) Redirect(routes.Dashboard.index).flashing(configValues.genericSuccess -> "Investment Updated")
+            else Redirect(routes.Dashboard.index).flashing(configValues.genericError -> "Updating the existing investment failed")
+          }
+          else {
+            val investmentsWithValue = getSymbolValuesWithQuantity(List[String](investmentSymbol),List[(String,Int)]((investmentSymbol,autoBound._2)))
+            if (investmentsWithValue.isDefined) {
+              val investmentId = models.Investment.createOne(quantity=Some(autoBound._2),value=investmentsWithValue.get.head.value,assetClass = autoBound._3,name=investmentName,symbol=Some(investmentSymbol),user=user)
+              if (investmentId.isDefined) {
+                if (models.InvestmentHistory.createToday(investmentsWithValue.get.head.value,investmentsWithValue.get.head.value,investmentId.get,Some(autoBound._2)))
+                  Redirect(routes.Dashboard.index).flashing(configValues.genericSuccess -> "New Investment added")
+                else
+                  Redirect(routes.Dashboard.index).flashing(configValues.genericError -> "Could not create a history for the new investment")
+              }
+              else
+                Redirect(routes.Dashboard.index).flashing(configValues.genericError -> "Adding the new investment failed")
+            }
+            else
+              Redirect(routes.Dashboard.index).flashing(configValues.genericError -> "Failed to get a quote for this investment")
+          }
+        }
+      )
+    }
+  }
+
   def addManual = withUser {
     user => implicit request => {
       Ok("hey")
     }
   }
 
-  def addAuto = withUser {
+  def remove = withUser {
     user => implicit request => {
       Ok("hey")
     }

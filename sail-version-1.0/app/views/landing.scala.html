@@ -1,6 +1,6 @@
 @(title:String, header:String,errors:List[Option[String]], success:List[Option[String]])(content:Html)
 
-@main(title) {
+@main(title,errors,success) {
   <div class="login">
     <div class="centre-container">
       <div>
@@ -15,43 +15,6 @@
         </article>
       </div>
     </div>
-
-      <!-- Iterate over the error messages to make a popup for each -->
-      <a href="#x" class="overlay" id="error-message"></a>
-      <div class="popup modal error">
-        <p id="error">
-          @for(error <- errors) {
-            @if(error.isDefined) {
-              @error.get
-            }
-          }    
-        </p>
-        <a class="flat-grey small right" href="#close">Continue</a>
-      </div>
-
-      <!-- Iterate over the error messages to make a popup for each -->
-      <a href="#x" class="overlay" id="success-message"></a>
-      <div class="popup modal success">
-        <p id="success">
-          @for(successMessage <- success) {
-            @if(successMessage.isDefined) {
-              @successMessage.get
-              }
-            } 
-        </p>
-        <a class="flat-grey small right" href="#close">Continue</a>
-      </div>
-    <script> 
-      //Checks to see if any error/success popups have been created and sets the browser to them
-      var errorP = document.getElementById("error"); 
-      var successP = document.getElementById("success"); 
-      if (successP && successP.innerHTML.replace(/^\s*/, "").replace(/\s*$/, "") != "") {
-        window.location.hash = '#success-message';  
-      }
-      if (errorP && errorP.innerHTML.replace(/^\s*/, "").replace(/\s*$/, "") != "") {
-        window.location.hash = '#error-message';
-      } 
-    </script>
     <link rel="stylesheet" href="@routes.Assets.at("stylesheets/login.css")">
   </div>
 }

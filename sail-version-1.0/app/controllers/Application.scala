@@ -70,6 +70,12 @@ trait Secured extends Controller{
 
     /** The flash key used to map the reset request email */
     val resetRequest: String = Play.application.configuration.getString("user.reset.request").get
+
+    /** The flash key used to map the generic errors*/
+    val genericError: String = Play.application.configuration.getString("generic.error").get
+
+    /** The flash key used to map the generic success */
+    val genericSuccess: String = Play.application.configuration.getString("generic.success").get
   }
 
   /**
