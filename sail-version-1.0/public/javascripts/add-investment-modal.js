@@ -28,16 +28,29 @@ $(function () {
     **/
     var tickerQueryUrl = "http://" + requestHost + "/service/findsymbols/";
 
+    /**
+    * Add a keyup listener to the enter key on the manual form
+    * submits the form
+    **/
     $('#add-manual-form').keyup(function(event) {
         if(event.keyCode == 13){
             submitManual();
         }
     });
 
+    /**
+    * Add a click listener to the add manual button on the manual form
+    * submits the form
+    **/
     $('#add-manual-button').click(function() {
         submitManual();
     });
 
+    /**
+    * Submit form handler
+    * Appends the asset class to the form and changes the currency to 
+    * regular decimals
+    **/
     function submitManual() {
         $('#add-manual-form').validate();
         if (currentInvestment && $('#add-manual-form').valid()) {
@@ -45,20 +58,34 @@ $(function () {
                .attr("type", "hidden")
                .attr("name", "assetclass").val(currentInvestment);
             $('#add-manual-form').append($(input));  
+            menuCurrencyInputs.toNumber();
             $('#add-manual-form').submit();  
         }
     }
 
+    /**
+    * Add a keyup listener to the enter key on the auto form
+    * submits the form
+    **/
     $('#add-auto-form').keyup(function(event) {
         if(event.keyCode == 13){
             submitAuto();
         }
     });
 
+    /**
+    * Add a click listener to the add auto button on the manual form
+    * submits the form
+    **/
     $('#add-button').click(function() {
         submitAuto();
     });
 
+    /**
+    * Submit form handler
+    * Appends the asset class to the form and changes the currency to 
+    * regular decimals
+    **/
     function submitAuto() {
         $('#add-auto-form').validate();
         if (currentInvestment && $('#add-auto-form').valid()) {
@@ -70,6 +97,10 @@ $(function () {
         }
     }
 
+    /**
+    * Add a click listener to the add auto links in the menu
+    * Sets up the automated investment modal popup
+    **/
     autoPopAnchors.click(function() {
         /**
         * Set up the Modal form with the investment chosen to add
@@ -84,6 +115,10 @@ $(function () {
         autoPopupMessage.html(titleMessage+description);
     });
 
+    /**
+    * Add a click listener to the link from the automated form to the manual form
+    * Needed to carry across the current investment class
+    **/
     $('.temp-investment').click(function () {
         var titleMessage = '<h3>Add '+currentInvestment+'</h3>';
         var description = '<p>Enter the name and current value of the '+currentInvestment+' you would like to add</p>';
@@ -92,12 +127,19 @@ $(function () {
         manualPopupMessage.html(titleMessage+description);
     });
 
+    /**
+    * Add a keyup listener to the symbol query field to search on enter
+    **/
     $(queryInput).keyup(function(event){
         if(event.keyCode == 13){
             $(search).click();
         }
     });
 
+    /**
+    * Add a click listener to the add manual links in the menu
+    * Sets up the manual investment modal popup
+    **/
     manualPopAnchors.click(function() {
         resetModals();
         var investment = $(this).closest('.menu-item').find('a')[0].innerHTML;
@@ -109,6 +151,13 @@ $(function () {
         manualPopupMessage.html(titleMessage+description);
     });
 
+    /**
+    * Add a click listener to the symbol search button
+    * checks if the input is not empty then calls the investment query web service
+    * The Json returned then checks the investment class against the chosen.
+    * Only equity investments should be shown for Shares
+    * Populates the results select list in the automated form
+    **/
     search.click(function() {
         // Get the search form value
         var input = queryInput.val();
@@ -152,6 +201,7 @@ $(function () {
                         $.unblockUI();
                     }
                     else {
+                        //Results exists - Show them
                         addHideButtons.hide();
                         noResultsDiv.hide();
                         searchResultsDivs.show();
@@ -175,16 +225,26 @@ $(function () {
         }
     });
 
+    /**
+    * Add a click listener to the close links
+    * Resets the modals
+    **/
     closeModalAnchors.click(function() {
         resetModals();
     });
 
+    /**
+    * Add a second click listener to clear the automated investment fields
+    **/
     manualPopAnchors.click(function() {
         queryInput.val('');   
         resetModalFields();
         noResultsDiv.hide(); 
     })
 
+    /**
+    * Resets the Modal fields to empty values
+    */
     function resetModalFields() {
         resultOptions.empty();
         quantityInput.val('');
@@ -192,6 +252,10 @@ $(function () {
         addHideButtons.show();  
     }
 
+    /**
+    * Completely Resets the Modal popups and sets the default message and title to be used when 
+    * An asset class is not chosen
+    */
     function resetModals() {
         resetModalFields();  
         manualName.val('');

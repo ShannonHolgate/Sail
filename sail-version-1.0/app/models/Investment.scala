@@ -97,7 +97,7 @@ object Investment extends ModelCompanion[Investment, ObjectId] {
   def getInvestmentsWithSymbols(user:ObjectId) : Option[List[Investment]] = {
 
     /** Get a list of investments from the database */
-    val investments = dao.find(MongoDBObject("user" -> user, "quantity" -> MongoDBObject("$exists" -> true)))
+    val investments = dao.find(MongoDBObject("user" -> user, "symbol" -> MongoDBObject("$exists" -> true)))
 
     /** Return the list of investments */
     if (!investments.isEmpty) Some(investments.toList)
@@ -193,5 +193,29 @@ object Investment extends ModelCompanion[Investment, ObjectId] {
 
     /** Insert the investment into the database and ensure the returned id exists */
     dao.insert(investment)
+  }
+
+  /**
+   * Remove a single investment for the given Investment Id
+   *
+   * @param investmentId  ObjectId of the investment to be removed
+   * @return              Boolean whether the deletion was a success or not
+   */
+  def removeOne(investmentId:ObjectId) : Boolean = {
+
+    /** Get the investment from the database */
+    val investment = dao.findOne(MongoDBObject("_id" -> investmentId))
+
+    if (investment.isDefined) {
+      /** Remove the investment from the database */
+      dao.remove(investment.get)
+
+      /** Check if the deletion succeeded */
+      if (dao.findOne(MongoDBObject("_id" -> investmentId)).isEmpty) true
+      /** the removal failed */
+      else false
+    }
+     /** Cannot find the investment */
+    else false
   }
 }

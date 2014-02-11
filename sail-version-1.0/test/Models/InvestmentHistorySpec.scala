@@ -47,7 +47,7 @@ class InvestmentHistorySpec extends Specification with TestUser{
       removeTestUsers
       confirmTestUserExists
       val user = User.findByEmail(testUser.email)
-      val investments = Investment.getInvestmentForAssetClass(user.get.id,"Bank Account")
+      val investments = Investment.getInvestmentForAssetClass(user.get.id,"Bank Accounts")
 
       val histories = InvestmentHistory.getHistoryForInvestments(investments.getOrElse(List[Investment]()))
 
@@ -73,28 +73,6 @@ class InvestmentHistorySpec extends Specification with TestUser{
       for(history <- histories.get.sortBy(hist => (hist.date))) {
         //Logger.info("All histories: " + history.date + " " +history.valuechanged)
       }
-    }
-
-    "create a time series from a set of investments" in new WithApplication(currentApplication){
-      removeTestUsers
-      confirmTestUserExists
-      val user = User.findByEmail(testUser.email)
-      val investments = Investment.getInvestmentForUser(user.get.id)
-
-      val histories = InvestmentHistory.getHistoryForInvestments(investments.getOrElse(List[Investment]()))
-
-      val timeSeries = InvestmentHistory.getTimeSeriesForInvestmentHistories(histories.get)
-
-      for(entry <- timeSeries.get) {
-        //Logger.info("time series: " + entry)
-      }
-
-      var tempHistoriesTotal:BigDecimal = 0
-      for (history <- histories.get) {
-        tempHistoriesTotal += history.valuechanged
-      }
-
-      timeSeries.get.last._2 must be equalTo(tempHistoriesTotal)
     }
   }
 

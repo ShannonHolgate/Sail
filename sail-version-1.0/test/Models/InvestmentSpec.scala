@@ -36,7 +36,7 @@ class InvestmentSpec extends Specification with TestUser{
       removeTestUsers
       confirmTestUserExists
       val user = User.findByEmail(testUser.email)
-      val investments = Investment.getInvestmentForAssetClass(user.get.id,"Bank Account")
+      val investments = Investment.getInvestmentForAssetClass(user.get.id,"Bank Accounts")
 
       investments.isDefined must beTrue
       investments.get.size must be_>(0)

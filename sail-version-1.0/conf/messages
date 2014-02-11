@@ -17,9 +17,34 @@ error.email.invalid=Please enter a valid email address
 error.password.nomatch=Passwords do not match
 error.name.length=Name must contain at least {0} letters
 
+# Investment manipulation errors
+error.investment.quantity=Quantity must be greater than {0}
+error.investment.noasset=Something went wrong, that asset class does not exist
+error.investment.value=Value must be a positive decimal number
+error.investment.noinvestmentform=This investment does not exist
+error.investment.updatingautofail=Updating {0} failed
+error.investment.historyaddfail=Could not create a history for {0}
+error.investment.addautofail=Adding {0} failed
+error.investment.quotefail=Failed to get a quote for {0}
+error.investment.manualexists=The manual investment {0} already exists, please update it's value
+error.investment.removehistoryfail=Could not create a history for the removed investment {0}
+error.investment.removefail=Failed to remove {0} completely
+error.investment.updatehistoryfail=Could not create a history for the updated investment {0}
+error.investment.quantityupdate=Failed to update the quantity of {0}
+error.investment.investmentnotauto={0} does not have a ticker symbol
+error.investment.valueupdatefail=Failed to update the value of {0}
+error.investment.valuequantityinvalid=Value or quantity have not been entered correctly
+error.investment.password=Password incorrect
 
 # Success Messages
 success.logout=You are now logged out
+
+# Investment manipulation success messages
+success.investment.updated={0} Updated
+success.investment.added={0} has been added
+success.investment.removed={0} Removed
+success.investment.quantity=Quantity for {0} changed
+success.investment.value=Value of {0} has been changed
 
 # Date Format
 date.format=dd/MM/yyyy
@@ -38,6 +63,8 @@ email.admin.address=noreply@sail.com
 view.emaillabel=Email Address
 view.passwordlabel=Password
 view.namelabel=Name
+view.sail=Sail
+view.cancel=Cancel
 
 # Langing page
 view.landing.tagline=Eventually, there will be a really nice tagline here about how Sail guides your investments
@@ -65,3 +92,34 @@ view.reset.pagetitle=Sail - Reset password
 view.reset.title=Reset Password
 view.reset.confirmlabel=Re-type Password
 view.reset.submit=Reset
+
+# Index Page
+view.index.dashboard=Dashboard
+view.index.shares=Shares
+view.index.bonds=Bonds
+view.index.bank=Bank Accounts
+view.index.commodities=Commodities
+view.index.collectibles=Collectibles
+view.index.property=Property
+view.index.riskprofile=Risk Profile
+view.index.targetfund=Target Fund
+view.index.newfund=New Fund
+view.index.buy=Buy
+view.index.sell=Sell
+view.index.add=Add
+view.index.update=Update
+view.index.addinvestment=Add Investment
+view.index.addinvestmentmessage=Please choose an investment to add in the menu on the left
+view.index.search=Search
+view.index.results=Results
+view.index.quantity=Quantity
+view.index.manual=manual investment
+view.index.noresultmessage=No Results found, please try again or add a 
+view.index.name=Name
+view.index.currenvalue=Current Value
+view.index.editinvestment=Edit Investment Value
+view.index.editinvestmentmessage=Please choose an investment to edit in the menu on the left
+view.index.newvalue=Value
+view.index.newquantity=New Quantity
+view.index.removeall=Remove all
+
