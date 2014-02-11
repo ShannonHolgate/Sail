@@ -249,7 +249,7 @@ $(function () {
     */
     function showFormDetails(assetClass) {
         var titleMessage = '<h3>Edit '+assetClass+' Value</h3>';
-        var description = '<p>Select the '+assetClass+' you would like to change the value of</p>';
+        var description = '<p>Select the '+assetClass+' you would like to change the quantity or value of</p>';
         removeNameSelect.parent().parent().parent().removeAttr('style');
 
         removeMessage.html(titleMessage+description);
