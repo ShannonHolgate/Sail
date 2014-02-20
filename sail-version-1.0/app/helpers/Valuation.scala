@@ -14,6 +14,8 @@ import scala.concurrent.duration._
 import play.api.libs.json._
 import scala.collection.mutable.ListBuffer
 import scala.math.BigDecimal.RoundingMode
+import java.net.URLEncoder
+import play.Logger
 
 /**
  * GoogleFinance class to be mapped from the Json returned from the URL
@@ -144,8 +146,10 @@ trait Valuation {
     /** Build up the URL to access and retrieve Json from */
     var googleFinanceURL = "http://finance.google.com/finance/info?client=ig&q="
     for (symbol <- symbols) {
-      googleFinanceURL+= symbol + ","
+      googleFinanceURL+= URLEncoder.encode(symbol, "UTF-8") + ","
     }
+
+    Logger.info(googleFinanceURL)
 
     /** Make a synchronous call to the Google finance URL and retrieve the Json String of results */
     val response = WS.url(googleFinanceURL).get()
