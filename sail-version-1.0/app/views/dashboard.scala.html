@@ -2,7 +2,7 @@
 @import play.api.Play
 @import play.api.Play.current
 
-@index("Dashboard - Sail","Dashboard",name, {
+@index(Messages("view.dash.pagetitle"),Messages("view.dash.title"),name, {
   // Add each possible error to a sequence
   flash.get(Play.application.configuration.getString("generic.error").get) ::  
   Nil
@@ -20,7 +20,7 @@
             <div class="span-3">
                 <div class="other-chart">
                     <!-- Holder for the Highchart history -->
-                    <h5>Asset Class History</h5>
+                    <h5>@Messages("view.dash.historytitle")</h5>
                     <div id="history-holder">
                         &nbsp;
                     </div>
@@ -29,7 +29,7 @@
             <div class="span-3">
                     <!-- Holder for the Highchart target fund -->
                 <div class="other-chart">
-                    <h5>Target Fund</h5>
+                    <h5>@Messages("view.dash.targetfund")</h5>
                     <div id="target-holder">
                         &nbsp;
                     </div>
@@ -45,7 +45,7 @@
                             <span class="green"></span>
                         </div>
                     </div>
-                    <h5 class="risk">Low Risk</h5>
+                    <h5 class="risk">@Messages("view.dash.lowrisk")</h5>
                 </div>
             </div>
             <div class="span-3">
@@ -55,7 +55,7 @@
                       <span class="green"></span>
                     </div>
                   </div>
-                  <h5 class="risk">Low Risk</h5>
+                  <h5 class="risk">@Messages("view.dash.lowrisk")</h5>
                 </div>
             </div>
         </div>
@@ -63,21 +63,21 @@
         <div class="summary row">
             <div class="span-4">
                 <div class="summary-value">
-                    <h5>Asset Class Selected</h5>
+                    <h5>@Messages("view.dash.classselected")</h5>
                     <p class="asset-label">
                     </p>
                 </div>
             </div>
             <div class="span-4">
                 <div class="summary-value">
-                    <h5>Value</h5>
+                    <h5>@Messages("view.dash.classvalue")</h5>
                     <p class="currency-label currency">
                     </p>
                 </div>
             </div>
             <div class="span-4">
                 <div class="summary-value">
-                    <h5>Percentage of Fund</h5>
+                    <h5>@Messages("view.dash.classpercent")</h5>
                     <p class="percentage-label">
                     </p>
                 </div>
@@ -88,6 +88,7 @@
     <script src="http://code.highcharts.com/highcharts.js"></script>
     <script src="http://code.highcharts.com/modules/exporting.js"></script>
     <script type="text/javascript">
+
     $(function () {
         $(document).ready(function(){
             /**
@@ -149,7 +150,7 @@
                 percentageLabel.innerHTML = assetClass.percentage.toFixed(2) + '%';
             }
             else {
-                assetLabel.innerHTML = "Net Worth";
+                assetLabel.innerHTML = '@Messages("view.dash.fundtitle")';
                 valueLabel.innerHTML = runningTotal;
                 percentageLabel.innerHTML = '100' + '%';
             }
@@ -161,7 +162,7 @@
         **/
         function updateHistoryGraph(assetClass) {
             var url = timeSeriesUrl;
-            var title = "Net Worth"
+            var title = '@Messages("view.dash.fundtitle")';
 
             /**
             * If no AssetClass is passed in, update the Ajax URL for all asset classes
@@ -201,7 +202,7 @@
                     },
                     yAxis: {
                         title: {
-                            text: "values (£)"
+                            text: '@Messages("view.dash.historyaxis")'
                         }
                     },
                     exporting: { enabled: false },
@@ -214,7 +215,7 @@
                 /**
                 * Upon failure, the user likely has no history, provide a link to add a new fund
                 **/
-                $('#history-holder').html('<p>Looks like you need to make history first</p><a class="flat-grey" href="#">New Fund</a>');
+                $('#history-holder').html('<p>@Messages("view.dash.nohistory")</p><a class="flat-grey" href="#">@Messages("view.dash.newfund")</a>');
             });
         }
 
@@ -248,7 +249,7 @@
                         }
                     },
                     series: [{
-                        name: 'Target Fund',
+                        name: '@Messages("view.dash.targetfund")',
                         data: data,
                         innerSize: '30%',
                         size: '80%'
@@ -262,7 +263,7 @@
                 /**
                 * Upon failure, the user likely has no target fund set, provide a link to add a get a target fund
                 **/
-                $('#target-holder').html('<p>Why not find your risk appetite?</p><a class="flat-grey" href="#">Risk Profile</a>');
+                $('#target-holder').html('<p>@Messages("view.dash.notargetfund")</p><a class="flat-grey" href="#">@Messages("view.dash.riskprofile")</a>');
             });
         }
 
@@ -344,7 +345,7 @@
                      * Update all the charts
                      **/
                     $('#fund-holder').highcharts().series[0].setData(assetClasses,true);
-                    fundTitleName.html('Net Worth');
+                    fundTitleName.html('@Messages("view.dash.fundtitle")');
                     fundTitleValue.html(runningTotal);
                     updateSummaryLabels();
                     updateHistoryGraph();
@@ -364,7 +365,7 @@
          * If there is no current fund the user must be provided with a link to create their fund
          **/
         if (assetClasses.length < 1) {
-            $('#fund-holder').html('<p>Add your fund to Sail to start tracking</p><a class="flat-grey" href="#">New Fund</a>');
+            $('#fund-holder').html('<p>@Messages("view.dash.nofund")</p><a class="flat-grey" href="#">@Messages("view.dash.newfund")</a>');
         }
         else {
             /**
@@ -379,7 +380,7 @@
                 },
                 title: {
                     useHTML: true,
-                    text: '<span id=\"fundTitleName\">Net Worth</span> <span id=\"fundTitleValue" class=\"currency\">' + runningTotal + '</span>'
+                    text: '<span id=\"fundTitleName\">@Messages("view.dash.fundtitle")</span> <span id=\"fundTitleValue" class=\"currency\">' + runningTotal + '</span>'
                 },
                 exporting: { enabled: false },
                 plotOptions: {
@@ -393,7 +394,7 @@
                     valuePrefix: '£'
                 },
                 series: [{
-                    name: 'Asset Classes',
+                    name: '@Messages("view.dash.assetclasses")',
                     data: assetClasses,
                     innerSize: '30%',
                     size: '80%',
@@ -413,7 +414,7 @@
                                     updateHistoryGraph(this);
                                 }
                                 else {
-                                    fundTitleName.html('Net Worth');
+                                    fundTitleName.html(dashboardM.fundTitle);
                                     fundTitleValue.html(runningTotal);
                                     updateSummaryLabels();
                                     updateHistoryGraph();

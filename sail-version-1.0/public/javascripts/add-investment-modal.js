@@ -108,8 +108,8 @@ $(function () {
         resetModals();
         var investment = $(this).closest('.menu-item').find('a')[0].innerHTML;
         currentInvestment = investment;
-        var titleMessage = '<h3>Add '+investment+'</h3>';
-        var description = '<p>Enter the ticker symbol below of the '+investment+' you would like to add</p>';
+        var titleMessage = '<h3>'+addInvestmentM.addTitle(investment)+'</h3>';
+        var description = '<p>'+addInvestmentM.addMessage(investment)+'</p>';
         queryInput.parent().removeAttr('style');
 
         autoPopupMessage.html(titleMessage+description);
@@ -120,8 +120,8 @@ $(function () {
     * Needed to carry across the current investment class
     **/
     $('.temp-investment').click(function () {
-        var titleMessage = '<h3>Add '+currentInvestment+'</h3>';
-        var description = '<p>Enter the name and current value of the '+currentInvestment+' you would like to add</p>';
+        var titleMessage = '<h3>'+addInvestmentM.addTitle(currentInvestment)+'</h3>';
+        var description = '<p>'+addInvestmentM.addManualMessage(currentInvestment)+'</p>';
         manualName.parent().parent().parent().show();
         addHideButtons.hide("fast");
         manualPopupMessage.html(titleMessage+description);
@@ -144,8 +144,8 @@ $(function () {
         resetModals();
         var investment = $(this).closest('.menu-item').find('a')[0].innerHTML;
         currentInvestment = investment;
-        var titleMessage = '<h3>Add '+currentInvestment+'</h3>';
-        var description = '<p>Enter the name and current value of the '+currentInvestment+' you would like to add</p>';
+        var titleMessage = '<h3>'+addInvestmentM.addTitle(currentInvestment)+'</h3>';
+        var description = '<p>'+addInvestmentM.addManualMessage(currentInvestment)+'</p>';
         manualName.parent().parent().parent().show();
         addHideButtons.hide("fast");
         manualPopupMessage.html(titleMessage+description);
@@ -173,7 +173,7 @@ $(function () {
             *  Block the UI until the Ajax request returns #
             */
             $.blockUI({ 
-                message: '<h1>Loading</h1>', 
+                message: '<h1>'+globalM.loading+'</h1>', 
                 timeout: 10000 
             }); 
             /**
@@ -182,7 +182,7 @@ $(function () {
             $.getJSON( tickerUrl, function( data ) { 
                 if (typeof data !== 'undefined' && data.length > 0) {
                     $.each(data, function() {
-                        if (currentInvestment!='Shares') {
+                        if (currentInvestment!=globalM.shares) {
                             if (this.type!='S') {
                                 resultOptions.append($("<option />").val(this.symbol+"~"+this.name).text(this.symbol+" ~ "+this.exch+" ~ "+this.name+" ~ "+this.typeDisp));    
                             }    
@@ -273,8 +273,8 @@ $(function () {
         menuCurrencyInputs.formatCurrency({symbol:'£'});
 
         currentInvestment = "";
-        var titleMessage = '<h3>Add Investment</h3>';
-        var description = '<p>Please choose an investment to add in the menu on the left</p>';
+        var titleMessage = '<h3>'+addInvestmentM.addDefaultTitle+'</h3>';
+        var description = '<p>'+addInvestmentM.addDefaultMessage+'</p>';
         manualName.parent().parent().parent().hide();
         queryInput.parent().hide();
         autoPopupMessage.html(titleMessage+description);

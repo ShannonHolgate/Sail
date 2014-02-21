@@ -15,7 +15,6 @@ import play.api.libs.json._
 import scala.collection.mutable.ListBuffer
 import scala.math.BigDecimal.RoundingMode
 import java.net.URLEncoder
-import play.Logger
 
 /**
  * GoogleFinance class to be mapped from the Json returned from the URL
@@ -148,8 +147,6 @@ trait Valuation {
     for (symbol <- symbols) {
       googleFinanceURL+= URLEncoder.encode(symbol, "UTF-8") + ","
     }
-
-    Logger.info(googleFinanceURL)
 
     /** Make a synchronous call to the Google finance URL and retrieve the Json String of results */
     val response = WS.url(googleFinanceURL).get()

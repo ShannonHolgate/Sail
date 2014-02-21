@@ -104,7 +104,7 @@ $(function () {
             *  Block the UI until the Ajax request returns #
             */
             $.blockUI({ 
-                message: '<h1>Loading</h1>', 
+                message: '<h1>'+globalM.loading+'</h1>', 
                 timeout: 10000 
             }); 
 
@@ -239,8 +239,8 @@ $(function () {
     * If no investments exist this should be displayed to the user
     */
     function showNoInvestmentsDiv(assetClass) {
-        var titleMessage = '<h3>Edit '+assetClass+' Value</h3>';
-        var description = '<p>You have no current '+assetClass+' investments, please use the menu on the left to add an asset</p>';
+        var titleMessage = '<h3>'+editInvestment.editTitle(assetClass)+'</h3>';
+        var description = '<p>'+editInvestment.noInvMessage(assetClass)+'</p>';
         removeMessage.html(titleMessage+description);
     }
 
@@ -248,8 +248,8 @@ $(function () {
     * Shows the update form and populates with the asset class
     */
     function showFormDetails(assetClass) {
-        var titleMessage = '<h3>Edit '+assetClass+' Value</h3>';
-        var description = '<p>Select the '+assetClass+' you would like to change the quantity or value of</p>';
+        var titleMessage = '<h3>'+editInvestment.editTitle(assetClass)+'</h3>';
+        var description = '<p>'+editInvestment.editMessage(assetClass)+'</p>';
         removeNameSelect.parent().parent().parent().removeAttr('style');
 
         removeMessage.html(titleMessage+description);
@@ -262,8 +262,8 @@ $(function () {
     function resetEditModal() {
         resetEditFields();  
         currentInvestment = "";
-        var titleMessage = '<h3>Edit Investment Value</h3>';
-        var description = '<p>Please choose an investment to edit in the menu on the left</p>';
+        var titleMessage = '<h3>'+editInvestment.editDefaultTitle+'</h3>';
+        var description = '<p>'+editInvestment.editDefaultMessage+'</p>';
 
         quantityHidden.hide();
         valueHidden.hide();

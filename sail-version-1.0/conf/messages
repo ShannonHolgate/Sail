@@ -93,6 +93,25 @@ view.reset.title=Reset Password
 view.reset.confirmlabel=Re-type Password
 view.reset.submit=Reset
 
+# Dashboard Page
+view.dash.pagetitle=Dashboard - Sail
+view.dash.title=Dashboard
+view.dash.historytitle=Asset Class History
+view.dash.targettitle=Target Fund
+view.dash.lowrisk=Low Risk
+view.dash.classselected=Asset Class Selected
+view.dash.classvalue=Value
+view.dash.classpercent=Percentage of Fund
+view.dash.fundtitle=Net Worth
+view.dash.historyaxis=value (£)
+view.dash.nohistory=Looks like you need to make history first
+view.dash.newfund=New Fund
+view.dash.targetfund=Target Fund
+view.dash.notargetfund=Why not find your risk appetite?
+view.dash.riskprofile=Risk Profile
+view.dash.nofund=Add your fund to Sail to start tracking
+view.dash.assetclasses=Asset Classes
+
 # Index Page
 view.index.dashboard=Dashboard
 view.index.shares=Shares
@@ -116,7 +135,7 @@ view.index.quantity=Quantity
 view.index.manual=manual investment
 view.index.noresultmessage=No Results found, please try again or add a 
 view.index.name=Name
-view.index.currenvalue=Current Value
+view.index.currentvalue=Current Value
 view.index.editinvestment=Edit Investment Value
 view.index.editinvestmentmessage=Please choose an investment to edit in the menu on the left
 view.index.newvalue=Value

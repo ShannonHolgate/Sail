@@ -17,3 +17,30 @@ var validationM = {
 	invalidCurrency:"Please enter a valid currency value",
 	valueRequired:"A value is required"
 }
+
+/**
+* The Global user messages
+**/
+var globalM = {
+	loading:"Loading",
+	shares:"Shares"
+}
+
+/**
+* The Add investment modal messages
+**/
+var addInvestmentM = {
+	addDefaultTitle: "Add Investment",
+	addDefaultMessage: "Please choose an investment to add in the menu on the left",
+	addTitle:function(assetClass) {return "Add " + assetClass},
+	addMessage:function(assetClass) {return "Enter the name or symbol below of the "+assetClass+" you would like to add"},
+	addManualMessage:function(assetClass) {return "Enter the name and current value of the "+assetClass+" you would like to add"},
+}
+
+var editInvestment = {
+	editTitle:function(assetClass) {return "Edit "+assetClass+" Value"},
+	editMessage:function(assetClass) {return "Select the "+assetClass+" you would like to change the quantity or value of"},
+	noInvMessage:function(assetClass) {return "You have no current "+assetClass+" investments, please use the menu on the left to add an asset"},
+	editDefaultTitle: "Edit Investment Value",
+	editDefaultMessage: "Please choose an investment to edit in the menu on the left"
+}
