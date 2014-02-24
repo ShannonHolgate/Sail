@@ -1,4 +1,4 @@
-@(name:String, symbolInvestments:List[(String,String,Int,BigDecimal)], assetClassValues: List[(String,BigDecimal)], runningTotal: BigDecimal, autoAddForm:Form[(String,Int,String)],manualAddForm:Form[(String,BigDecimal,String)],removeForm:Form[(String,Int,BigDecimal,Boolean,String)])(implicit request: play.api.mvc.Request[Any], flash: Flash)
+@(name:String, symbolInvestments:List[(String,String,Int,BigDecimal)], assetClassValues: List[(String,BigDecimal)], runningTotal: BigDecimal, autoAddForm:Form[(String,Int,String)],manualAddForm:Form[(String,BigDecimal,String)],removeForm:Form[(String,Option[Int],Option[BigDecimal],Boolean,String)])(implicit request: play.api.mvc.Request[Any], flash: Flash)
 @import play.api.Play
 @import play.api.Play.current
 

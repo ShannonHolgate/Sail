@@ -7,15 +7,15 @@
         <div class="menu-item">
             <a href="#">@Messages("view.index.shares")</a>
             <ul>
-                <li><a href="#auto-form" class="auto-pop">@Messages("view.index.buy")</a></li>
-                <li><a href="#remove-form" class="remove-pop">@Messages("view.index.sell")</a></li>
+                <li><a href="#auto-form" class="auto-pop">@Messages("view.index.add")</a></li>
+                <li><a href="#remove-form" class="remove-pop">@Messages("view.index.update")</a></li>
             </ul>
         </div>
         <div class="menu-item">
             <a href="#">@Messages("view.index.bonds")</a>
             <ul>
-                <li><a href="#auto-form" class="auto-pop">@Messages("view.index.buy")</a></li>
-                <li><a href="#remove-form" class="remove-pop">@Messages("view.index.sell")</a></li>
+                <li><a href="#auto-form" class="auto-pop">@Messages("view.index.add")</a></li>
+                <li><a href="#remove-form" class="remove-pop">@Messages("view.index.update")</a></li>
             </ul>
         </div>
         <div class="menu-item">
@@ -144,7 +144,7 @@
                 <div class="row">
                     <select id="remove-name-select" name="investment" class="span-6"></select>
                     <!-- quantity and value interchange their hidden attribute depending on the investment chosen -->
-                    <select id="remove-quantity-select" name="quantity" class="left span-3 quantity-hidden" style="display:none;"></select>
+                    <input type="text" id="remove-quantity-select" name="quantity" class="left span-3 quantity-hidden" style="display:none;">
                     <input type="text" id="remove-value-input" name="value" class="menu-currency left span-3 value-hidden" style="display:none;">
                     <input type="checkbox" id="remove-checkbox" name="removeall" class="right"  style="margin-right: 68px;">
                 </div>

@@ -72,6 +72,9 @@ $(function () {
       password: {
         required: true,
         minlength: 8
+      },
+      quantity: {
+        integer: true
       }
     },
     messages: {

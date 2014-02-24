@@ -45,8 +45,8 @@ object Dashboard extends Controller with Secured with Valuation{
   val removeForm = Form(
     tuple(
       "id" -> text,
-      "quantity" -> number,
-      "value" -> bigDecimal,
+      "quantity" -> optional(number),
+      "value" -> optional(bigDecimal),
       "removeall" -> boolean,
       "password" -> text
     )

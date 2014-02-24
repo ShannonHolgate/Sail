@@ -6,7 +6,6 @@ $(function () {
     //Global variables for the remove investment modal
     var removePopAnchors = $('.remove-pop');
     var removeNameSelect = $('#remove-name-select');
-    var removeQuantitySelect = $('#remove-quantity-select');
     var quantityHidden = $('.quantity-hidden');
     var quantitySelect = $('#remove-quantity-select');
     var valueHidden = $('.value-hidden');
@@ -161,8 +160,8 @@ $(function () {
     * If the name does not exist, populate the value input field
     */
     removeNameSelect.change(function() {
-        //Empty the quantity drop down
-        quantitySelect.empty();
+        //Empty the quantity input
+        quantitySelect.val('');
 
         //Get the id of the investment chosen
         var selectedValue = $("#remove-name-select option:selected").val();
@@ -170,13 +169,8 @@ $(function () {
         //Check if the id exists in the quantity array
         if (quantityArray.hasOwnProperty(selectedValue)) {
             if (quantityArray[selectedValue] != 0) {
-                for(i=1; i <= quantityArray[selectedValue]; i++){
-                    //Build up the drop down with values up to the quantity of the investment
-                    quantitySelect.append($("<option />").val(i).text(i)); 
-                }
-                //Set the current quantity as selected
-                $('#remove-quantity-select option').last().prop('selected',true);
-                //Show the quantity drop down and hide the value
+                quantitySelect.val(quantityArray[selectedValue]);
+                //Show the quantity field and hide the value
                 quantityHidden.show();
                 valueHidden.hide();
             }
@@ -287,7 +281,7 @@ $(function () {
         valueInput.val('');
         $('#password').val('')
         removeNameSelect.parent().parent().parent().hide();
-        quantitySelect.empty();
+        quantitySelect.val('');
         removeHideButtons.show();  
     }
 }); 
