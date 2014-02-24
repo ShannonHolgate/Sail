@@ -10,7 +10,7 @@ package Controllers
 
 import org.specs2.mutable.Specification
 import test_data.TestUser
-import play.api.test.{Helpers, FakeRequest, WithApplication}
+import play.api.test.{FakeHeaders, Helpers, FakeRequest, WithApplication}
 import play.api.test.Helpers._
 import play.api.libs.json.Json._
 
@@ -92,53 +92,6 @@ class InvestmentSpec extends Specification with TestUser with controllers.Secure
       contentType(result.run) must beSome("application/json")
       contentAsJson(result.run).\\("symbol").seq.size must be_>(0)
       contentAsString(result.run) must find("id.*name.*symbol.*quantity.*value")
-    }
-
-    "add an automated investment" in new WithApplication(currentApplication){
-      /** Ensure user exists */
-      removeTestUsers
-      confirmTestUserExists
-
-      /** The Json form object*/
-      val jsonObject = toJson(
-        Map(
-          "email" -> toJson(testUser.email),
-          "password" -> toJson(testUser.password)
-        )
-      )
-      val login= controllers.Login.authenticate()(FakeRequest().withJsonBody(jsonObject))
-
-      /** Store the cookies to pass onto the next request */
-      val sessionCookies = cookies(login).get("PLAY_SESSION").orNull
-
-      /** Get the JKS investment if it exists so we can remove it in prep of the test */
-      val jKSInvestment = models.Investment.getOneFromSymbol("JKS",models.User.findByEmail(testUser.email).get)
-
-      if (jKSInvestment.isDefined) {
-        /** Json to remove the test investment if it exists */
-        val jsonRemoveObject = toJson(
-          Map(
-            "id" -> toJson(jKSInvestment.get.id.toString),
-            "removeallbool" -> toJson(true),
-            "password" -> toJson(testUser.password)
-          )
-        )
-        val RemoveResult = controllers.Investment.remove()(FakeRequest().withCookies(sessionCookies).withJsonBody(jsonRemoveObject))
-      }
-
-      /** Json auto investment form */
-      val jsonAutoObject = toJson(
-        Map(
-          "investmentresults" -> toJson("JKS~JinkoSolar Holding Co., Ltd."),
-          "quantity" -> toJson(15),
-          "assetclass" -> toJson("Shares")
-        )
-      )
-
-      val result = controllers.Investment.addAuto()(FakeRequest().withCookies(sessionCookies).withJsonBody(jsonAutoObject))
-
-      status(result.run) must beEqualTo(SEE_OTHER)
-      Helpers.flash(result.run).data must haveKey(configValues.genericSuccess)
     }
   }
 

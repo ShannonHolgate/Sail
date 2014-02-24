@@ -14,6 +14,7 @@ import models.User
 import org.joda.time.{DateTime, Days}
 import play.api.Play.current
 import play.i18n.Messages
+import play.Logger
 
 /**
  * Landing route controller.

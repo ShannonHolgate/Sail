@@ -20,6 +20,7 @@ import play.api.libs.json.JsString
 import play.api.libs.json.JsNumber
 import org.bson.types.ObjectId
 import play.i18n.Messages
+import play.Logger
 
 /**
  *  Controller for the Investment Model
