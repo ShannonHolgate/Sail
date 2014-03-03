@@ -63,7 +63,7 @@ object InvestmentHistory extends ModelCompanion[InvestmentHistory, ObjectId] {
    * @param investments List[Investment] the list of investments to retrieve the histories for
    * @return            Option[List[InvestmentHistory] ] A list of investment histories for the investments, if any
    */
-  def getHistoryForInvestments(investments:List[Investment]) : Option[List[InvestmentHistory]] = {
+  def getHistoryForInvestments(investments:List[Investment], dateFrom:Option[Date] = None, dateTo:Option[Date] = None) : Option[List[InvestmentHistory]] = {
 
     /** Create an empty placeholder list to be filled with investment histories */
     var histories = List[InvestmentHistory]()
@@ -76,9 +76,57 @@ object InvestmentHistory extends ModelCompanion[InvestmentHistory, ObjectId] {
       if (!investmentHistories.isEmpty) histories = histories ++ investmentHistories.toList
     }
 
-    /** Return the list of histories */
-    if (histories.size.>(0)) Some(histories)
-    else None
+    /** If a date range is defined, find the histories in that range and create new histories at the boundaries **/
+    if (dateFrom.isDefined && dateTo.isDefined && histories.length.>(0)) {
+      /** Create a holder for the histories */
+      val historiesInRange = new ListBuffer[InvestmentHistory]()
+
+      /** Create a sorted array of investment histories to iterate over */
+      val sortedHistory = histories.sortBy(history => history.date)
+
+      /** Create a list of investments before the range to ensure the start date has the correct value */
+      val investmentsBeforeRange = histories.filter(history => LocalDate.fromDateFields(history.date).toDateTimeAtStartOfDay.isBefore(LocalDate.fromDateFields(dateFrom.get).toDateTimeAtStartOfDay)).map(history => history.investment).distinct
+
+      /** Ensure the investments that exist before the date exist on the first date by creating histories at the dateFrom */
+      investmentsBeforeRange.foreach(investmentId => {
+        /** If a history does not exist at the dateFrom for an existing id, create one */
+        if (!histories.exists(history => LocalDate.fromDateFields(history.date).toDateTimeAtStartOfDay.equals(LocalDate.fromDateFields(dateFrom.get).toDateTimeAtStartOfDay)
+           && history.investment == investmentId)) {
+          val investmentBeforeRange = sortedHistory.reverse.find(history => LocalDate.fromDateFields(history.date).toDateTimeAtStartOfDay.isBefore(LocalDate.fromDateFields(dateFrom.get).toDateTimeAtStartOfDay) && history.investment.equals(investmentId))
+          if (investmentBeforeRange.isDefined) {
+            historiesInRange.append(investmentBeforeRange.get.copy(date = dateFrom.get))
+          }
+        }
+      })
+
+      /** Filter the list of histories between the dates and append them onto the new date range list */
+      historiesInRange.appendAll(sortedHistory.filter(history => LocalDate.fromDateFields(history.date).toDateTimeAtStartOfDay.isBefore(LocalDate.fromDateFields(dateTo.get).plusDays(1).toDateTimeAtStartOfDay) &&
+        LocalDate.fromDateFields(history.date).isAfter(LocalDate.fromDateFields(dateFrom.get).toDateTimeAtStartOfDay.toLocalDate)))
+
+      /** Get each investment id in the range to ensure a history is available at the end date */
+      val investmentsInRange = historiesInRange.map(history => history.investment).distinct
+
+      /** Ensure a history exists at the last date for each investment */
+      investmentsInRange.foreach(investmentId => {
+        /** If a history does not exist at the dateTo for an existing id, create one */
+        if (!historiesInRange.exists(history => LocalDate.fromDateFields(history.date).toDateTimeAtStartOfDay.equals(LocalDate.fromDateFields(dateTo.get).toDateTimeAtStartOfDay)
+          && history.investment == investmentId)) {
+          val investmentinRange = historiesInRange.reverse.find(history => LocalDate.fromDateFields(history.date).toDateTimeAtStartOfDay.isBefore(LocalDate.fromDateFields(dateTo.get).toDateTimeAtStartOfDay) && history.investment.equals(investmentId))
+          if (investmentinRange.isDefined) {
+            historiesInRange.append(investmentinRange.get.copy(date = dateTo.get))
+          }
+        }
+      })
+
+      /** Return the list of histories in the range */
+      if (historiesInRange.length.>(0)) Some(historiesInRange.toList)
+      else None
+    }
+    else {
+      /** Return the list of histories */
+      if (histories.size.>(0)) Some(histories)
+      else None
+    }
   }
 
   /**
@@ -130,7 +178,7 @@ object InvestmentHistory extends ModelCompanion[InvestmentHistory, ObjectId] {
       /** Check if all Investments have been recorded for this date */
       if (investmentIds.length != investmentsRecorded.length) {
 
-        /** Find the ID's of theinvestments which have not been recorded yet */
+        /** Find the ID's of the investments which have not been recorded yet */
         val investmentsLeft = (investmentIds++investmentsRecorded).groupBy(id => id).filter(_._2.lengthCompare(1) == 0)
 
         /** Iterate over each investment left to find the most recent value */

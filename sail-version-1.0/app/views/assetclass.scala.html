@@ -1,0 +1,39 @@
+@(name:String, assetClass:String, pageTitle:String, autoAddForm:Form[(String,Int,String)],manualAddForm:Form[(String,BigDecimal,String)],removeForm:Form[(String,Option[Int],Option[BigDecimal],Boolean,String)])(implicit request: play.api.mvc.Request[Any], flash: Flash)
+@import play.api.Play
+@import play.api.Play.current
+
+@index(pageTitle,assetClass,name, {
+  // Add each possible error to a sequence
+  flash.get(Play.application.configuration.getString("generic.error").get) ::  
+  Nil
+},{
+  // Add each possible success to a sequence
+  flash.get(Play.application.configuration.getString("generic.success").get) ::
+  Nil
+}) {
+    <div class="span-12 dashboard">
+        <div class="row">
+            <!-- Holder for the Highchart asset class history -->
+            <div class="span-9 no-margin" id="class-holder">
+
+            </div>
+            <div class="span-3">
+                <div class="regular-payments">
+                    <!-- Holder for the Regular Payments-->
+                    <h5>@Messages("view.assetclass.regularpayments")</h5>
+                    <div id="history-holder">
+                        &nbsp;
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Recent Changes of the asset class -->
+        <div class="summary row">
+        </div>
+    </div>
+
+    <script src="http://code.highcharts.com/highcharts.js"></script>
+    <script src="http://code.highcharts.com/modules/exporting.js"></script>
+    <script type="text/javascript">
+    </script>
+}

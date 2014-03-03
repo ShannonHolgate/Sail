@@ -30,7 +30,7 @@ object InvestmentHistory extends Controller with Secured {
    * @return           Result Json result containing key value pairs for a time series. Conforms
    *                   to the Highcharts format to allow easy parsing.
    */
-  def getInvestmentHistoryForAssetClass(assetClass:String = "") = withUser {
+  def getInvestmentHistoryForAssetClass(assetClass:String = "", dateFrom:Option[Date] = None, dateTo:Option[Date] = None) = withUser {
     user => implicit request => {
 
       /** Create a list holder which will change based on the assetClass */
@@ -44,7 +44,7 @@ object InvestmentHistory extends Controller with Secured {
       if (investments.isDefined) {
 
         /** Get the histories for the investment list */
-        val histories = models.InvestmentHistory.getHistoryForInvestments(investments.get)
+        val histories = models.InvestmentHistory.getHistoryForInvestments(investments.get,dateFrom,dateTo)
 
         /** Ensure the histories list is defined before parsing it to a time series */
         if (histories.isDefined) {

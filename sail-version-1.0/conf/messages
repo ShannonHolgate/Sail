@@ -142,3 +142,7 @@ view.index.newvalue=Value
 view.index.newquantity=New Quantity
 view.index.removeall=Remove all
 
+# Asset Class Page
+view.assetclass.regularpayments=Regular Payments
+
+

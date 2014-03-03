@@ -25,7 +25,10 @@ POST        /register                               controllers.Register.registe
 # dashboard
 GET         /dash                                   controllers.Dashboard.index
 
-# Investment
+# asset class
+GET         /class/:assetClass                      controllers.AssetClass.index(assetClass)
+
+# investment
 POST        /addmanualinvestment                    controllers.Investment.addManual
 POST        /addautoinvestment                      controllers.Investment.addAuto
 POST        /removeinvestment                       controllers.Investment.remove
