@@ -3,41 +3,43 @@
 # ~~~~
 
 # Home page
-GET         /                                       controllers.Application.index
+GET         /                                                   controllers.Application.index
 
 # Map static resources from the /public folder to the /assets URL path
-GET         /assets/*file                           controllers.Assets.at(path="/public", file)
+GET         /assets/*file                                       controllers.Assets.at(path="/public", file)
 
 # login
-GET         /login                                  controllers.Login.index
-POST        /login                                  controllers.Login.authenticate()
-GET         /logout                                 controllers.Login.logout
+GET         /login                                              controllers.Login.index
+POST        /login                                              controllers.Login.authenticate()
+GET         /logout                                             controllers.Login.logout
 
 # reset password
-POST        /reset                                  controllers.Login.requestReset
-GET         /reset/:key                             controllers.Reset.index(key: String)
-POST        /reset/:key                             controllers.Reset.reset(key: String)
+POST        /reset                                              controllers.Login.requestReset
+GET         /reset/:key                                         controllers.Reset.index(key: String)
+POST        /reset/:key                                         controllers.Reset.reset(key: String)
 
 # register
-GET         /register                               controllers.Register.index
-POST        /register                               controllers.Register.register
+GET         /register                                           controllers.Register.index
+POST        /register                                           controllers.Register.register
 
 # dashboard
-GET         /dash                                   controllers.Dashboard.index
+GET         /dash                                               controllers.Dashboard.index
 
 # asset class
-GET         /class/:assetClass                      controllers.AssetClass.index(assetClass)
+GET         /class/:assetClass                                  controllers.AssetClass.index(assetClass)
 
 # investment
-POST        /addmanualinvestment                    controllers.Investment.addManual
-POST        /addautoinvestment                      controllers.Investment.addAuto
-POST        /removeinvestment                       controllers.Investment.remove
+POST        /addmanualinvestment                                controllers.Investment.addManual
+POST        /addautoinvestment                                  controllers.Investment.addAuto
+POST        /removeinvestment                                   controllers.Investment.remove
 
 # services
-GET         /service/realtimeinvestments            controllers.Investment.getAutomatedInvestmentValues
-GET         /service/timeseries                     controllers.InvestmentHistory.getInvestmentHistoryForAssetClass(asset = "")
-GET         /service/timeseries/:asset              controllers.InvestmentHistory.getInvestmentHistoryForAssetClass(asset)
-GET         /service/risk                           controllers.RiskFinder.getRisksForUser
-GET         /service/targetfund                     controllers.TargetFund.getTargetFund
-GET         /service/findsymbols/:query             controllers.Investment.getTickerSymbolService(query)
-GET         /service/investments/:assetClass        controllers.Investment.getInvestmentList(assetClass)
+GET         /service/realtimeinvestments                        controllers.Investment.getAutomatedInvestmentValues
+GET         /service/timeseries                                 controllers.InvestmentHistory.getInvestmentHistoryForAssetClass(asset = "")
+GET         /service/timeseries/:asset                          controllers.InvestmentHistory.getInvestmentHistoryForAssetClass(asset)
+GET         /service/risk                                       controllers.RiskFinder.getRisksForUser
+GET         /service/targetfund                                 controllers.TargetFund.getTargetFund
+GET         /service/findsymbols/:query                         controllers.Investment.getTickerSymbolService(query)
+GET         /service/investments/:assetClass                    controllers.Investment.getInvestmentList(assetClass)
+GET         /service/class/:assetClass/:dateFrom/:dateTo        controllers.AssetClass.getTimeSeriesForAssetClass(assetClass,assetId="",dateFrom,dateTo)
+GET         /service/class/:assetClass                          controllers.AssetClass.getTimeSeriesForAssetClass(assetClass,assetId="",dateFrom="",dateTo="")

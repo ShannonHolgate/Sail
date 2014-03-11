@@ -27,6 +27,7 @@ object ApplicationBuild extends Build {
   val main = play.Project(appName, appVersion, appDependencies).settings(
     /** Add the new dependencies to support the salat-Play plugin*/
     routesImport += "se.radley.plugin.salat.Binders._",
+    routesImport += "extensions.Binders._",
     templatesImport += "org.bson.types.ObjectId"
   )
 

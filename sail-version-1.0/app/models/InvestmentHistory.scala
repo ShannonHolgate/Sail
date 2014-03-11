@@ -94,14 +94,16 @@ object InvestmentHistory extends ModelCompanion[InvestmentHistory, ObjectId] {
            && history.investment == investmentId)) {
           val investmentBeforeRange = sortedHistory.reverse.find(history => LocalDate.fromDateFields(history.date).toDateTimeAtStartOfDay.isBefore(LocalDate.fromDateFields(dateFrom.get).toDateTimeAtStartOfDay) && history.investment.equals(investmentId))
           if (investmentBeforeRange.isDefined) {
-            historiesInRange.append(investmentBeforeRange.get.copy(date = dateFrom.get))
+            val newHistory = investmentBeforeRange.get.copy(id = new ObjectId,date = dateFrom.get)
+            if (this.create(newHistory))
+              historiesInRange.append(newHistory)
           }
         }
       })
 
       /** Filter the list of histories between the dates and append them onto the new date range list */
       historiesInRange.appendAll(sortedHistory.filter(history => LocalDate.fromDateFields(history.date).toDateTimeAtStartOfDay.isBefore(LocalDate.fromDateFields(dateTo.get).plusDays(1).toDateTimeAtStartOfDay) &&
-        LocalDate.fromDateFields(history.date).isAfter(LocalDate.fromDateFields(dateFrom.get).toDateTimeAtStartOfDay.toLocalDate)))
+        LocalDate.fromDateFields(history.date).toDateTimeAtStartOfDay.isAfter(LocalDate.fromDateFields(dateFrom.get).minusDays(1).toDateTimeAtStartOfDay)))
 
       /** Get each investment id in the range to ensure a history is available at the end date */
       val investmentsInRange = historiesInRange.map(history => history.investment).distinct
@@ -113,7 +115,9 @@ object InvestmentHistory extends ModelCompanion[InvestmentHistory, ObjectId] {
           && history.investment == investmentId)) {
           val investmentinRange = historiesInRange.reverse.find(history => LocalDate.fromDateFields(history.date).toDateTimeAtStartOfDay.isBefore(LocalDate.fromDateFields(dateTo.get).toDateTimeAtStartOfDay) && history.investment.equals(investmentId))
           if (investmentinRange.isDefined) {
-            historiesInRange.append(investmentinRange.get.copy(date = dateTo.get))
+            val newHistory = investmentinRange.get.copy(id = new ObjectId,date = dateTo.get)
+            if (this.create(newHistory))
+              historiesInRange.append(newHistory)
           }
         }
       })
@@ -268,7 +272,7 @@ object InvestmentHistory extends ModelCompanion[InvestmentHistory, ObjectId] {
     if (recordedHistory.isInstanceOf[InvestmentHistory]) {
 
       /** Update the InvestmentHistory for the Investment id in the database */
-      dao.save(recordedHistory.asInstanceOf[InvestmentHistory].copy(value = value))
+      dao.save(recordedHistory.asInstanceOf[InvestmentHistory].copy(value = value, quantity = quantity))
 
       /** Ensure the update was successful and return */
       val updatedHistory = getOne(recordedHistory.asInstanceOf[InvestmentHistory].id).getOrElse(false)
@@ -279,6 +283,22 @@ object InvestmentHistory extends ModelCompanion[InvestmentHistory, ObjectId] {
     }
     else
       recordedHistory.asInstanceOf[Boolean]
+  }
+
+  /**
+   * Update an Investment History in the DB
+   * Ensures the update has been successful
+   *
+   * @param investmentHistory InvestmentHistory the updated investment history to save
+   * @return                  Boolean whether the update was successful
+   */
+  def update(investmentHistory: InvestmentHistory): Boolean = {
+    /** Update the InvestmentHistory */
+    dao.save(investmentHistory)
+
+    /** Ensure the update was successful */
+    val history = getOne(investmentHistory.id)
+    history.isDefined && history.get.value.equals(investmentHistory.value)
   }
 
   /**
