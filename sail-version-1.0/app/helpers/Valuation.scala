@@ -335,9 +335,16 @@ trait Valuation {
           (__ \ "Close").format[BigDecimal]
         )(YqlHistoricalQuote.apply, unlift(YqlHistoricalQuote.unapply))
 
-      val historicalQuotes = Json.fromJson[List[YqlHistoricalQuote]](result.json \ "query" \ "results" \ "quote" )
+      var historicalQuotes = (result.json \ "query" \ "results" \ "quote" ).validate[List[YqlHistoricalQuote]].asOpt
+      if (historicalQuotes.isEmpty) {
+        val singleQuoteAttempt = (result.json \ "query" \ "results" \ "quote" ).validate[YqlHistoricalQuote].asOpt
+        if (singleQuoteAttempt.isDefined) {
+          historicalQuotes = Some(List[YqlHistoricalQuote](singleQuoteAttempt.get))
+        }
+      }
+        //Json.fromJson[List[YqlHistoricalQuote]](result.json \ "query" \ "results" \ "quote").
 
-      if (historicalQuotes.asOpt.isDefined && exchangeRate.isDefined) {
+      if (historicalQuotes.isDefined && exchangeRate.isDefined) {
         /** Convert the values to GBP */
         val finalHistoricalQuotes = historicalQuotes.get.map(quote => quote.copy(Close = quote.Close.*(exchangeRate.get.rate).setScale(2, RoundingMode.CEILING)))
 

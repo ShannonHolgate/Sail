@@ -150,7 +150,8 @@ div.dashboard h5 {
   line-height: 40px;
   text-align: center;
   font-size: 1.2em;
-  background-color: #fedcb2; }
+  background-color: #fedcb2;
+  overflow: hidden; }
 div.dashboard h5.risk {
   background-color: #f2eae1; }
 div.dashboard #fund-holder {
@@ -192,6 +193,17 @@ div.dashboard .summary p {
   margin-top: 5px;
   font-size: 1.5em;
   padding-top: 0; }
+div.dashboard div.individual-asset {
+  min-width: 800px; }
+  div.dashboard div.individual-asset select, div.dashboard div.individual-asset input {
+    float: none;
+    display: inline-block;
+    font-size: 12px; }
+  div.dashboard div.individual-asset input {
+    text-align: center;
+    border-style: solid;
+    border-width: thin;
+    border-color: #cfcfcf; }
 
 /* -------------------------------------
   Risk rating bar Styles

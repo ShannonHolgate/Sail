@@ -1,4 +1,4 @@
-@(name:String, assetClass:String, pageTitle:String, autoAddForm:Form[(String,Int,String)],manualAddForm:Form[(String,BigDecimal,String)],removeForm:Form[(String,Option[Int],Option[BigDecimal],Boolean,String)])(implicit request: play.api.mvc.Request[Any], flash: Flash)
+@(name:String, assetClass:String, pageTitle:String, investments:List[Investment], autoAddForm:Form[(String,Int,String)],manualAddForm:Form[(String,BigDecimal,String)],removeForm:Form[(String,Option[Int],Option[BigDecimal],Boolean,String)])(implicit request: play.api.mvc.Request[Any], flash: Flash)
 @import play.api.Play
 @import play.api.Play.current
 
@@ -14,7 +14,7 @@
     <div class="span-12 dashboard">
         <div class="row">
             <!-- Holder for the Highchart asset class history -->
-            <div class="span-9 no-margin" id="class-holder">
+            <div class="span-9 no-margin" id="fund-holder">
 
             </div>
             <div class="span-3">
@@ -28,7 +28,44 @@
             </div>
         </div>
         <!-- Recent Changes of the asset class -->
-        <div class="summary row">
+        <div class="span-9 no-margin summary individual-asset">
+            @helper.form(routes.Investment.addAuto, 'id -> "change-range-form", 'novalidate -> "novalidate") {
+                <div class="span-2">
+                    <div class="summary-value">
+                        <h5>@Messages("view.assetclass.investments")</h5>
+                        <p><select name="investment" id="investment-select" class="span-8">
+                            <option>All</option>
+                        </select></p>
+                    </div>
+                </div>
+                <div class="span-3">
+                    <div class="summary-value">
+                        <h5>@Messages("view.assetclass.from")</h5>
+                        <p><input name="date-from" id="investment-from" class="span-8">
+                        </input></p>
+                    </div>
+                </div>
+                <div class="span-3">
+                    <div class="summary-value">
+                        <h5>@Messages("view.assetclass.to")</h5>
+                        <p><input name="date-to" id="investment-to" class="span-8">
+                        </input></p>
+                    </div>
+                </div>
+                <div class="span-2">
+                    <div class="summary-value">
+                        <h5>@Messages("view.assetclass.all")</h5>
+                        <p><input type="checkbox" name="date-all" id="investment-full" class="span-8">
+                        </input></p>
+                    </div>
+                </div>
+                <div class="span-2">
+                    <div class="summary-value">
+                        <p>&nbsp;</p>
+                        <p><input type="button" value="Update Chart" class="flat-grey small-long" id="update-button"></input></p>
+                    </div>
+                </div>
+            }
         </div>
     </div>
 
@@ -36,11 +73,121 @@
     <script src="http://code.highcharts.com/modules/exporting.js"></script>
     <script type="text/javascript">
     $(document).ready(function(){
-        $.getJSON( "/service/class/Shares/2014-02-13/2014-02-20", function( data ) {
-          alert("Success")
+
+        /** 
+        * Global caching of elements
+        **/
+        var investmentSelect = $('#investment-select');
+
+        /**
+        * Create the Ajax URLs
+        **/
+        var investmentUrl = "http://@request.host/service/class/@assetClass";
+
+        /**
+        *  Block the UI until the Ajax request returns
+        */
+        $.blockUI({ 
+            message: '<h1>'+globalM.loading+'</h1>', 
+            timeout: 10000 
+        }); 
+
+        /**
+        * Create a select list of the investments in the asset class if available
+        **/
+        var investmentsForClass = [];
+
+        /**
+        * Create a list of dates to get the largest and smallest for the date pickers
+        * To be updated after each ajax request
+        * Also create the datepicker objects
+        **/
+        var dates = [];
+        var dateFromPicker = new Pikaday({ field: $('#investment-from')[0] });
+        var dateToPicker = new Pikaday({ field: $('#investment-to')[0] });
+
+        @for(investment <- investments) {
+            var investment = new Object();
+            investment.name = "@investment.name";
+            investment.id = "@investment.id";
+            investmentsForClass.push(investment);
+        }
+
+        $.each(investmentsForClass, function() {
+          investmentSelect.append($("<option />").val(this.id).text(this.name));               
+        }); 
+
+        /**
+         * Do the Ajax call to get the time series of histories
+         * Then create the Highcharts graph based on the data
+         **/
+        $.getJSON( investmentUrl, function( data ) {
+            $('#fund-holder').highcharts({
+                chart: {
+                    backgroundColor: '#f6f6f6',
+                    plotShadow: false
+                },
+                title: {
+                    useHTML: true,
+                    text: '<span id=\"fundTitleName\">@assetClass</span>'
+                },
+                legend: {
+                    enabled: false
+                },
+                xAxis: {
+                    labels: {
+                        enabled: false
+                    }
+                },
+                tooltip: {
+                    valuePrefix: '£'
+                },
+                yAxis: {
+                    title: {
+                        text: '@Messages("view.dash.historyaxis")'
+                    }
+                },
+                exporting: { enabled: false },
+                series: [{
+                    data: data,
+                    name: "@assetClass"
+                }]
+            });
+
+            /**
+            * Update the dates array and find the smallest and largest dates 
+            */
+            dates = [];
+            $.each( data, function() {
+              var parsedDate = parseDate(this.name)
+              if (parsedDate) dates.push(parsedDate)
+            });
+
+            if (dates.length > 0) {
+              var maxDate=new Date(Math.max.apply(null,dates));
+              var minDate=new Date(Math.min.apply(null,dates));
+
+              /**
+              * Update the date pickers
+              **/
+              dateFromPicker.setDate(minDate);
+              dateToPicker.setDate(maxDate);
+            }
+
+            $.unblockUI();
         }).fail( function(d, textStatus, error) {
-          alert("fail")
+            /**
+            * Upon failure, grab the bad request message and display it
+            **/
+            $('#fund-holder').html('<p>'+d.responseText+'</p>');
+            $.unblockUI();
         });
     });
+
+    /** Helper to parse dates formatted in dd-MM-yyyy */
+    function parseDate(stringDate) {
+      var parts = stringDate.split('-');
+      return new Date(parts[2], parts[1]-1, parts[0]);
+    }
     </script>
 }

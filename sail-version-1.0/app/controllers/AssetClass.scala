@@ -18,10 +18,11 @@ import java.util.Date
 import javax.security.auth.callback.LanguageCallback
 import org.joda.time.LocalDate
 import scala.collection.mutable.ListBuffer
-import java.text.SimpleDateFormat
+import java.text.{ParseException, SimpleDateFormat}
 import models.{Investment, InvestmentHistory}
 import play.Logger
 import play.api.libs.json.{JsNumber, JsString, Json, Writes}
+import play.i18n.Messages
 
 object AssetClass extends Controller with Secured with Valuation{
 
@@ -56,92 +57,190 @@ object AssetClass extends Controller with Secured with Valuation{
 
   def index(assetClass:String) = withUser{
     user => implicit request => {
-      /** Render the dashboard view, now that the data is ready for it */
-      Ok(html.assetclass(user.name,assetClass,"Sail - "+assetClass,addAutoForm,addManualForm,removeForm)).flashing(request.flash)
+      /** Get the investments in the asset class for the user */
+      val investments = models.Investment.getInvestmentForAssetClass(user.id,assetClass)
+      if (investments.isDefined) {
+        /** Render the dashboard view, now that the data is ready for it */
+        Ok(html.assetclass(user.name,assetClass,"Sail - "+assetClass,investments.get,addAutoForm,addManualForm,removeForm)).flashing(request.flash)
+      }
+      else {
+        Ok(html.assetclass(user.name,assetClass,"Sail - "+assetClass,List[models.Investment](),addAutoForm,addManualForm,removeForm)).flashing(configValues.genericError -> Messages.get("view.assetclass.noinvestments",assetClass))
+      }
     }
   }
 
   def getTimeSeriesForAssetClass(assetClass:String,assetId:String = "",dateFrom:String = "",dateTo:String = "") = withUser {
     user => implicit request => {
-      /** If an assetId is not provided, get all the assets histories between the dates given */
-      if (assetId.length == 0) {
-        /** Get a list of investments for the user and assetClass*/
-        val investments = models.Investment.getInvestmentForAssetClass(user.id,assetClass)
+      /** Wrap in a try catch to handle date parse errors */
+      try {
+        /** If an assetId is not provided, get all the assets histories between the dates given */
+        if (assetId.length == 0) {
+          /** Get a list of investments for the user and assetClass*/
+          val investments = models.Investment.getInvestmentForAssetClass(user.id,assetClass)
 
-        if (investments.isDefined) {
-          /** Get a list of investment Id's for the automated investments */
-          val automatedIds = investments.get.filter(_.symbol.isDefined).map(_.id).distinct
+          if (investments.isDefined) {
+            /** Get a list of investment Id's for the automated investments */
+            val automatedIds = investments.get.filter(_.symbol.isDefined).map(_.id).distinct
 
-          /** If a date range exists, filter the histories */
-          if (dateFrom.length.>(0) && dateTo.length.>(0)) {
+            /** If a date range exists, filter the histories */
+            if (dateFrom.length.>(0) && dateTo.length.>(0)) {
 
-            /** Parse the string dates */
-            val dateFromFmt = new SimpleDateFormat("yyyy-MM-dd").parse(dateFrom)
-            val dateToFmt = new SimpleDateFormat("yyyy-MM-dd").parse(dateTo)
+              /** Parse the string dates */
+              val dateFromFmt = new SimpleDateFormat("yyyy-MM-dd").parse(dateFrom)
+              val dateToFmt = new SimpleDateFormat("yyyy-MM-dd").parse(dateTo)
 
-            /** Get the investment histories between the dates given */
-            var histories = models.InvestmentHistory.getHistoryForInvestments(investments.get,Some(dateFromFmt),Some(dateToFmt))
+              /** Get the investment histories between the dates given */
+              var histories = models.InvestmentHistory.getHistoryForInvestments(investments.get,Some(dateFromFmt),Some(dateToFmt))
 
-            /** Get the automated investments at the dateFrom and dateTo to ensure their values are correctly quoted from yahoo finance */
-            if (histories.isDefined) {
-              /** Keep a temporary success flag to save extra processing on failure */
-              var updateSuccess = true
+              /** Get the automated investments at the dateFrom and dateTo to ensure their values are correctly quoted from yahoo finance */
+              if (histories.isDefined) {
+                /** Keep a temporary success flag to save extra processing on failure */
+                var updateSuccess = true
 
-              /** Get the automated investments and their accurate value at the date from */
-              val automatedInvestmentValuesFrom = automatedInvestmentLimitFinder(histories.get,automatedIds,investments.get,dateFromFmt)
-
-              /** Ensure the investment values at the limits are accurate by updating the investment histories in the database */
-              if (automatedInvestmentValuesFrom.isDefined) {
-                updateSuccess = updateHistoriesForAutomatedLimit(automatedInvestmentValuesFrom.get,investments.get,histories.get)
-              }
-
-              /** If the date from limit updates were successful, update the date to */
-              if (updateSuccess) {
-                /** Get the automated investments and their accurate value at the date to */
-                val automatedInvestmentValuesTo = automatedInvestmentLimitFinder(histories.get,automatedIds,investments.get,dateToFmt)
+                /** Get the automated investments and their accurate value at the date from */
+                val automatedInvestmentValuesFrom = automatedInvestmentLimitFinder(histories.get,automatedIds,investments.get,dateFromFmt)
 
                 /** Ensure the investment values at the limits are accurate by updating the investment histories in the database */
-                if (automatedInvestmentValuesTo.isDefined) {
-                  updateSuccess = updateHistoriesForAutomatedLimit(automatedInvestmentValuesTo.get,investments.get,histories.get)
+                if (automatedInvestmentValuesFrom.isDefined) {
+                  updateSuccess = updateHistoriesForAutomatedLimit(automatedInvestmentValuesFrom.get,investments.get,histories.get)
                 }
-              }
 
-              /** If all updates were successful do one final call to the investment history table to find the most accurate
-                * Investment values at the date range
-                */
-              if (updateSuccess) {
-                histories = models.InvestmentHistory.getHistoryForInvestments(investments.get,Some(dateFromFmt),Some(dateToFmt))
+                /** If the date from limit updates were successful, update the date to */
+                if (updateSuccess) {
+                  /** Get the automated investments and their accurate value at the date to */
+                  val automatedInvestmentValuesTo = automatedInvestmentLimitFinder(histories.get,automatedIds,investments.get,dateToFmt)
 
-                /** Finally create the time series for the histories */
-                if (histories.isDefined) {
-                  createTimeSeriesAsJson(histories.get)
+                  /** Ensure the investment values at the limits are accurate by updating the investment histories in the database */
+                  if (automatedInvestmentValuesTo.isDefined) {
+                    updateSuccess = updateHistoriesForAutomatedLimit(automatedInvestmentValuesTo.get,investments.get,histories.get)
+                  }
                 }
-                /** No histories were found on the second run, unlikely to happen unless the DB fails */
-                else BadRequest("Database failure, please try again")
+
+                /** If all updates were successful do one final call to the investment history table to find the most accurate
+                  * Investment values at the date range
+                  */
+                if (updateSuccess) {
+                  histories = models.InvestmentHistory.getHistoryForInvestments(investments.get,Some(dateFromFmt),Some(dateToFmt))
+
+                  /** Finally create the time series for the histories */
+                  if (histories.isDefined) {
+                    createTimeSeriesAsJson(histories.get)
+                  }
+                  /** No histories were found on the second run, unlikely to happen unless the DB fails */
+                  else BadRequest("Database failure, please try again")
+                }
+                /** Updating the date limit failed where it should have worked, update the user and bail out */
+                else BadRequest("Could not get an accurate value for some of your investments!")
               }
-              /** Updating the date limit failed where it should have worked, update the user and bail out */
-              else BadRequest("Could not get an accurate value for some of your investments!")
+              /** No histories exist in the date range, user must have no investments on or before the range */
+              else BadRequest("You have no investments in this date range!")
             }
-            /** No histories exist in the date range, user must have no investments on or before the range */
-            else BadRequest("You have no investments in this date range!")
-          }
-          /** A date range does not exist, return a full time series for the investments */
-          else {
-            /** Get the investment histories between the dates given */
-            val histories = models.InvestmentHistory.getHistoryForInvestments(investments.get,None,None)
-            /** Finally create the time series for the histories */
-            if (histories.isDefined) {
-              createTimeSeriesAsJson(histories.get)
+            /** A date range does not exist, return a full time series for the investments */
+            else {
+              /** Get the investment histories between the dates given */
+              val histories = models.InvestmentHistory.getHistoryForInvestments(investments.get,None,None)
+              /** Finally create the time series for the histories */
+              if (histories.isDefined) {
+                createTimeSeriesAsJson(histories.get)
+              }
+              /** No histories were found, Will not happen unless DB fails mid flight*/
+              else  BadRequest("Database failure, please try again")
             }
-            /** No histories were found, Will not happen unless DB fails mid flight*/
-            else  BadRequest("Database failure, please try again")
           }
+          /** No investments were found, user should add */
+          else BadRequest("You have no investments, add new investments using the menu on the left")
         }
-        /** No investments were found, user should add */
-        else BadRequest("You have no investments, add new investments using the menu on the left")
+
+        /**
+         * An Asset ID exists so this is a single investment we are looking for
+         */
+        else {
+          /** Get the investment for the investment id*/
+          val investment = models.Investment.getOne(new ObjectId(assetId))
+
+          if (investment.isDefined) {
+
+            /** If a date range exists, filter the histories */
+            if (dateFrom.length.>(0) && dateTo.length.>(0)) {
+
+              /** Parse the string dates */
+              val dateFromFmt = new SimpleDateFormat("yyyy-MM-dd").parse(dateFrom)
+              val dateToFmt = new SimpleDateFormat("yyyy-MM-dd").parse(dateTo)
+
+              /** Get the investment histories between the dates given */
+              var histories = models.InvestmentHistory.getHistoryForInvestments(List[Investment](investment.get),Some(dateFromFmt),Some(dateToFmt))
+
+              /** Get the automated investments at the dateFrom and dateTo to ensure their values are correctly quoted from yahoo finance */
+              if (histories.isDefined) {
+                /** Keep a temporary success flag to save extra processing on failure */
+                var updateSuccess = true
+
+                /** Only update the limits if this is an automated investment */
+                if (investment.get.symbol.isDefined) {
+                  /** Get the automated investments and their accurate value at the date from */
+                  val automatedInvestmentValuesFrom = automatedInvestmentLimitFinder(histories.get,
+                    List[ObjectId](investment.get.id),
+                    List[Investment](investment.get),
+                    dateFromFmt)
+
+                  /** Ensure the investment values at the limits are accurate by updating the investment histories in the database */
+                  if (automatedInvestmentValuesFrom.isDefined) {
+                    updateSuccess = updateHistoriesForAutomatedLimit(automatedInvestmentValuesFrom.get,List[Investment](investment.get),histories.get)
+                  }
+
+                  /** If the date from limit updates were successful, update the date to */
+                  if (updateSuccess) {
+                    /** Get the automated investments and their accurate value at the date to */
+                    val automatedInvestmentValuesTo = automatedInvestmentLimitFinder(histories.get,
+                      List[ObjectId](investment.get.id),
+                      List[Investment](investment.get),
+                      dateToFmt)
+
+                    /** Ensure the investment values at the limits are accurate by updating the investment histories in the database */
+                    if (automatedInvestmentValuesTo.isDefined) {
+                      updateSuccess = updateHistoriesForAutomatedLimit(automatedInvestmentValuesTo.get,List[Investment](investment.get),histories.get)
+                    }
+                  }
+                }
+                /** If all updates were successful do one final call to the investment history table to find the most accurate
+                  * Investment values at the date range
+                  */
+                if (updateSuccess) {
+                  histories = models.InvestmentHistory.getHistoryForInvestments(List[Investment](investment.get),Some(dateFromFmt),Some(dateToFmt))
+
+                  /** Finally create the time series for the histories */
+                  if (histories.isDefined) {
+                    createTimeSeriesAsJson(histories.get)
+                  }
+                  /** No histories were found on the second run, unlikely to happen unless the DB fails */
+                  else BadRequest("Database failure, please try again")
+                }
+                /** Updating the date limit failed where it should have worked, update the user and bail out */
+                else BadRequest("Could not get an accurate value for this investment!")
+              }
+              /** No histories exist in the date range, user must have no investments on or before the range */
+              else BadRequest("This investment does not exist in this date range!")
+            }
+            /** A date range does not exist, return a full time series for the investments */
+            else {
+              /** Get the investment histories between the dates given */
+              val histories = models.InvestmentHistory.getHistoryForInvestments(List[Investment](investment.get),None,None)
+              /** Finally create the time series for the histories */
+              if (histories.isDefined) {
+                createTimeSeriesAsJson(histories.get)
+              }
+              /** No histories were found, Will not happen unless DB fails mid flight*/
+              else  BadRequest("Database failure, please try again")
+            }
+          }
+          /** No investments were found, user should add */
+          else BadRequest("This investment does not exist!")
+        }
       }
-      // TODO Single investment time!
-      else BadRequest("Single Investment")
+      catch {
+        case pe: ParseException => BadRequest("Please correct the URL: " + pe.getMessage)
+        case e: Exception => BadRequest("Service request failed: " + e.getMessage)
+      }
     }
   }
 

@@ -24,6 +24,7 @@ div.dashboard {
 		text-align: center;
 		font-size: 1.2em;
 		background-color: $plot-title-orange;
+		overflow: hidden;
 	}
 	h5.risk {
 		background-color: $plot-orange;	
@@ -91,6 +92,23 @@ div.dashboard {
 			margin-top: 5px;
 			font-size: 1.5em;
 			padding-top:0;
+		}
+	}
+
+	div.individual-asset {
+		min-width: 800px;
+
+		select, input {
+			float:none;
+			display:inline-block;
+			font-size: $font-base-size;
+		}
+
+		input {
+			text-align: center;
+			border-style: solid;
+			border-width: thin;
+			border-color: $lighter-grey;
 		}
 	}
 }

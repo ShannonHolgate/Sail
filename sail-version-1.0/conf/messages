@@ -144,5 +144,9 @@ view.index.removeall=Remove all
 
 # Asset Class Page
 view.assetclass.regularpayments=Regular Payments
-
+view.assetclass.noinvestments=No Investments exist for {0}. Please add an investments first
+view.assetclass.investments=Investment
+view.assetclass.from=From
+view.assetclass.to=To
+view.assetclass.all=Complete History?
 
