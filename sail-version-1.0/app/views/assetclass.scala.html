@@ -34,7 +34,7 @@
                     <div class="summary-value">
                         <h5>@Messages("view.assetclass.investments")</h5>
                         <p><select name="investment" id="investment-select" class="span-8">
-                            <option>All</option>
+                            <option value="">All</option>
                         </select></p>
                     </div>
                 </div>
@@ -78,6 +78,7 @@
         * Global caching of elements
         **/
         var investmentSelect = $('#investment-select');
+        var fullRangeCheckbox = $('#investment-full');
 
         /**
         * Create the Ajax URLs
@@ -103,8 +104,7 @@
         * Also create the datepicker objects
         **/
         var dates = [];
-        var dateFromPicker = new Pikaday({ field: $('#investment-from')[0] });
-        var dateToPicker = new Pikaday({ field: $('#investment-to')[0] });
+        var dateFromPicker, dateToPicker; 
 
         @for(investment <- investments) {
             var investment = new Object();
@@ -170,6 +170,8 @@
               /**
               * Update the date pickers
               **/
+              dateFromPicker = new Pikaday({ field: $('#investment-from')[0], minDate: minDate, maxDate: maxDate });
+              dateToPicker = new Pikaday({ field: $('#investment-to')[0], minDate: minDate, maxDate: maxDate });
               dateFromPicker.setDate(minDate);
               dateToPicker.setDate(maxDate);
             }
@@ -181,6 +183,29 @@
             **/
             $('#fund-holder').html('<p>'+d.responseText+'</p>');
             $.unblockUI();
+        });
+
+        /**
+        * Add a change listener to the full date range check box to disable the date range fields
+        */
+        fullRangeCheckbox.change(function() {
+            if (document.getElementById('investment-full').checked) {
+                document.getElementById('investment-from').disabled = true;  
+                document.getElementById('investment-to').disabled = true;
+            }
+            else {
+                document.getElementById('investment-from').disabled = false;   
+                document.getElementById('investment-to').disabled = false;
+            }
+        });
+
+        /**
+        * Add the submit handler for the update chart button
+        * This uses an Ajax request and updates the central chart upon return
+        **/
+        $('#update-button').click(function() {
+            var selectedInvestmentId = investmentSelect.val();
+            // TODO Get all the values for the json request
         });
     });
 
