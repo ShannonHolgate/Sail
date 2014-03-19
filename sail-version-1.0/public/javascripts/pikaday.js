@@ -778,8 +778,8 @@
 
             if (typeof field.getBoundingClientRect === 'function') {
                 clientRect = field.getBoundingClientRect();
-                left = clientRect.left + window.pageXOffset;
-                top = clientRect.bottom + window.pageYOffset;
+                left = clientRect.left + window.pageXOffset - document.getElementsByClassName('content')[0].getBoundingClientRect().left;
+                top = clientRect.bottom + window.pageYOffset - document.getElementsByClassName('content')[0].getBoundingClientRect().top;
             } else {
                 left = pEl.offsetLeft;
                 top  = pEl.offsetTop + pEl.offsetHeight;
