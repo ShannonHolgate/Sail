@@ -12,10 +12,12 @@ var validationM = {
 	passwordMustMatch:"Both passwords must match",
 
 	quantityRequired:"A quantity is required",
+	dateRequired:"A date is required",
 
 	invalidInteger:"Please enter a valid integer number",
 	invalidCurrency:"Please enter a valid currency value",
-	valueRequired:"A value is required"
+	valueRequired:"A value is required",
+	invalidDate:"Date must be in the format DD-MM-YYYY"
 }
 
 /**

@@ -23,6 +23,7 @@ import models.{Investment, InvestmentHistory}
 import play.Logger
 import play.api.libs.json.{JsNumber, JsString, Json, Writes}
 import play.i18n.Messages
+import scala.math.BigDecimal.RoundingMode
 
 object AssetClass extends Controller with Secured with Valuation{
 
@@ -236,6 +237,73 @@ object AssetClass extends Controller with Secured with Valuation{
           /** No investments were found, user should add */
           else BadRequest("This investment does not exist!")
         }
+      }
+      catch {
+        case pe: ParseException => BadRequest("Please correct the URL: " + pe.getMessage)
+        case e: Exception => BadRequest("Service request failed: " + e.getMessage)
+      }
+    }
+  }
+
+  /**
+   * Web Service to get a formatted list of investment histories for a given date
+   * Uses the Investment history model to get all histories from MongoDB at the date then gets the
+   * corresponding Investment objects to retrieve the name from.
+   * Finally creates a Json string and returns it in the response.
+   *
+   * @param assetClass  String asset class of from which the histories should be retrieved
+   * @param assetId     String the individual investemnt ID if the results need to be filtered
+   * @param onDate        String the string date to be parsed in the format "dd-MM-yyyy"
+   * @return            Result carrying the Json string representation of the histories at the date
+   */
+  def getValuesAtDate(assetClass:String,assetId:String = "",onDate:String) = withUser {
+    user => implicit request => {
+      /** Wrap in a try catch to handle date parse errors */
+      try {
+        /** Parse the string date */
+        val date = new SimpleDateFormat("dd-MM-yyyy").parse(onDate)
+        /** Get all the investments in the asset class to gather the histories */
+        val investments = models.Investment.getInvestmentForAssetClass(user.id, assetClass)
+        if (investments.isDefined) {
+          var historiesAtDate = models.InvestmentHistory.getAtDate(date, Some(investments.get.map(_.id).toList))
+
+          /** Create a list buffer to hold the details we will use to parse the histories */
+          val formattedHistories = ListBuffer[(String,BigDecimal,Int)]()
+          if (historiesAtDate.isDefined) {
+            /** If an assetId is provided, only get the histories for it */
+            if (assetId.length > 0 && historiesAtDate.get.exists(_.investment.equals(new ObjectId(assetId)))) {
+              historiesAtDate = Some(historiesAtDate.get.filter(_.investment.equals(new ObjectId(assetId))))
+            }
+
+            historiesAtDate.get.foreach(history => {
+              /** Get the investment name for the history */
+              val investment = models.Investment.getOne(history.investment)
+
+              /** Create a new list entry for the investment at the date */
+              if (investment.isDefined) {
+                formattedHistories.append((investment.get.name,
+                  history.value.setScale(2, RoundingMode.CEILING),
+                  history.quantity.getOrElse(0)))
+              }
+            })
+
+            /** The Json parser which writes the history at date object to Json strings */
+            implicit val historyAtDateWrites = new Writes[(String,BigDecimal,Int)] {
+              def writes(historyAtDate: (String,BigDecimal,Int)) = {
+                Json.obj(
+                  "name" -> JsString(historyAtDate._1),
+                  "value" -> JsNumber(historyAtDate._2),
+                  "quantity" -> JsNumber(historyAtDate._3)
+                )
+              }
+            }
+
+            /** Return the Json result */
+            Ok(Json.toJson(formattedHistories.toList))
+          }
+          else BadRequest("Please add an investment for this asset class")
+        }
+        else  BadRequest("There are no investment values recorded at this date")
       }
       catch {
         case pe: ParseException => BadRequest("Please correct the URL: " + pe.getMessage)

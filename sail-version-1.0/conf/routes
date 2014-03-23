@@ -45,3 +45,5 @@ GET         /service/class/:assetClass/:dateFrom/:dateTo        controllers.Asse
 GET         /service/class/:assetClass                          controllers.AssetClass.getTimeSeriesForAssetClass(assetClass,assetId="",dateFrom="",dateTo="")
 GET         /service/class/:assetClass/:assetId/:dateFrom/:dateTo        controllers.AssetClass.getTimeSeriesForAssetClass(assetClass,assetId,dateFrom,dateTo)
 GET         /service/class/:assetClass/:assetId                          controllers.AssetClass.getTimeSeriesForAssetClass(assetClass,assetId,dateFrom="",dateTo="")
+GET         /service/onedate/:assetClass/:onDate     		 	controllers.AssetClass.getValuesAtDate(assetClass,assetId="",onDate)
+GET         /service/onedate/:assetClass/:assetId/:onDate 		controllers.AssetClass.getValuesAtDate(assetClass,assetId,onDate)

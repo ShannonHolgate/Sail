@@ -326,4 +326,61 @@ object InvestmentHistory extends ModelCompanion[InvestmentHistory, ObjectId] {
     /** The history does not exist */
     else false
   }
+
+  /**
+   * Finds a list of investment histories at the date passed in
+   *
+   * @param date            Date the simple date object to be used in the Mongo query
+   * @param investmentIds   Option[List[ObjectId]] The optional list of investment ids relating to the asset class
+   * @return                Option[List[InvestmentHistory]] The list of histories to return, if any
+   */
+  def getAtDate(date: Date, investmentIds:Option[List[ObjectId]]): Option[List[InvestmentHistory]] = {
+    /** Find the start of the day and the end of the day to provide a date range */
+    val thisMorning = LocalDate.fromDateFields(date).toDateTimeAtStartOfDay.toDate()
+    val midnight = LocalDate.fromDateFields(date).plusDays(1).toDateTimeAtStartOfDay().toDate()
+
+    /** Get all the investment histories for the date passed in */
+    if (investmentIds.isDefined) {
+      val histories = dao.find(MongoDBObject("date" -> MongoDBObject("$gte" -> thisMorning, "$lt" -> midnight),
+        "investment" -> MongoDBObject("$in" -> investmentIds.get))).toList
+      /** Create a temporary array to hold the id's of investments found at the date */
+      var investmentsAtDate = investmentIds.get.toList
+
+      histories.foreach(history => {
+        investmentsAtDate = investmentsAtDate.filterNot(invId => invId == history.investment)
+      })
+
+      /** Now we have a list of investment which we could not find an investment value for on the date
+        * We will need these values for the date from the most recent value on the db
+        */
+      if (investmentsAtDate.length.>(0)) {
+        val historiesBeforeDate = dao.find(MongoDBObject("date" -> MongoDBObject("$lt" -> thisMorning),
+          "investment" -> MongoDBObject("$in" -> investmentsAtDate))).toList.sortBy(history => history.date)
+
+        /** Create a list of the most recent values for each of the histories */
+        val mostRecentHistories = ListBuffer[InvestmentHistory]()
+        investmentsAtDate.foreach(investment => {
+          if (historiesBeforeDate.exists(_.investment == investment)) {
+            mostRecentHistories.append(historiesBeforeDate.reverse.find(_.investment == investment).get)
+          }
+        })
+
+        if (mostRecentHistories.length.>(0))
+          Some(histories ++ mostRecentHistories.toList)
+        else if (histories.length.>(0))
+          Some(histories)
+        else
+          None
+      }
+      else {
+        if (histories.length > 0) Some(histories)
+        else None
+      }
+    }
+    else {
+      val histories = dao.find(MongoDBObject("date" -> MongoDBObject("$gte" -> thisMorning, "$lt" -> midnight))).toList
+      if (histories.length > 0) Some(histories)
+      else None
+    }
+  }
 }

@@ -41,6 +41,32 @@ div.dashboard {
 		width: 100%;
 	}
 
+	.date-table-foot {
+		display: inline-block;
+		height: 23px;
+		width: 70%;
+		margin-right: 18px;
+	}
+
+	#date-holder {
+		height: 330px;
+		overflow-y: scroll;
+		overflow-x: visible;
+	}
+
+	table {
+		display: table;
+
+		th {
+			font-size: 1.1em;
+			line-height: 23px;
+		}
+
+		td, th {
+			text-align: center;
+		}
+	}
+
 	.other-chart {
 		background-color: $plot-orange;
 	}
@@ -109,6 +135,14 @@ div.dashboard {
 			border-style: solid;
 			border-width: thin;
 			border-color: $lighter-grey;
+		}
+
+		input.error {
+			border: 2px solid red;
+		}
+
+		label.error {
+			text-align: center;
 		}
 	}
 }

@@ -3,10 +3,11 @@
     <!-- The Navigation bar -->
     <nav class="nav-bar" id="nav-bar">
         <h3 id="showLeft">@Messages("view.sail")</h3>
-        <a href="#">@Messages("view.index.dashboard")</a>
+        <a href="/dash">@Messages("view.index.dashboard")</a>
         <div class="menu-item">
             <a href="#">@Messages("view.index.shares")</a>
             <ul>
+                <li><a href="/class/Shares">View</a></li>
                 <li><a href="#auto-form" class="auto-pop">@Messages("view.index.add")</a></li>
                 <li><a href="#remove-form" class="remove-pop">@Messages("view.index.update")</a></li>
             </ul>
@@ -14,6 +15,7 @@
         <div class="menu-item">
             <a href="#">@Messages("view.index.bonds")</a>
             <ul>
+                <li><a href="/class/Bonds">View</a></li>
                 <li><a href="#auto-form" class="auto-pop">@Messages("view.index.add")</a></li>
                 <li><a href="#remove-form" class="remove-pop">@Messages("view.index.update")</a></li>
             </ul>
@@ -21,6 +23,7 @@
         <div class="menu-item">
             <a href="#">@Messages("view.index.bank")</a>
             <ul>
+                <li><a href="/class/Bank Accounts">View</a></li>
                 <li><a href="#manual-form" class="manual-pop">@Messages("view.index.add")</a></li>
                 <li><a href="#remove-form" class="remove-pop">@Messages("view.index.update")</a></li>
             </ul>
@@ -28,6 +31,7 @@
         <div class="menu-item">
             <a href="#">@Messages("view.index.commodities")</a>
             <ul>
+                <li><a href="/class/Commodities">View</a></li>
                 <li><a href="#manual-form" class="manual-pop">@Messages("view.index.add")</a></li>
                 <li><a href="#remove-form" class="remove-pop">@Messages("view.index.update")</a></li>
             </ul>
@@ -35,6 +39,7 @@
         <div class="menu-item">
             <a href="#">@Messages("view.index.collectibles")</a>
             <ul>
+                <li><a href="/class/Collectibles">View</a></li>
                 <li><a href="#manual-form" class="manual-pop">@Messages("view.index.add")</a></li>
                 <li><a href="#remove-form" class="remove-pop">@Messages("view.index.update")</a></li>
             </ul>
@@ -42,6 +47,7 @@
         <div class="menu-item">
             <a href="#">@Messages("view.index.property")</a>
             <ul>
+                <li><a href="/class/Property">View</a></li>
                 <li><a href="#manual-form" class="manual-pop">@Messages("view.index.add")</a></li>
                 <li><a href="#remove-form" class="remove-pop">@Messages("view.index.update")</a></li>
             </ul>
@@ -174,6 +180,15 @@
             menuCurrencyInputs.formatCurrency({symbol:'£'});
         }).blur(function() {
             menuCurrencyInputs.formatCurrency({symbol:'£'});
+        });
+
+        $(document).ready(function() {
+          $(window).keydown(function(event){
+            if(event.keyCode == 13) {
+              event.preventDefault();
+              return false;
+            }
+          });
         });
     </script>
     <!-- Include the javascript to handle the modal popups -->

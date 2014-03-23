@@ -18,11 +18,23 @@
 
             </div>
             <div class="span-3">
-                <div class="regular-payments">
-                    <!-- Holder for the Regular Payments-->
-                    <h5>@Messages("view.assetclass.regularpayments")</h5>
-                    <div id="history-holder">
+                <div class="date-history">
+                    <!-- Holder for the value breakdown at a date-->
+                    <h5 id="date-title">&nbsp;</h5>
+                    <div id="date-holder">
+                        <table class="span-12" id="date-table">
+                            <tr>
+                                <th>Name</th><th>Quantity</th><th>Value</th>
+                            </tr>
+                        </table>
                         &nbsp;
+                    </div>
+                    <div class="date-table-foot right">
+                        <table class="span-12">
+                            <tr>
+                                <th></th><th>Total Value:</th><th id="total-value" class="currency"></th>
+                            </tr>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -41,21 +53,21 @@
                 <div class="span-3">
                     <div class="summary-value">
                         <h5>@Messages("view.assetclass.from")</h5>
-                        <p><input name="date-from" id="investment-from" class="span-8">
+                        <p><input name="datefrom" id="investment-from" class="span-8">
                         </input></p>
                     </div>
                 </div>
                 <div class="span-3">
                     <div class="summary-value">
                         <h5>@Messages("view.assetclass.to")</h5>
-                        <p><input name="date-to" id="investment-to" class="span-8">
+                        <p><input name="dateto" id="investment-to" class="span-8">
                         </input></p>
                     </div>
                 </div>
                 <div class="span-2">
                     <div class="summary-value">
                         <h5>@Messages("view.assetclass.all")</h5>
-                        <p><input type="checkbox" name="date-all" id="investment-full" class="span-8">
+                        <p><input type="checkbox" name="dateall" id="investment-full" class="span-8">
                         </input></p>
                     </div>
                 </div>
@@ -75,7 +87,14 @@
     <script src="@routes.Assets.at("javascripts/pikaday.js")" type="text/javascript"></script>
     <script src="@routes.Assets.at("javascripts/pikaday.jquery.js")" type="text/javascript"></script>
     <script type="text/javascript">
-    var dateFromPicker, dateToPicker; 
+    var dateFromPicker, dateToPicker, selectedInvestmentId; 
+
+    /**
+    * Create the Ajax URLs
+    **/
+    var investmentUrl = "http://@request.host/service/class/@assetClass";
+    var historyAtDateUrl = "http://@request.host/service/onedate/@assetClass";
+
     $(document).ready(function(){
 
         /** 
@@ -83,11 +102,6 @@
         **/
         var investmentSelect = $('#investment-select');
         var fullRangeCheckbox = $('#investment-full');
-
-        /**
-        * Create the Ajax URLs
-        **/
-        var investmentUrl = "http://@request.host/service/class/@assetClass";
 
         /**
         *  Block the UI until the Ajax request returns
@@ -153,7 +167,14 @@
                 exporting: { enabled: false },
                 series: [{
                     data: data,
-                    name: "@assetClass"
+                    name: "@assetClass",
+                    point:{
+                        events:{
+                            click: function (event) {
+                                updateDateBreakdown(this.name)
+                            }
+                        }
+                    }
                 }]
             });
 
@@ -177,6 +198,9 @@
               dateToPicker = new Pikaday({ field: $('#investment-to')[0], minDate: minDate, maxDate: maxDate, format: 'DD-MM-YYYY' });
               dateFromPicker.setDate(minDate);
               dateToPicker.setDate(maxDate);
+
+                /** Update the date table*/
+                updateDateBreakdown(dateToPicker.toString("DD-MM-YYYY"));
             }
 
             $.unblockUI();
@@ -195,11 +219,19 @@
             if (document.getElementById('investment-full').checked) {
                 document.getElementById('investment-from').disabled = true;  
                 document.getElementById('investment-to').disabled = true;
+                $('#investment-from').addClass("ignore");
+                $('#investment-from').removeClass("error");
+                $('#investment-to').addClass("ignore");
+                $('#investment-to').removeClass("error");
             }
             else {
                 document.getElementById('investment-from').disabled = false;   
                 document.getElementById('investment-to').disabled = false;
+                $('#investment-from').removeClass("ignore");
+                $('#investment-to').removeClass("ignore");
             }
+            $('#change-range-form').validate().resetForm();
+            $('#change-range-form').validate();
         });
 
         /**
@@ -207,8 +239,41 @@
         * This uses an Ajax request and updates the central chart upon return
         **/
         $('#update-button').click(function() {
-            var selectedInvestmentId = investmentSelect.val();
-            // TODO Get all the values for the json request
+            /** Only proceed if the fields are valid **/
+            $('#change-range-form').validate();
+            if ($('#change-range-form').valid()) {
+                /** Setup the Ajax variables */
+                selectedInvestmentId = investmentSelect.val();
+                var selectedInvestmentName = investmentSelect.children(':selected')[0].innerHTML
+                var dateFrom = dateFromPicker.toString("YYYY-MM-DD");
+                var dateTo = dateToPicker.toString("YYYY-MM-DD");
+                var completeRange = document.getElementById('investment-full').checked;
+                var investmentUrlExtended = investmentUrl
+
+                /** Setup the Ajax url */
+                if (selectedInvestmentId) {
+                    if (completeRange)
+                        investmentUrlExtended = investmentUrlExtended 
+                                    + "/" + selectedInvestmentId;
+                    else
+                        investmentUrlExtended = investmentUrlExtended 
+                                    + "/" + selectedInvestmentId 
+                                    + "/" + dateFrom
+                                    + "/" + dateTo;
+                }
+                else {
+                    selectedInvestmentName = "@assetClass"
+                    if (completeRange)
+                        investmentUrlExtended = investmentUrlExtended;
+                    else
+                        investmentUrlExtended = investmentUrlExtended 
+                                    + "/" + dateFrom
+                                    + "/" + dateTo;
+                }
+
+                /** Do the Ajax request **/
+                updateClassGraph(investmentUrlExtended, selectedInvestmentName)
+            }
         });
     });
 
@@ -217,5 +282,165 @@
       var parts = stringDate.split('-');
       return new Date(parts[2], parts[1]-1, parts[0]);
     }
+
+    /** Update graph funtion to do the Ajax request with the passed in URL and update the graph **/
+    function updateClassGraph(investmentUrlExtended, selectedInvestmentName) {
+        /**
+        *  Block the UI until the Ajax request returns
+        */
+        $.blockUI({ 
+            message: '<h1>'+globalM.loading+'</h1>', 
+            timeout: 10000 
+        }); 
+
+        /**
+         * Do the Ajax call to get the time series of histories
+         * Then create the Highcharts graph based on the data
+         **/
+        $.getJSON( investmentUrlExtended, function( data ) {
+            $('#fund-holder').highcharts({
+                chart: {
+                    backgroundColor: '#f6f6f6',
+                    plotShadow: false
+                },
+                title: {
+                    useHTML: true,
+                    text: '<span id=\"fundTitleName\">'+selectedInvestmentName+'</span>'
+                },
+                legend: {
+                    enabled: false
+                },
+                xAxis: {
+                    labels: {
+                        enabled: false
+                    }
+                },
+                tooltip: {
+                    valuePrefix: '£'
+                },
+                yAxis: {
+                    title: {
+                        text: '@Messages("view.dash.historyaxis")'
+                    }
+                },
+                exporting: { enabled: false },
+                series: [{
+                    data: data,
+                    name: selectedInvestmentName,
+                    point:{
+                        events:{
+                            click: function (event) {
+                                updateDateBreakdown(this.name)
+                            }
+                        }
+                    }
+                }]
+            });
+
+            /**
+            * Update the dates array and find the smallest and largest dates 
+            */
+            dates = [];
+            $.each( data, function() {
+              var parsedDate = parseDate(this.name)
+              if (parsedDate) dates.push(parsedDate)
+            });
+
+            if (dates.length > 0) {
+              var maxDate=new Date(Math.max.apply(null,dates));
+              var minDate=new Date(Math.min.apply(null,dates));
+
+              /**
+              * Update the date pickers
+              **/
+              dateFromPicker.setDate(minDate);
+              dateToPicker.setDate(maxDate);
+
+                /** Update the date table*/
+                updateDateBreakdown(dateToPicker.toString("DD-MM-YYYY"));
+            }
+
+            $.unblockUI();
+        }).fail( function(d, textStatus, error) {
+            /**
+            * Upon failure, grab the bad request message and display it
+            **/
+            $('#fund-holder').html('<p>'+d.responseText+'</p>');
+            $.unblockUI();
+        });
+    }
+
+    /** 
+    * Does the Ajax request to get the Value breakdown on the date selected 
+    * Makes use of the var selectedInvestmentId field which is set every time a new graph is chosen
+    **/
+    function updateDateBreakdown(dateString) {
+        /**
+        *  Block the UI until the Ajax request returns
+        */
+        $.blockUI({ 
+            message: '<h1>'+globalM.loading+'</h1>', 
+            timeout: 10000 
+        }); 
+
+        var historyAtDateUrlExtended = historyAtDateUrl
+
+        /** Update the historyAtDateUrl for the chosen investmentId and Date */
+        if (selectedInvestmentId) 
+          historyAtDateUrlExtended = historyAtDateUrlExtended + "/" +  selectedInvestmentId;
+
+        historyAtDateUrlExtended = historyAtDateUrlExtended + "/" + dateString;
+
+        /**
+         * Do the Ajax call to get the list of histories
+         * Create a HTML list to put in the corner of the screen once returned
+         **/
+        $.getJSON( historyAtDateUrlExtended, function( data ) {
+            /** Remove all the rows in the table */
+            $('.value-row').remove();
+
+            var runningTotal = 0;
+            var tableRows = '';
+
+            /** Create the html string to add to the table and work out the total vale **/
+            $.each( data, function() {
+                tableRows = tableRows + '<tr class="value-row">';
+                if (this.quantity != 0)
+                    tableRows = tableRows + '<td>' + this.name + '</td>'
+                            + '<td>' + this.quantity + '</td>' 
+                            + '<td class="currency">' + this.value + '</td>';
+                else
+                    tableRows = tableRows + '<td>' + this.name + '</td>'
+                            + '<td></td>' 
+                            + '<td class="currency">' + this.value + '</td>';
+                tableRows = tableRows + '</tr>';
+
+                runningTotal = runningTotal + this.value;
+            });
+
+            /** Update the rows and total value */
+            $('#total-value').html(runningTotal);
+            $('#date-table tr:last').after(tableRows);
+            $('.currency').formatCurrency({symbol:'£'});
+            $('#date-title').html(dateString);
+
+            $.unblockUI();
+        }).fail( function(d, textStatus, error) {
+            /**
+            * Upon failure, grab the bad request message and display it
+            **/
+
+            /** Remove all the rows in the table */
+            $('.value-row').remove();
+
+            /** Update the rows and total value */
+            $('#total-value').html('');
+            $('#date-title').html(d.responseText);
+
+            $.unblockUI();
+        });
+    }
     </script>
+    <!-- Include the validation for the update form -->
+    <script src="@routes.Assets.at("javascripts/validation/class.validation.js")" type="text/javascript"></script>
 }

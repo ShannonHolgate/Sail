@@ -83,7 +83,7 @@ body.nav-bar-push-toright {
       background: #888888;
       color: white; }
   .nav-bar div.menu-item:hover ul {
-    height: 70px; }
+    height: 105px; }
 
 .nav-bar.nav-bar-closed {
   left: -200px; }
@@ -161,6 +161,22 @@ div.dashboard #fund-holder {
 div.dashboard #history-holder, div.dashboard #target-holder {
   height: 160px;
   width: 100%; }
+div.dashboard .date-table-foot {
+  display: inline-block;
+  height: 23px;
+  width: 70%;
+  margin-right: 18px; }
+div.dashboard #date-holder {
+  height: 330px;
+  overflow-y: scroll;
+  overflow-x: visible; }
+div.dashboard table {
+  display: table; }
+  div.dashboard table th {
+    font-size: 1.1em;
+    line-height: 23px; }
+  div.dashboard table td, div.dashboard table th {
+    text-align: center; }
 div.dashboard .other-chart {
   background-color: #f2eae1; }
 div.dashboard div.row {
@@ -204,6 +220,10 @@ div.dashboard div.individual-asset {
     border-style: solid;
     border-width: thin;
     border-color: #cfcfcf; }
+  div.dashboard div.individual-asset input.error {
+    border: 2px solid red; }
+  div.dashboard div.individual-asset label.error {
+    text-align: center; }
 
 /* -------------------------------------
   Risk rating bar Styles
