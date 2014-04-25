@@ -32,7 +32,7 @@ body.nav-bar-push-toright {
     font-size: 31.41509px;
     padding: 20px;
     margin: 0;
-    font-weight: 100;
+    font-weight: 300;
     background: #ff9955;
     cursor: pointer;
     margin-top: 60px;
@@ -44,7 +44,6 @@ body.nav-bar-push-toright {
     display: block;
     color: #888888;
     font-size: 12px;
-    font-weight: 900;
     text-decoration: none;
     margin-left: 20px;
     margin-right: 20px;
@@ -82,7 +81,7 @@ body.nav-bar-push-toright {
     .nav-bar div.menu-item ul a:active {
       background: #888888;
       color: white; }
-  .nav-bar div.menu-item:hover ul {
+  .nav-bar div.menu-item.open ul {
     height: 105px; }
 
 .nav-bar.nav-bar-closed {
@@ -114,7 +113,7 @@ div.header {
     display: table-cell; }
     div.header .title h3 {
       font-size: 50px;
-      font-weight: 100;
+      font-weight: 300;
       margin-top: 0;
       margin-bottom: 0;
       line-height: 0.8; }
@@ -152,6 +151,8 @@ div.dashboard h5 {
   font-size: 1.2em;
   background-color: #fedcb2;
   overflow: hidden; }
+div.dashboard h5.hover {
+  background-color: #DDB583; }
 div.dashboard h5.risk {
   background-color: #f2eae1; }
 div.dashboard #fund-holder {
@@ -172,11 +173,13 @@ div.dashboard #date-holder {
   overflow-x: visible; }
 div.dashboard table {
   display: table; }
+  div.dashboard table th, div.dashboard table td {
+    text-align: right; }
   div.dashboard table th {
     font-size: 1.1em;
     line-height: 23px; }
-  div.dashboard table td, div.dashboard table th {
-    text-align: center; }
+  div.dashboard table .left {
+    text-align: left; }
 div.dashboard .other-chart {
   background-color: #f2eae1; }
 div.dashboard div.row {
@@ -186,8 +189,10 @@ div.dashboard div.risk-holder {
   height: 60px;
   padding: 0;
   background-color: #f6f6f6; }
+  div.dashboard div.risk-holder div.span-3 {
+    background-color: #f2eae1; }
 div.dashboard .current-risk-holder {
-  width: 300px;
+  max-width: 300px;
   margin-top: 0;
   margin-left: auto;
   margin-right: auto; }
@@ -195,10 +200,11 @@ div.dashboard .current-risk-holder {
     background-color: #f6f6f6; }
 div.dashboard .target-risk-holder {
   background-color: #f2eae1;
-  height: 60px;
-  width: 100%;
-  padding-left: 5px;
-  padding-right: 5px; }
+  max-width: 300px;
+  margin-top: 0;
+  margin-left: auto;
+  margin-right: auto;
+  padding-top: 15px; }
 div.dashboard div.row.summary {
   background-color: white; }
 div.dashboard .summary .span-4 {
@@ -230,52 +236,43 @@ div.dashboard div.individual-asset {
 ------------------------------------- */
 .rating-bar {
   background: white;
-  padding: 3px; }
+  padding: 2px; }
 
 .rating-bar span {
   display: block;
-  height: 15px; }
+  height: 10px; }
 
 .rating-bar, .rating-bar span {
-  border-radius: 4px; }
+  border-radius: 3px; }
 
-.green {
-  background: green; }
+.colour-1 {
+  background: #52b502; }
 
-.yellow {
-  background: yellow; }
+.colour-2 {
+  background: #7CB502; }
 
-.red {
-  background: red; }
+.colour-3 {
+  background: #b5af02; }
+
+.colour-4 {
+  background: #b57c02; }
+
+.colour-5 {
+  background: #b51402; }
 
 .rate-1 {
-  width: 10%; }
-
-.rate-2 {
   width: 20%; }
 
-.rate-3 {
-  width: 30%; }
-
-.rate-4 {
+.rate-2 {
   width: 40%; }
 
-.rate-5 {
-  width: 50%; }
-
-.rate-6 {
+.rate-3 {
   width: 60%; }
 
-.rate-7 {
-  width: 70%; }
-
-.rate-8 {
+.rate-4 {
   width: 80%; }
 
-.rate-9 {
-  width: 90%; }
-
-.rate-10 {
+.rate-5 {
   width: 100%; }
 
 * {
@@ -336,7 +333,7 @@ div.dashboard div.individual-asset {
   .popup p {
     text-align: left; }
   .popup h3 {
-    font-weight: 100;
+    font-weight: 300;
     font-size: 2em; }
 
 .popup.error {

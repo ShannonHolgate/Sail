@@ -1,0 +1,38 @@
+@import "vendor/bourbon/bourbon";
+@import "vendor/neat/neat";
+@import "modules/colours";
+
+div.target-holder {
+	background-color: $plot-grey;
+	padding-right: 20px;
+
+	li.block {
+		@include span-columns(6);
+		@include omega(2n);
+		padding-left: 7px;
+		padding-right: 7px;
+		margin-bottom: 10px;
+	}	
+
+	#submit-button {
+		float: right;
+		margin-bottom: 7px;
+	}
+
+	h5 {
+		height:40px;
+		margin: 0;
+		vertical-align: middle;
+		line-height:40px;
+		text-align: center;
+		font-size: 1.2em;
+		overflow: hidden;
+	}
+
+	.risk-holder {
+		max-width: 300px;
+		margin-top: 0;
+		margin-left: auto;
+		margin-right: auto;
+	}
+}

@@ -9,7 +9,7 @@
 package controllers
 
 import play.api.mvc._
-import helpers.{Valuation}
+import helpers.{Risker, Valuation}
 import views.html
 import scala.collection.mutable.ListBuffer
 import scala.math.BigDecimal.RoundingMode
@@ -21,7 +21,7 @@ import scala.Some
 /**
  * Controller for the Dashboard flow.
  */
-object Dashboard extends Controller with Secured with Valuation{
+object Dashboard extends Controller with Secured with Valuation with Risker{
 
   /** Empty auto add form to render the dashboard view */
   val addAutoForm = Form(
@@ -72,8 +72,14 @@ object Dashboard extends Controller with Secured with Valuation{
       var tempAssetClass = Some("") : Option[String]
       var runningTotal = BigDecimal(0)
 
+      /** Create the risk profile of the fund */
+      var fundRisk = 0
+
       /** Ensure the user has investments defined before accessing them */
       if (investments.isDefined) {
+        /** Get the percentage breakdown of the current fund */
+        val percentageBreakdown = models.Investment.getPercentageBreakdown(user.id)
+        fundRisk = analyseFundRisk(percentageBreakdown.get)
 
         /** find all asset classes with investments that have symbols
           * This will allow us to add any manual investments to the symbol array
@@ -112,8 +118,21 @@ object Dashboard extends Controller with Secured with Valuation{
         }
       }
 
-      /** Render the dashboard view, now that the data is ready for it */
-      Ok(html.dashboard(user.name,symbolInvestments.toList,assetClassValues.toList,runningTotal,addAutoForm,addManualForm,removeForm)).flashing(request.flash)
+      /** Get the target fund if it exists */
+      val targetFund = models.TargetFund.getTargetFundForUser(user.id)
+      val riskAppetite = models.RiskAppetite.getRiskAppetiteForUser(user.id)
+      /** If the target fund exists, use it in the view, otherwise use an empty list*/
+      if (targetFund.isDefined && riskAppetite.isDefined) {
+        /** Render the dashboard view, now that the data is ready for it */
+        Ok(html.dashboard(user.name,symbolInvestments.toList,assetClassValues.toList,runningTotal,
+          fundRisk, targetFund.get, riskAppetite.get,
+          addAutoForm,addManualForm,removeForm)).flashing(request.flash)
+      }
+      else {
+        /** Render the dashboard view, now that the data is ready for it */
+        Ok(html.dashboard(user.name,symbolInvestments.toList,assetClassValues.toList,runningTotal,
+          fundRisk, List[Double](), 0, addAutoForm,addManualForm,removeForm)).flashing(request.flash)
+      }
     }
   }
 }

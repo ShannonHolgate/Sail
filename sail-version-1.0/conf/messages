@@ -109,7 +109,7 @@ view.dash.newfund=New Fund
 view.dash.targetfund=Target Fund
 view.dash.notargetfund=Why not find your risk appetite?
 view.dash.riskprofile=Risk Profile
-view.dash.nofund=Add your fund to Sail to start tracking
+view.dash.nofund=Add Investments using the menu on the left to start tracking
 view.dash.assetclasses=Asset Classes
 
 # Index Page
@@ -120,13 +120,13 @@ view.index.bank=Bank Accounts
 view.index.commodities=Commodities
 view.index.collectibles=Collectibles
 view.index.property=Property
-view.index.riskprofile=Risk Profile
+view.index.riskprofile=Risk Questionnaire
 view.index.targetfund=Target Fund
 view.index.newfund=New Fund
 view.index.buy=Buy
 view.index.sell=Sell
 view.index.add=Add
-view.index.update=Update
+view.index.update=Change
 view.index.addinvestment=Add Investment
 view.index.addinvestmentmessage=Please choose an investment to add in the menu on the left
 view.index.search=Search
@@ -149,4 +149,18 @@ view.assetclass.investments=Investment
 view.assetclass.from=From
 view.assetclass.to=To
 view.assetclass.all=Complete History?
+
+# Risk Appetite Page
+view.risk.pagetitle=Risk Appetite - Sail
+view.risk.header=Risk Appetite
+
+# Target Fund Page
+view.target.pagetitle=Target Fund - Sail
+view.target.header=Target Fund
+view.target.risk.1=Very Low Risk
+view.target.risk.2=Low Risk
+view.target.risk.3=Medium Risk
+view.target.risk.4=High Risk
+view.target.risk.5=Very High Risk 
+
 

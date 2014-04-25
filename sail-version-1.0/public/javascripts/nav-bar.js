@@ -6,8 +6,6 @@ var navBar = $('#nav-bar'),
         showLeft = $('#showLeft'),
         body = $('body');
         pushLeft = $('.push-left')
-
-body.toggleClass('nav-bar-push-toright');
  
 showLeft.click(function(){
     showLeft.toggleClass('active');
@@ -15,3 +13,13 @@ showLeft.click(function(){
     body.toggleClass('nav-bar-push-toright');
     pushLeft.toggleClass('push-left-open');
 });
+
+$('.menu-item').click(function() {
+	if ($(this).hasClass('open'))
+		$(this).removeClass('open');
+	else {	
+		$('.menu-item').removeClass('open');
+		$(this).addClass('open');	
+	}
+});
+

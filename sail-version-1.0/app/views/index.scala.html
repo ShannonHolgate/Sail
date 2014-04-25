@@ -1,11 +1,12 @@
-@(title:String, header:String, name:String,errors:List[Option[String]], success:List[Option[String]])(content:Html)(implicit request: play.api.mvc.Request[Any])
+@(title:String, header:String, name:String, errors:List[Option[String]], success:List[Option[String]])(
+        content:Html)(implicit request: play.api.mvc.Request[Any])
 @main(title,errors,success) {
     <!-- The Navigation bar -->
-    <nav class="nav-bar" id="nav-bar">
-        <h3 id="showLeft">@Messages("view.sail")</h3>
+    <nav class="nav-bar nav-bar-closed" id="nav-bar">
+        <h3 id="showLeft" class="active">@Messages("view.sail")</h3>
         <a href="/dash">@Messages("view.index.dashboard")</a>
         <div class="menu-item">
-            <a href="#">@Messages("view.index.shares")</a>
+            <a href="javascript:undefined">@Messages("view.index.shares")</a>
             <ul>
                 <li><a href="/class/Shares">View</a></li>
                 <li><a href="#auto-form" class="auto-pop">@Messages("view.index.add")</a></li>
@@ -13,7 +14,7 @@
             </ul>
         </div>
         <div class="menu-item">
-            <a href="#">@Messages("view.index.bonds")</a>
+            <a href="javascript:undefined">@Messages("view.index.bonds")</a>
             <ul>
                 <li><a href="/class/Bonds">View</a></li>
                 <li><a href="#auto-form" class="auto-pop">@Messages("view.index.add")</a></li>
@@ -21,7 +22,7 @@
             </ul>
         </div>
         <div class="menu-item">
-            <a href="#">@Messages("view.index.bank")</a>
+            <a href="javascript:undefined">@Messages("view.index.bank")</a>
             <ul>
                 <li><a href="/class/Bank Accounts">View</a></li>
                 <li><a href="#manual-form" class="manual-pop">@Messages("view.index.add")</a></li>
@@ -29,7 +30,7 @@
             </ul>
         </div>
         <div class="menu-item">
-            <a href="#">@Messages("view.index.commodities")</a>
+            <a href="javascript:undefined">@Messages("view.index.commodities")</a>
             <ul>
                 <li><a href="/class/Commodities">View</a></li>
                 <li><a href="#manual-form" class="manual-pop">@Messages("view.index.add")</a></li>
@@ -37,7 +38,7 @@
             </ul>
         </div>
         <div class="menu-item">
-            <a href="#">@Messages("view.index.collectibles")</a>
+            <a href="javascript:undefined">@Messages("view.index.collectibles")</a>
             <ul>
                 <li><a href="/class/Collectibles">View</a></li>
                 <li><a href="#manual-form" class="manual-pop">@Messages("view.index.add")</a></li>
@@ -45,15 +46,15 @@
             </ul>
         </div>
         <div class="menu-item">
-            <a href="#">@Messages("view.index.property")</a>
+            <a href="javascript:undefined">@Messages("view.index.property")</a>
             <ul>
                 <li><a href="/class/Property">View</a></li>
                 <li><a href="#manual-form" class="manual-pop">@Messages("view.index.add")</a></li>
                 <li><a href="#remove-form" class="remove-pop">@Messages("view.index.update")</a></li>
             </ul>
         </div>
-        <a href="#">@Messages("view.index.riskprofile")</a>
-        <a href="#">@Messages("view.index.targetfund")</a>
+        <a href="/riskappetite">@Messages("view.index.riskprofile")</a>
+        <a href="/targetfund">@Messages("view.index.targetfund")</a>
         <a href="#">@Messages("view.index.newfund")</a>
     </nav>
     <!-- The Content area -->
@@ -94,6 +95,7 @@
                     <select id="result-list" class="span-9" name="investmentresults"></select>
                     <input id="quantity" type="text" name="quantity" class="right" style="width: 80px;">
                 </div>
+                <p class="warning">Note: You will lose any progress on the current page when you add a new investment.</p>
                 <a class="flat-grey small left close-modal" href="#close">@Messages("view.cancel")</a>
                 <input type="button" value="Add" class="flat-grey small right" id="add-button"></input>
             }
@@ -122,6 +124,7 @@
                     <input type="text" id="manual-name" name="name" class="span-9">
                     <input type="text" id="manual-value" name="currentvalue" class="right menu-currency" style="width: 80px;">
                 </div>
+                <p class="warning">Note: You will lose any progress on the current page when you add a new investment.</p>
                 <a class="flat-grey small left close-modal" href="#close">@Messages("view.cancel")</a>
                 <input type="button" value="Add" class="flat-grey small right" id="add-manual-button"></input> 
             }
@@ -160,6 +163,7 @@
                 <div class="row">
                     <input type="password" name="password" id="password">
                 </div>  
+                <p class="warning">Note: You will lose any progress on the current page when you edit an investment.</p>
                 <a class="flat-grey small left close-remove" href="#close">@Messages("view.cancel")</a>
                 <input type="button" value="Update" class="flat-grey small right" id="remove-button"></input> 
             }

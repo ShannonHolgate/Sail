@@ -1,4 +1,8 @@
-@(name:String, assetClass:String, pageTitle:String, investments:List[Investment], autoAddForm:Form[(String,Int,String)],manualAddForm:Form[(String,BigDecimal,String)],removeForm:Form[(String,Option[Int],Option[BigDecimal],Boolean,String)])(implicit request: play.api.mvc.Request[Any], flash: Flash)
+@(name:String, assetClass:String, pageTitle:String, investments:List[Investment],
+        autoAddForm:Form[(String,Int,String)],
+        manualAddForm:Form[(String,BigDecimal,String)],
+        removeForm:Form[(String,Option[Int],Option[BigDecimal],Boolean,String)])(
+        implicit request: play.api.mvc.Request[Any], flash: Flash)
 @import play.api.Play
 @import play.api.Play.current
 
@@ -24,7 +28,7 @@
                     <div id="date-holder">
                         <table class="span-12" id="date-table">
                             <tr>
-                                <th>Name</th><th>Quantity</th><th>Value</th>
+                                <th class="left">Name</th><th>Quantity</th><th>Value</th>
                             </tr>
                         </table>
                         &nbsp;
@@ -172,6 +176,14 @@
                         events:{
                             click: function (event) {
                                 updateDateBreakdown(this.name)
+                                if(dateFromPicker.isVisible()) {
+                                    dateFromPicker.setDate(parseDate(this.name));
+                                    dateFromPicker.hide();
+                                }
+                                else if (dateToPicker.isVisible()) {
+                                    dateToPicker.setDate(parseDate(this.name));
+                                    dateToPicker.hide();
+                                }   
                             }
                         }
                     }
@@ -194,8 +206,20 @@
               /**
               * Update the date pickers
               **/
-              dateFromPicker = new Pikaday({ field: $('#investment-from')[0], minDate: minDate, maxDate: maxDate, format: 'DD-MM-YYYY'});
-              dateToPicker = new Pikaday({ field: $('#investment-to')[0], minDate: minDate, maxDate: maxDate, format: 'DD-MM-YYYY' });
+              dateFromPicker = new Pikaday({ field: $('#investment-from')[0], minDate: minDate, maxDate: maxDate, format: 'DD-MM-YYYY',
+                onOpen: function() {
+                    $('.highcharts-markers path').css("cursor","pointer");    
+                },
+                onClose: function() {
+                    $('.highcharts-markers path').css("cursor","default");
+                }});
+              dateToPicker = new Pikaday({ field: $('#investment-to')[0], minDate: minDate, maxDate: maxDate, format: 'DD-MM-YYYY' ,
+                onOpen: function() {
+                    $('.highcharts-markers path').css("cursor","pointer");    
+                },
+                onClose: function() {
+                    $('.highcharts-markers path').css("cursor","default");
+                }});
               dateFromPicker.setDate(minDate);
               dateToPicker.setDate(maxDate);
 
@@ -331,6 +355,14 @@
                         events:{
                             click: function (event) {
                                 updateDateBreakdown(this.name)
+                                if(dateFromPicker.isVisible()) {
+                                    dateFromPicker.setDate(parseDate(this.name));
+                                    dateFromPicker.hide();
+                                }
+                                else if (dateToPicker.isVisible()) {
+                                    dateToPicker.setDate(parseDate(this.name));
+                                    dateToPicker.hide();
+                                }   
                             }
                         }
                     }
@@ -406,11 +438,11 @@
             $.each( data, function() {
                 tableRows = tableRows + '<tr class="value-row">';
                 if (this.quantity != 0)
-                    tableRows = tableRows + '<td>' + this.name + '</td>'
+                    tableRows = tableRows + '<td class="left">' + this.name + '</td>'
                             + '<td>' + this.quantity + '</td>' 
                             + '<td class="currency">' + this.value + '</td>';
                 else
-                    tableRows = tableRows + '<td>' + this.name + '</td>'
+                    tableRows = tableRows + '<td class="left">' + this.name + '</td>'
                             + '<td></td>' 
                             + '<td class="currency">' + this.value + '</td>';
                 tableRows = tableRows + '</tr>';

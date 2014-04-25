@@ -59,7 +59,7 @@
   .popup p {
     text-align: left; }
   .popup h3 {
-    font-weight: 100;
+    font-weight: 300;
     font-size: 2em; }
 
 .popup.error {
@@ -96,8 +96,7 @@ div.login {
   margin-left: auto;
   margin-right: auto;
   min-height: 100%;
-  color: #888888;
-  font-weight: 900; }
+  color: #888888; }
   div.login:before, div.login:after {
     content: " ";
     display: table; }
@@ -125,7 +124,7 @@ div.login {
       padding: 2.35765%;
       vertical-align: baseline; }
       div.login .centre-container article .banner h3 {
-        font-weight: 100;
+        font-weight: 300;
         margin-top: 10px;
         margin-bottom: 20px;
         background-color: #ff9955;

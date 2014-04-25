@@ -56,6 +56,13 @@ object AssetClass extends Controller with Secured with Valuation{
     )
   )
 
+  /**
+   * Renders the Asset Class view by taking the asset class from the url
+   * If no asset class is assigned, the full list of investments is used
+   *
+   * @param assetClass String the asset class that the view should render a time series for
+   * @return           Result renderinf the Asset Class view
+   */
   def index(assetClass:String) = withUser{
     user => implicit request => {
       /** Get the investments in the asset class for the user */
@@ -70,6 +77,18 @@ object AssetClass extends Controller with Secured with Valuation{
     }
   }
 
+  /**
+   * Web Service building up the time series of investments for use on the highcharts time series graph
+   * Can return a full history for the asset class or
+   * a full history for a specific investment
+   * A date range can be specified to give the history between dates
+   *
+   * @param assetClass  String the asset class to get the investment values for
+   * @param assetId     String the string version of the Object ID relating to the investment defaults to empty
+   * @param dateFrom    String the string date in the format "yyyy-MM-dd" to be parsed defaults to empty
+   * @param dateTo      String the string date in the format "yyyy-MM-dd" to be parsed defaults to empty
+   * @return            Result either as a BadRequest or JSON response with the time series in date-value pairs
+   */
   def getTimeSeriesForAssetClass(assetClass:String,assetId:String = "",dateFrom:String = "",dateTo:String = "") = withUser {
     user => implicit request => {
       /** Wrap in a try catch to handle date parse errors */

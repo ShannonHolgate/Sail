@@ -4,27 +4,24 @@
 
 .rating-bar{
   background:white;
-  padding:3px;
+  padding:2px;
 }
 .rating-bar span{
   display:block;
-  height:15px;
+  height:10px;
 }
 .rating-bar, .rating-bar span {
-  border-radius:4px; 
+  border-radius:3px; 
 }
 
-.green{ background:green; }
-.yellow{ background:yellow; }
-.red{ background:red;}
+.colour-1{ background:#52B502 }
+.colour-2{ background:#7CB502}
+.colour-3{ background:#B5AF02 }
+.colour-4{ background:#B57C02 }
+.colour-5{ background:#B51402 }
 
-.rate-1{ width:10%; }
-.rate-2{ width:20%; }
-.rate-3{ width:30%; }
-.rate-4{ width:40%; }
-.rate-5{ width:50%; }
-.rate-6{ width:60%; }
-.rate-7{ width:70%; }
-.rate-8{ width:80%; }
-.rate-9{ width:90%; }
-.rate-10{ width:100%; }
+.rate-1{ width:20%; }
+.rate-2{ width:40%; }
+.rate-3{ width:60%; }
+.rate-4{ width:80%; }
+.rate-5{ width:100%; }

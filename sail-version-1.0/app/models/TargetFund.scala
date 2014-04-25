@@ -21,8 +21,8 @@ import java.util.Date
  * Holds a list of asset class breakdowns, to be held in alphabetical order
  *
  * @param id                      ObjectId generated on creation
- * @param assetClassPercentages   List[BigDecimal] the list of asset class percentages, must be in alphabetical order
- *                                                 upon creation
+ * @param assetClassPercentages   List[Double] the list of asset class percentages,
+ *                                Stored in alphabetical order
  * @param user                    ObjectId the Id of the user relating to the target fund
  * @param added                   Option[Date] the TargetFund was created, needed by MongoDB
  * @param updated                 Option[Date] the TargetFund was updated, needed by MongoDB
@@ -30,7 +30,7 @@ import java.util.Date
  */
 case class TargetFund(
                        id: ObjectId = new ObjectId,
-                       assetClassPercentages: List[BigDecimal],
+                       assetClassPercentages: List[Double],
                        user: ObjectId,
                        added: Date = new Date(),
                        updated: Option[Date] = None,
@@ -50,9 +50,9 @@ object TargetFund extends ModelCompanion[TargetFund, ObjectId] {
    * Get the target fund percentages for each asset class in alphabetical order for the user Id
    *
    * @param user  ObjectId the Id of the User
-   * @return      Option[List[BigDecimal] ] the percentage breakdown of the target fund, in alphabetical order
+   * @return      Option[List[Double] ] the percentage breakdown of the target fund, Stored in alphabetical order
    */
-  def getTargetFundForUser(user:ObjectId) : Option[List[BigDecimal]] = {
+  def getTargetFundForUser(user:ObjectId) : Option[List[Double]] = {
 
     /** Get the target fund from the database */
     val targetFund: Option[TargetFund] = dao.findOne(MongoDBObject("user" -> user))
@@ -63,6 +63,21 @@ object TargetFund extends ModelCompanion[TargetFund, ObjectId] {
     }
     else
       None
+  }
+
+  /**
+   * Inserts or updates the Users target fund breakdown
+   *
+   * @param user                    ObjectId of the User
+   * @param assetClassPercentages   List[Double] list of the target percentages and asset classes,
+   *                                Stored in alphabetical order
+   * @return                        String Error of the update if the insert or update fails
+   */
+  def addTargetFundForUser(user: ObjectId, assetClassPercentages:List[Double]): String = {
+    /** Map the updates to the row in the database */
+    dao.update(q = MongoDBObject("user" -> user),o = MongoDBObject("$set" -> MongoDBObject(
+      "assetClassPercentages" -> assetClassPercentages)),
+      upsert = true, multi = false, wc = new WriteConcern()).getError()
   }
 
 }

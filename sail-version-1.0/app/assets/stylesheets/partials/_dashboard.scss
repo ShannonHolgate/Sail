@@ -26,6 +26,11 @@ div.dashboard {
 		background-color: $plot-title-orange;
 		overflow: hidden;
 	}
+
+	h5.hover {
+		background-color: #DDB583;
+	}
+
 	h5.risk {
 		background-color: $plot-orange;	
 	}
@@ -57,14 +62,19 @@ div.dashboard {
 	table {
 		display: table;
 
+		th, td {
+			text-align: right;
+		}
+
 		th {
 			font-size: 1.1em;
 			line-height: 23px;
 		}
 
-		td, th {
-			text-align: center;
+		.left {
+			text-align: left;
 		}
+
 	}
 
 	.other-chart {
@@ -80,10 +90,14 @@ div.dashboard {
 		height: 60px;
 		padding: 0;	
 		background-color: $plot-grey;
+
+		div.span-3 {
+			background-color: $plot-orange;	
+		}
 	}
 
 	.current-risk-holder {
-		width: 300px;
+		max-width: 300px;
 		margin-top: 0;
 		margin-left: auto;
 		margin-right: auto;
@@ -95,10 +109,11 @@ div.dashboard {
 
 	.target-risk-holder {
 		background-color: $plot-orange;
-		height: 60px;
-		width: 100%;	
-		padding-left:5px;
-		padding-right:5px;
+		max-width: 300px;
+		margin-top: 0;
+		margin-left: auto;
+		margin-right: auto;
+		padding-top: 15px;
 	}
 
 	div.row.summary {

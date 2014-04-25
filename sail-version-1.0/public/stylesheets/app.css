@@ -18,7 +18,12 @@ input {
 
 input[type=checkbox] {
   width: initial;
+  width: auto;
   margin-top: 7.5px; }
+
+input[type=radio] {
+  width: initial;
+  width: auto; }
 
 input:disabled, select:disabled {
   background: #888888; }
@@ -49,7 +54,6 @@ body {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   color: black;
   font-size: 12px;
-  font-weight: 200;
   background-color: white; }
 
 .reset {
@@ -256,6 +260,9 @@ a.a-button {
 .small-font {
   font-size: 7.41656px; }
 
+.warning {
+  color: #fff50d; }
+
 /* -------------------------------------
   Button styles
 ------------------------------------- */
@@ -264,7 +271,6 @@ a.a-button {
   display: block;
   color: white;
   font-size: 12px;
-  font-weight: 900;
   text-decoration: none;
   margin-left: auto;
   margin-right: auto;

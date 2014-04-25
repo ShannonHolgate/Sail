@@ -20,7 +20,13 @@ input {
 
 input[type=checkbox] {
   width: initial;
+  width: auto;
   margin-top: $default-input-padding*1.5;
+}
+
+input[type=radio] {
+  width: initial;
+  width: auto;
 }
 
 input:disabled, select:disabled

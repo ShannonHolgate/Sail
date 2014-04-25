@@ -16,6 +16,8 @@ import models.MongoContext._
 import com.mongodb.casbah.commons.TypeImports.ObjectId
 import java.util.Date
 import play.Logger
+import scala.collection.mutable.ListBuffer
+import scala.math.BigDecimal.RoundingMode
 
 /**
  * Investment class to be mapped from MongoDB using the Salat library
@@ -217,5 +219,57 @@ object Investment extends ModelCompanion[Investment, ObjectId] {
     }
      /** Cannot find the investment */
     else false
+  }
+
+  /**
+   * Calculate the percentage breakdown of each of the asset classes for the users investments
+   *
+   * @param user  ObjectId of the User
+   * @return      Option[List[(String,BigDecimal)] ] Optional list of asset class
+   */
+  def getPercentageBreakdown(user:ObjectId) : Option[List[(String,BigDecimal)]] = {
+    /** Create an empty list buffer which will hold the calculated percentages */
+    val percentageList = ListBuffer[(String,BigDecimal)]()
+
+    /** Create temporary values to assist */
+    var tempClass = ""
+    var runningTotal:BigDecimal = 0
+
+    /** Get a list of Investments from the database */
+    val investments = dao.find(MongoDBObject("user" -> user))
+
+    /** If the user holds investments we can continue */
+    if (!investments.isEmpty) {
+
+      /** For each asset class, build the value */
+      for (investment <- investments.toList.sortBy(_.assetclass)) {
+
+        /** If the assetClass is different from the previous investment, append the value */
+        if (percentageList.isEmpty || !investment.assetclass.equals(tempClass)) percentageList.append((investment.assetclass,investment.value))
+
+        /** Otherwise add the value to the current assetClass */
+        else percentageList.update(percentageList.size-1,(percentageList.last._1,percentageList.last._2+investment.value))
+
+        /** Update the temporary values */
+        tempClass = investment.assetclass
+        runningTotal+=investment.value
+      }
+
+      /** Use the new aggregated investment values to calculate the percentages relating to the running total */
+      for ((value, index) <- percentageList.zipWithIndex) {
+
+        /** Calculate the percentage */
+        val percentageOfTotal = ((value._2/runningTotal)*100).setScale(2, RoundingMode.CEILING)
+
+        /** Update the percentage from the value to the percent */
+        percentageList.update(index,(percentageList(index)._1,percentageOfTotal))
+      }
+
+      /** Return the completed percentage list */
+      Some(percentageList.toList)
+    }
+    else
+      /** No investments exist for the user */
+      None
   }
 }

@@ -21,3 +21,7 @@ a.a-button {
 .small-font {
   font-size: golden-ratio($font-base-size, -1);
 }
+
+.warning {
+	color: $font-warning-color;
+}

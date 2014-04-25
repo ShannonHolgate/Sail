@@ -35,7 +35,7 @@ body.nav-bar-push-toright {
 	    font-size: golden-ratio($font-base-size, 2);
 	    padding: 20px;
 	    margin: 0;
-	    font-weight: 100;
+	    font-weight: 300;
 	    background: $nav-bar-bg;
 	    cursor: pointer;
 
@@ -50,7 +50,6 @@ body.nav-bar-push-toright {
 	    display: block;
 	    color: $nav-link-colour;
 	    font-size: $font-base-size;
-	    font-weight: 900;
 	    text-decoration: none;
 	    margin-left: 20px;
 	    margin-right: 20px;
@@ -107,7 +106,7 @@ body.nav-bar-push-toright {
         }
     }
 
-    div.menu-item:hover ul{
+    div.menu-item.open ul{
         height: 105px;
     }	
 }

@@ -1,4 +1,12 @@
-@(name:String, symbolInvestments:List[(String,String,Int,BigDecimal)], assetClassValues: List[(String,BigDecimal)], runningTotal: BigDecimal, autoAddForm:Form[(String,Int,String)],manualAddForm:Form[(String,BigDecimal,String)],removeForm:Form[(String,Option[Int],Option[BigDecimal],Boolean,String)])(implicit request: play.api.mvc.Request[Any], flash: Flash)
+@(name:String, symbolInvestments:List[(String,String,Int,BigDecimal)], assetClassValues: List[(String,BigDecimal)],
+        runningTotal: BigDecimal,
+        fundRisk: Int,
+        targetFund: List[Double],
+        targetRisk: Int,
+        autoAddForm:Form[(String,Int,String)],
+        manualAddForm:Form[(String,BigDecimal,String)],
+        removeForm:Form[(String,Option[Int],Option[BigDecimal],Boolean,String)])(
+        implicit request: play.api.mvc.Request[Any], flash: Flash)
 @import play.api.Play
 @import play.api.Play.current
 
@@ -27,7 +35,7 @@
                 </div>
             </div>
             <div class="span-3">
-                    <!-- Holder for the Highchart target fund -->
+                <!-- Holder for the Highchart target fund -->
                 <div class="other-chart">
                     <h5>@Messages("view.dash.targetfund")</h5>
                     <div id="target-holder">
@@ -39,23 +47,24 @@
         <!-- Risk related to current and target fund -->
         <div class="row risk-holder" style="display:none;">
             <div class="span-9 no-margin">
+                &nbsp;
                 <div class="current-risk-holder" style="display:none;">
                     <div class="rating-bar">
-                        <div class="rate-2">
-                            <span class="green"></span>
+                        <div class="rate-@fundRisk">
+                            <span class="colour-@fundRisk"></span>
                         </div>
                     </div>
-                    <h5 class="risk">@Messages("view.dash.lowrisk")</h5>
+                    <h5 class="risk">@Messages("view.target.risk."+fundRisk)</h5>
                 </div>
             </div>
             <div class="span-3">
                 <div class="target-risk-holder" style="display:none;">
                   <div class="rating-bar">
-                    <div class="rate-2">
-                      <span class="green"></span>
+                    <div class="rate-@targetRisk">
+                      <span class="colour-@targetRisk"></span>
                     </div>
                   </div>
-                  <h5 class="risk">@Messages("view.dash.lowrisk")</h5>
+                  <h5 class="risk">@Messages("view.target.risk."+targetRisk)</h5>
                 </div>
             </div>
         </div>
@@ -96,9 +105,26 @@
             **/
             updateSummaryLabels();
             updateHistoryGraph();
-            getTargetFund();
             getRealTimeInvestments();
+
+            
+            if (assetClasses.length < 1) {
+                /**
+                * Temporarily show the nav bar menu to display how it is used
+                **/
+                setTimeout(function(){
+                    $('#showLeft').bind('click',flashNav);
+                    $('#showLeft').click();
+                    $('#showLeft').unbind('click',flashNav);},1000);
+            }
+
         });
+
+        function flashNav(event) {
+            for(i=0;i<3;i++) {
+                $(this).fadeTo('fast', 0.5).fadeTo('fast', 1.0);
+            }
+        }
 
         /**
         * Get a handle on each of the Summary labels
@@ -169,10 +195,28 @@
             **/
             if (!assetClass) {
                 url = url.slice(0, - 1);
+                /** 
+                * Unbind the click listener from the header and reset the cursor
+                **/
+                $('.other-chart h5:first').unbind("click");
+                $('.other-chart h5:first' ).off( "mouseenter mouseleave" );
+                $('.other-chart h5:first').css("cursor","default");
             }
             else {
                 url = url + assetClass.name;
                 title = assetClass.name;
+                /**
+                * Add a click listener to the title to navigate to the Individual asset class
+                **/
+                $('.other-chart h5:first').click(function() {
+                    window.location = "http://@request.host/class/"+assetClass.name;   
+                });
+                $('.other-chart h5:first').css("cursor","pointer");
+                $('.other-chart h5:first').hover(function() { 
+                    $(this).addClass("hover");
+                }, function() {
+                    $(this).removeClass("hover");
+                });
             }
 
             /**
@@ -208,62 +252,18 @@
                     exporting: { enabled: false },
                     series: [{
                         data: data,
-                        name: title
+                        name: title,
+                        marker:
+                        {
+                            radius: 2
+                        },
                     }]
                 });
             }).fail( function(d, textStatus, error) {
                 /**
                 * Upon failure, the user likely has no history, provide a link to add a new fund
                 **/
-                $('#history-holder').html('<p>@Messages("view.dash.nohistory")</p><a class="flat-grey" href="#">@Messages("view.dash.newfund")</a>');
-            });
-        }
-
-        /**
-        * Get the target fund for the User and add the Highcharts graph
-        **/
-        function getTargetFund(){
-
-            /**
-            * Do the Ajax call to get the target fund
-            * Then create the Highcharts graph based on the data
-            **/
-            $.getJSON( targetFundUrl, function( data ) {
-                $('#target-holder').highcharts({
-                    chart: {
-                        backgroundColor: '#f2eae1',
-                        plotShadow: false
-                    },
-                    title: {
-                        text: null
-                    },
-                    exporting: { enabled: false },
-                    plotOptions: {
-                        pie: {
-                            allowPointSelect: false,
-                            cursor: 'pointer',
-                            dataLabels: {
-                                enabled: false
-                            },
-                            center: ['50%', '50%']
-                        }
-                    },
-                    series: [{
-                        name: '@Messages("view.dash.targetfund")',
-                        data: data,
-                        innerSize: '30%',
-                        size: '80%'
-                    }]
-                });
-
-                $('div.risk-holder').removeAttr('style')
-                $('div.target-risk-holder').removeAttr('style')
-
-            }).fail( function(d, textStatus, error) {
-                /**
-                * Upon failure, the user likely has no target fund set, provide a link to add a get a target fund
-                **/
-                $('#target-holder').html('<p>@Messages("view.dash.notargetfund")</p><a class="flat-grey" href="#">@Messages("view.dash.riskprofile")</a>');
+                $('#history-holder').html('<p>@Messages("view.dash.nohistory")</p>');
             });
         }
 
@@ -365,7 +365,7 @@
          * If there is no current fund the user must be provided with a link to create their fund
          **/
         if (assetClasses.length < 1) {
-            $('#fund-holder').html('<p>@Messages("view.dash.nofund")</p><a class="flat-grey" href="#">@Messages("view.dash.newfund")</a>');
+            $('#fund-holder').html('<p>@Messages("view.dash.nofund")</p>');
         }
         else {
             /**
@@ -427,6 +427,95 @@
 
             $('div.risk-holder').removeAttr('style')
             $('div.current-risk-holder').removeAttr('style')
+        }
+
+        /** 
+        * Map out the asset class names
+        **/
+        var assetClassesLabels = [
+        '@Messages("view.index.bank")',
+        '@Messages("view.index.bonds")',
+        '@Messages("view.index.collectibles")',
+        '@Messages("view.index.commodities")',
+        '@Messages("view.index.property")',
+        '@Messages("view.index.shares")'
+        ];
+
+        /**
+        * Build up the percentages data to be used by Highcharts
+        **/
+        var targetFundPerc = [];
+
+        @for((targetClassPerc, index) <- targetFund.zipWithIndex) {
+            var percentage = new Object();
+            percentage.name = assetClassesLabels[@index];
+            percentage.y = @targetClassPerc;
+            targetFundPerc.push(percentage);
+        }
+
+        /**
+        * If the target fund exists build the chart
+        **/
+        if (targetFundPerc.length >= 1) {
+            /**
+            * Create the target fund chart
+            **/
+            $('#target-holder').highcharts({
+                chart: {
+                    backgroundColor: '#f2eae1',
+                    type: 'pie',
+                    plotBorderWidth: null,
+                    plotShadow: false
+                },
+                title: {
+                    useHTML: true,
+                    text: null
+                },
+                exporting: { enabled: false },
+                plotOptions: {
+                    pie: {
+                        allowPointSelect: false,
+                        shadow: false,
+                        center: ['50%', '50%']
+                    }
+                },
+                tooltip: {
+                    valueSuffix: '%'
+                },
+                series: [{
+                    name: 'Percentage of fund',
+                    data: targetFundPerc,
+                    innerSize: '30%',
+                    size: '80%',
+                    dataLabels: {
+                        align: 'right',
+                        formatter: function() {
+                            return this.y.toFixed(2) +'%';
+                        },
+                    }
+                }]
+            });
+
+            $('div.risk-holder').removeAttr('style')
+            $('div.target-risk-holder').removeAttr('style')
+            /**
+            * Add a click listener to the title to navigate to the Individual asset class
+            **/
+            $('.other-chart h5:last').click(function() {
+                window.location = "http://@request.host/targetfund";   
+            });
+            $('.other-chart h5:last').css("cursor","pointer");
+            $('.other-chart h5:last').hover(function() { 
+                $(this).addClass("hover");
+            }, function() {
+                $(this).removeClass("hover");
+            });
+        }
+        else {
+            /**
+            * Let the user know that there is no target fund
+            **/
+            $('#target-holder').html('<p>@Messages("view.dash.notargetfund")</p><a class="flat-grey" href="/riskappetite">@Messages("view.dash.riskprofile")</a>');
         }
 
         /**

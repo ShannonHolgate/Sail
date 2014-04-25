@@ -17,7 +17,9 @@ var validationM = {
 	invalidInteger:"Please enter a valid integer number",
 	invalidCurrency:"Please enter a valid currency value",
 	valueRequired:"A value is required",
-	invalidDate:"Date must be in the format DD-MM-YYYY"
+	invalidDate:"Date must be in the format DD-MM-YYYY",
+
+	answerRequired:"Please provide an answer to this question"
 }
 
 /**

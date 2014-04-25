@@ -1,0 +1,44 @@
+@import "vendor/bourbon/bourbon";
+@import "vendor/neat/neat";
+@import "modules/colours";
+
+#risk-form{
+	background-color: $plot-grey;
+	padding-right: 20px;
+
+	li.block {
+		@include span-columns(3);
+		@include omega(4n);
+		background-color: $plot-orange;
+		padding-left: 7px;
+		padding-right: 7px;
+		margin-bottom: 10px;
+	}	
+
+	li.error {
+		border: 2px solid red;
+	}
+
+	input[type=radio] {
+	    @include inline-block;
+	    margin-left: -20px;
+	    margin-right: 7px;
+	}
+
+	.radio-options {
+		margin-left: 20px;
+	}
+
+	p {
+		font-size: 0.9em;
+		
+		label {
+			cursor: pointer;
+		}
+	}
+
+	#submit-button {
+		float: right;
+		margin-bottom: 7px;
+	}
+}

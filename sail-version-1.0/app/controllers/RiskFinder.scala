@@ -12,6 +12,7 @@ import play.api.mvc.Controller
 import scala.collection.mutable.ListBuffer
 import helpers.{InvestmentWithValue, Risker}
 import play.api.libs.json.{JsNumber, JsString, Writes, Json}
+import scala.math.BigDecimal.RoundingMode
 
 /**
  *  Controller for the Risk Web Services
@@ -30,53 +31,24 @@ object RiskFinder extends Controller with Secured with Risker{
     user => implicit request => {
 
       /** Get a list of investments for the user to be processed by the Risker */
-      val investments = models.Investment.getInvestmentForUser(user.id)
+      val percentageBreakdown = models.Investment.getPercentageBreakdown(user.id)
 
-      /** Create an empty listbuffer which will hold the calculated percentages */
-      val percentageList = ListBuffer[BigDecimal]()
-
-      /** Create temporary values to assist */
-      var tempClass = ""
-      var runningTotal:BigDecimal = 0
+      /** Create the empty risk holder */
       val risks = ListBuffer[(String,Int)]()
 
       /** If the user holds investments we can continue */
-      if (investments.isDefined) {
-
-        /** For each asset class, build the value */
-        for (investment <- investments.get.sortBy(_.assetclass)) {
-
-          /** If the assetClass is different from the previous investment, append the value */
-          if (percentageList.isEmpty || !investment.assetclass.equals(tempClass)) percentageList.append(investment.value)
-
-          /** Otherwise add the value to the current assetClass */
-          else percentageList.update(percentageList.size-1,percentageList.last+investment.value)
-
-          /** Update the temporary values */
-          tempClass = investment.assetclass
-          runningTotal+=investment.value
-        }
-
-        /** Use the new aggregated investment values to calculate the percentages relating to the running total */
-        for ((value, index) <- percentageList.zipWithIndex) {
-
-          /** Calculate the percentage */
-          val percentageOfTotal = (value/runningTotal)*100
-
-          /** Update the percentage from the value to the percent */
-          percentageList.update(index,percentageOfTotal)
-        }
-
+      if (percentageBreakdown.isDefined) {
         /** Analyse the risk and add it to the Risk List */
-        risks.append(("Fund",analyseRiskAppetite(percentageList.toList)))
+        risks.append(("Fund",analyseFundRisk(percentageBreakdown.get)))
       }
 
       /** Retrieve the target fund percentage breakdown from the database */
       val targetFundBreakdown = models.TargetFund.getTargetFundForUser(user.id)
 
-      /** If the user hase a target fund we should retrieve the risk related to it and add it to the risk list */
+      /** If the user has a target fund we should retrieve the risk related to it and add it to the risk list */
       if (targetFundBreakdown.isDefined) {
-        risks.append(("Target",analyseRiskAppetite(targetFundBreakdown.get)))
+        // TODO Get the users risk from the Risk Appetite table
+        risks.append(("Target",2))
       }
 
       /** Create the Json Risk parser which will format the Risk list into Json to be returned */

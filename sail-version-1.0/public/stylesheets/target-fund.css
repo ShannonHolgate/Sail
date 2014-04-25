@@ -1,0 +1,41 @@
+/* -------------------------------------
+  Target Fund global styles
+------------------------------------- */
+* {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box; }
+
+div.target-holder {
+  background-color: #f6f6f6;
+  padding-right: 20px; }
+  div.target-holder li.block {
+    display: block;
+    float: left;
+    margin-right: 2.35765%;
+    width: 48.82117%;
+    padding-left: 7px;
+    padding-right: 7px;
+    margin-bottom: 10px; }
+    div.target-holder li.block:last-child {
+      margin-right: 0; }
+    div.target-holder li.block:nth-child(2n) {
+      margin-right: 0; }
+    div.target-holder li.block:nth-child(2n+1) {
+      clear: left; }
+  div.target-holder #submit-button {
+    float: right;
+    margin-bottom: 7px; }
+  div.target-holder h5 {
+    height: 40px;
+    margin: 0;
+    vertical-align: middle;
+    line-height: 40px;
+    text-align: center;
+    font-size: 1.2em;
+    overflow: hidden; }
+  div.target-holder .risk-holder {
+    max-width: 300px;
+    margin-top: 0;
+    margin-left: auto;
+    margin-right: auto; }

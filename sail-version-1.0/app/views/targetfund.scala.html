@@ -1,0 +1,177 @@
+@(name:String, pageTitle:String, header:String,
+        currentFundPerc:List[BigDecimal],
+        targetFundPerc:List[Double],
+        fundRisk:Int,
+        targetRisk:Int,
+        autoAddForm:Form[(String,Int,String)],
+        manualAddForm:Form[(String,BigDecimal,String)],
+        removeForm:Form[(String,Option[Int],Option[BigDecimal],Boolean,String)])(
+        implicit request: play.api.mvc.Request[Any], flash: Flash)
+@import play.api.Play
+@import play.api.Play.current
+
+@index(pageTitle,header,name, {
+  // Add each possible error to a sequence
+  flash.get(Play.application.configuration.getString("generic.error").get) ::  
+  Nil
+},{
+  // Add each possible success to a sequence
+  flash.get(Play.application.configuration.getString("generic.success").get) ::
+  Nil
+}) {
+<link rel="stylesheet" href="@routes.Assets.at("stylesheets/target-fund.css")">
+<div class="span-12 target-holder">
+	<div class="span-12">
+		<ul>
+			<!-- Holder for the Highchart fund -->
+			<li class="block">
+				<div id="current-fund-holder">
+				</div>
+				<div class="risk-holder">
+                    <div class="rating-bar">
+                        <div class="rate-@fundRisk">
+                            <span class="colour-@fundRisk"></span>
+                        </div>
+                    </div>
+                    <h5 class="risk" id="current-risk-label">@Messages("view.target.risk."+fundRisk)</h5>
+                </div>
+	  		</li>
+	  		<!-- Holder for the Highchart target fund -->
+			<li class="block">
+				<div id="target-fund-holder">
+				</div>
+				<div class="risk-holder">
+                    <div class="rating-bar">
+                        <div class="rate-@targetRisk">
+                            <span class="colour-@targetRisk"></span>
+                        </div>
+                    </div>
+                    <h5 class="risk" id="current-risk-label">@Messages("view.target.risk."+targetRisk)</h5>
+                </div>
+	  		</li>
+	  	</ul>
+  	</div>
+	<p><a class="flat-grey small-long right" id="submit-button" href="/dash">Continue</a></p>
+</div>
+<script src="http://code.highcharts.com/highcharts.js"></script>
+<script src="http://code.highcharts.com/modules/exporting.js"></script>
+<script type="text/javascript">
+$(function () {
+	/** 
+	* Map out the asset class names
+	**/
+	var assetClasses = [
+	'@Messages("view.index.bank")',
+    '@Messages("view.index.bonds")',
+    '@Messages("view.index.collectibles")',
+    '@Messages("view.index.commodities")',
+    '@Messages("view.index.property")',
+    '@Messages("view.index.shares")'
+	];
+
+	/**
+	* Build up the percentages data to be used by Highcharts
+	**/
+	var currentFundPerc = [];
+	var targetFundPerc = [];
+
+	@for((classPerc, index) <- currentFundPerc.zipWithIndex) {
+	    var percentage = new Object();
+	    percentage.name = assetClasses[@index];
+	    percentage.y = @classPerc;
+	    currentFundPerc.push(percentage);
+	}
+
+	@for((targetClassPerc, index) <- targetFundPerc.zipWithIndex) {
+	    var percentage = new Object();
+	    percentage.name = assetClasses[@index];
+	    percentage.y = @targetClassPerc;
+	    targetFundPerc.push(percentage);
+	}
+
+    /**
+    * Create the current fund chart
+    **/
+    if (currentFundPerc.length >= 1) {
+	    $('#current-fund-holder').highcharts({
+	        chart: {
+	            backgroundColor: '#f6f6f6',
+	            type: 'pie',
+	            plotBorderWidth: null,
+	            plotShadow: false
+	        },
+	        title: {
+	            useHTML: true,
+	            text: 'Current Fund Percentages'
+	        },
+	        exporting: { enabled: false },
+	        plotOptions: {
+	            pie: {
+	                allowPointSelect: false,
+	                shadow: false,
+	                center: ['50%', '50%']
+	            }
+	        },
+	        tooltip: {
+	            valueSuffix: '%'
+	        },
+	        series: [{
+	            name: 'Percentage of fund',
+	            data: currentFundPerc,
+	            innerSize: '30%',
+	            size: '80%',
+	            dataLabels: {
+	                align: 'right',
+	                formatter: function() {
+	                    return '<b>'+ this.point.name +':</b> '+ this.y.toFixed(2) +'%';
+	                },
+	            }
+	        }]
+	    });
+	}
+	else {
+		$('#current-fund-holder').html('<h5>@Messages("view.dash.nofund")</h5>');
+		$('.risk-holder').hide();
+	}
+
+    /**
+    * Create the target fund chart
+    **/
+    $('#target-fund-holder').highcharts({
+        chart: {
+            backgroundColor: '#f6f6f6',
+            type: 'pie',
+            plotBorderWidth: null,
+            plotShadow: false
+        },
+        title: {
+            useHTML: true,
+            text: 'Target Fund Percentages'
+        },
+        exporting: { enabled: false },
+        plotOptions: {
+            pie: {
+                allowPointSelect: false,
+                shadow: false,
+                center: ['50%', '50%']
+            }
+        },
+        tooltip: {
+            valueSuffix: '%'
+        },
+        series: [{
+            name: 'Percentage of fund',
+            data: targetFundPerc,
+            innerSize: '30%',
+            size: '80%',
+            dataLabels: {
+                align: 'right',
+                formatter: function() {
+                    return '<b>'+ this.point.name +':</b> '+ this.y.toFixed(2) +'%';
+                },
+            }
+        }]
+    });
+});
+</script>
+}

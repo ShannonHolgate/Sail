@@ -1,0 +1,45 @@
+/* -------------------------------------
+  Risk Appetite global styles
+------------------------------------- */
+* {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box; }
+
+#risk-form {
+  background-color: #f6f6f6;
+  padding-right: 20px; }
+  #risk-form li.block {
+    display: block;
+    float: left;
+    margin-right: 2.35765%;
+    width: 23.23176%;
+    background-color: #f2eae1;
+    padding-left: 7px;
+    padding-right: 7px;
+    margin-bottom: 10px; }
+    #risk-form li.block:last-child {
+      margin-right: 0; }
+    #risk-form li.block:nth-child(4n) {
+      margin-right: 0; }
+    #risk-form li.block:nth-child(4n+1) {
+      clear: left; }
+  #risk-form li.error {
+    border: 2px solid red; }
+  #risk-form input[type=radio] {
+    display: inline-block;
+    vertical-align: baseline;
+    zoom: 1;
+    *display: inline;
+    *vertical-align: auto;
+    margin-left: -20px;
+    margin-right: 7px; }
+  #risk-form .radio-options {
+    margin-left: 20px; }
+  #risk-form p {
+    font-size: 0.9em; }
+    #risk-form p label {
+      cursor: pointer; }
+  #risk-form #submit-button {
+    float: right;
+    margin-bottom: 7px; }
