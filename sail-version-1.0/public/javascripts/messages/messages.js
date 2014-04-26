@@ -10,6 +10,7 @@ var validationM = {
 	passwordRequired:"A password is required",
 	passwordMinLength:"Password must contain at least {0} letters",
 	passwordMustMatch:"Both passwords must match",
+	emailMustMatch:"Both email addresses must match",
 
 	quantityRequired:"A quantity is required",
 	dateRequired:"A date is required",
