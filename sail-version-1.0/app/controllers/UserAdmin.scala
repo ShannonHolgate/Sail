@@ -26,14 +26,11 @@ object UserAdmin extends Controller with Secured with Mailer{
   /** change password form verifying the email address and that the new passwords match */
   val changePasswordForm= Form(
     tuple(
-      "email" -> text,
       "oldpassword" -> text,
       "password" -> text,
       "confirm" -> text
-    ) verifying (Messages.get("error.login.invalid"),result => result match {
-      case (email,oldPassword,password,confirm) => User.authenticate(email, oldPassword).isDefined
-    }) verifying(Messages.get("error.password.nomatch"),result => result match {
-      case (email,oldPassword,password,confirm) => {
+    ) verifying(Messages.get("error.password.nomatch"),result => result match {
+      case (oldPassword,password,confirm) => {
         password.equals(confirm)
       }
     })
@@ -42,19 +39,16 @@ object UserAdmin extends Controller with Secured with Mailer{
   /** change email address form, veryifying that the email address does not exists */
   val changeEmailForm= Form(
     tuple(
-      "oldemail" -> text,
       "password" -> text,
       "email" -> text,
       "confirm" -> text
-    ) verifying (Messages.get("error.login.invalid"),result => result match {
-      case (oldEmail,password,email,confirm) => User.authenticate(oldEmail, password).isDefined
-    }) verifying(Messages.get("error.email.nomatch"),result => result match {
-      case (oldEmail,password,email,confirm) => {
+    ) verifying(Messages.get("error.email.nomatch"),result => result match {
+      case (password,email,confirm) => {
         email.equals(confirm)
     }}) verifying (Messages.get("error.user.exists"), result => result._3 match {
       case (email) => User.findByEmail(email).isEmpty
     }) verifying(Messages.get("error.email.invalid"),result => result match {
-      case (oldEmail,password,email,confirm) => email.contains('@') && confirm.contains('@')
+      case (password,email,confirm) => email.contains('@') && confirm.contains('@')
     })
   )
 
@@ -115,11 +109,19 @@ object UserAdmin extends Controller with Secured with Mailer{
           BadRequest(html.admin(formWithErrors,changeEmailForm,newFundForm,changeNameForm,user))
         },
         changePassword => {
-          val resetResult = User.changePassword(user.id, changePassword._1,changePassword._3)
-          if (null == resetResult) Redirect(routes.UserAdmin.index).flashing(configValues.resetSuccess -> user.name)
+          if (User.authenticate(user.email, changePassword._1).isDefined) {
+            val resetResult = User.changePassword(user.id, changePassword._1,changePassword._3)
+            if (null == resetResult) Redirect(routes.UserAdmin.index).flashing(configValues.resetSuccess -> user.name)
+            else {
+              /** There was an error changing the password */
+              val formWithErrors = changePasswordForm.fill(changePassword).withGlobalError(resetResult)
+              BadRequest(html.admin(formWithErrors,changeEmailForm,newFundForm,changeNameForm,user))
+            }
+          }
           else {
-            /** There was an error changing the password */
-            val formWithErrors = changePasswordForm.fill(changePassword).withGlobalError(resetResult)
+            /** The email and password do not match */
+            val formWithErrors = changePasswordForm.fill(changePassword).withGlobalError(
+              Messages.get("error.password.incorrect"))
             BadRequest(html.admin(formWithErrors,changeEmailForm,newFundForm,changeNameForm,user))
           }
         }
@@ -141,13 +143,20 @@ object UserAdmin extends Controller with Secured with Mailer{
           BadRequest(html.admin(changePasswordForm,formWithErrors,newFundForm,changeNameForm,user))
         },
         changeEmail => {
-          val resetResult = User.changeEmail(user.id,changeEmail._3)
-          if (null == resetResult) Redirect(routes.UserAdmin.index).flashing(configValues.genericSuccess ->
-            Messages.get("view.admin.emailchanged",user.name,changeEmail._3)).withSession(
-            Security.username -> changeEmail._3, configValues.timeoutSession -> DateTime.now().toString())
+          if (User.authenticate(user.email, changeEmail._1).isDefined) {
+            val resetResult = User.changeEmail(user.id,changeEmail._3)
+            if (null == resetResult) Redirect(routes.UserAdmin.index).flashing(configValues.genericSuccess ->
+              Messages.get("view.admin.emailchanged",user.name,changeEmail._3)).withSession(
+              Security.username -> changeEmail._3, configValues.timeoutSession -> DateTime.now().toString())
+            else {
+              /** There was an error changing the email address */
+              val formWithErrors = changeEmailForm.fill(changeEmail).withGlobalError(resetResult)
+              BadRequest(html.admin(changePasswordForm,formWithErrors,newFundForm,changeNameForm,user))
+            }
+          }
           else {
-            /** There was an error changing the email address */
-            val formWithErrors = changeEmailForm.fill(changeEmail).withGlobalError(resetResult)
+            /** The username and password do not match */
+            val formWithErrors = changeEmailForm.fill(changeEmail).withGlobalError(Messages.get("error.password.incorrect"))
             BadRequest(html.admin(changePasswordForm,formWithErrors,newFundForm,changeNameForm,user))
           }
         }

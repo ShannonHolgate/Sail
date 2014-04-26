@@ -1,4 +1,4 @@
-@(changePasswordForm: Form[(String,String,String,String)], changeEmailForm: Form[(String,String,String,String)],
+@(changePasswordForm: Form[(String,String,String)], changeEmailForm: Form[(String,String,String)],
         newFundForm:Form[(String,String,String)],
         changeNameForm:Form[(String,String,String)],
         user:User)(implicit flash: Flash)
@@ -46,12 +46,6 @@
 
   @helper.form(routes.UserAdmin.changePassword, 'id -> "password-change-form", 'novalidate -> "novalidate") {
     <div class="row">
-        @Messages("view.emaillabel")
-    </div>  
-    <div class="row">
-        <input type="email" name="email" value="@changePasswordForm("email").value">
-    </div>  
-    <div class="row">
         Old Password <a href="/admin/reset" class="small-font" >[@Messages("view.login.forgotlabel")]</a>
     </div>
     <div class="row">
@@ -81,18 +75,6 @@
 
   @helper.form(routes.UserAdmin.changeEmail, 'id -> "email-change-form", 'novalidate -> "novalidate") {
     <div class="row">
-        Old Email
-    </div>  
-    <div class="row">
-        <input type="email" name="oldemail" value="@changeEmailForm("oldemail").value">
-    </div>  
-    <div class="row">
-        @Messages("view.passwordlabel") <a href="/admin/reset" class="small-font" >[@Messages("view.login.forgotlabel")]</a>
-    </div>
-    <div class="row">
-      <input type="password" name="password">
-    </div>  
-    <div class="row">
         @Messages("view.emaillabel")
     </div>  
     <div class="row">
@@ -103,6 +85,12 @@
     </div>
     <div class="row">
       <input type="email" name="confirm" id="confirm" value="@changeEmailForm("confirm").value">
+    </div>  
+    <div class="row">
+        @Messages("view.passwordlabel") <a href="/admin/reset" class="small-font" >[@Messages("view.login.forgotlabel")]</a>
+    </div>
+    <div class="row">
+      <input type="password" name="password">
     </div>  
     <a class="flat-grey small left close-modal" href="#close">@Messages("view.cancel")</a>
     <input type="submit" value="Change" class="flat-grey small right"></input> 

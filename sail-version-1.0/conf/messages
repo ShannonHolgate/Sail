@@ -20,6 +20,7 @@ error.name.length=Name must contain at least {0} letters
 error.question.incorrect=That's the incorrect answer to this question, are you a machine?
 error.newfund.failed=An error occured in the database, please try again
 error.name.failed=An error occured in the database, please try again
+error.password.incorrect=Incorrect password entered
 
 # Investment manipulation errors
 error.investment.quantity=Quantity must be greater than {0}

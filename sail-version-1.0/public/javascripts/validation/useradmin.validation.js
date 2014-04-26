@@ -38,10 +38,6 @@ $(function () {
    **/
   $("#email-change-form").validate({
     rules: {
-      oldemail: {
-        required: true,
-        email: true
-      },
       password: {
         required: true,
         minlength: 8
@@ -57,10 +53,6 @@ $(function () {
       }
     },
     messages: {
-      oldemail: {
-        required: validationM.emailrequired,
-        email: validationM.emailInvalid
-      },
       password: {
         required: validationM.passwordRequired,
         minlength: $.format(validationM.passwordMinLength)
@@ -91,10 +83,6 @@ $(function () {
    **/
   $("#password-change-form").validate({
     rules: {
-      email: {
-        required: true,
-        email: true
-      },
       oldpassword: {
         required: true,
         minlength: 8
@@ -110,10 +98,6 @@ $(function () {
       }
     },
     messages: {
-      email: {
-        required: validationM.emailrequired,
-        email: validationM.emailInvalid
-      },
       oldpassword: {
         required: validationM.passwordRequired,
         minlength: $.format(validationM.passwordMinLength)
