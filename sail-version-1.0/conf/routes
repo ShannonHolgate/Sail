@@ -38,7 +38,15 @@ GET         /riskappetite                                                control
 POST        /riskappetite                                                controllers.RiskAppetite.submit
 
 # target fund
-GET         /targetfund                                                 controllers.TargetFund.index
+GET         /targetfund                                                  controllers.TargetFund.index
+
+# user admin
+GET         /admin                                                       controllers.UserAdmin.index
+GET         /admin/reset                                                 controllers.UserAdmin.requestReset
+POST        /admin/newpassword                                           controllers.UserAdmin.changePassword
+POST        /admin/newemail                                              controllers.UserAdmin.changeEmail
+POST        /admin/newfund                                               controllers.UserAdmin.newFund
+POST        /admin/newname                                               controllers.UserAdmin.changeName
 
 # services
 GET         /service/realtimeinvestments                                 controllers.Investment.getAutomatedInvestmentValues

@@ -108,7 +108,10 @@ body.nav-bar-push-toright {
 ------------------------------------- */
 div.header {
   margin-top: 60px;
-  margin-bottom: 30px; }
+  margin-bottom: 30px;
+  -webkit-transition: margin-bottom 0.7s ease;
+  -moz-transition: margin-bottom 0.7s ease;
+  transition: margin-bottom 0.7s ease; }
   div.header .title {
     display: table-cell; }
     div.header .title h3 {
@@ -123,9 +126,42 @@ div.header {
     font-size: 25px;
     padding-right: 60px; }
     div.header .user-holder span {
-      font-size: 15px;
-      line-height: 25px;
-      vertical-align: middle; }
+      text-align: right;
+      font-size: 25px; }
+      div.header .user-holder span span {
+        font-size: 15px;
+        line-height: 25px;
+        vertical-align: middle; }
+
+#name-handler {
+  cursor: pointer; }
+
+div.header.open {
+  margin-bottom: 0; }
+
+div.user-options {
+  padding-right: 50px;
+  text-align: right;
+  height: 55px;
+  -webkit-transition: height 0.7s ease;
+  -moz-transition: height 0.7s ease;
+  transition: height 0.7s ease; }
+  div.user-options a {
+    display: block;
+    text-align: right;
+    text-decoration: none;
+    font-size: 1.4em;
+    font-weight: bolder;
+    padding: 3px;
+    margin: 0; }
+  div.user-options a:hover {
+    background-color: #e7e7e7; }
+
+div.user-options.closed {
+  -webkit-transition: height 0.7s ease;
+  -moz-transition: height 0.7s ease;
+  transition: height 0.7s ease;
+  height: 0; }
 
 @media screen and (max-height: 26.375em) {
   div.header {

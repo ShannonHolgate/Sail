@@ -7,7 +7,7 @@
 #
 
 # Error Messages
-error.user.exists=User Already exists
+error.user.exists=User Already exists with this email address
 error.user.inactive=You have been inactive for over {0} days
 error.user.invalid=Invalid user
 error.login.invalid=Incorrect email or password
@@ -15,7 +15,11 @@ error.user.none=User does not exist, please Register first
 error.email.incorrect=Incorrect email
 error.email.invalid=Please enter a valid email address
 error.password.nomatch=Passwords do not match
+error.email.nomatch=Email Addresses do not match
 error.name.length=Name must contain at least {0} letters
+error.question.incorrect=That's the incorrect answer to this question, are you a machine?
+error.newfund.failed=An error occured in the database, please try again
+error.name.failed=An error occured in the database, please try again
 
 # Investment manipulation errors
 error.investment.quantity=Quantity must be greater than {0}
@@ -161,6 +165,16 @@ view.target.risk.1=Very Low Risk
 view.target.risk.2=Low Risk
 view.target.risk.3=Medium Risk
 view.target.risk.4=High Risk
-view.target.risk.5=Very High Risk 
+view.target.risk.5=Very High Risk
+
+# User Admin Page
+view.admin.pagetitle=Sail - Admin
+view.admin.title=Admin
+view.admin.question=How many days are in a week?
+view.admin.answer.text=seven
+view.admin.answer.number=7
+view.admin.emailchanged=Success, {0}, your email address has been changed to: {1}
+view.admin.fundreset=Your fund is now empty, head over to the Dashboard to add your investments
+view.admin.namechanged=Success, {0}, you have changed your name
 
 

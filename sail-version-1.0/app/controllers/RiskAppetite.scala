@@ -77,7 +77,8 @@ object RiskAppetite extends Controller with Secured with Risker{
   def index = withUser{
     user => implicit request => {
       /** Render the Risk Appetite View */
-      Ok(html.riskappetite(user.name,Messages.get("view.risk.pagetitle"),Messages.get("view.risk.header"),addAutoForm,addManualForm,removeForm)).flashing(request.flash)
+      Ok(html.riskappetite(user.name,Messages.get("view.risk.pagetitle"),Messages.get("view.risk.header"),
+        addAutoForm,addManualForm,removeForm)).flashing(request.flash)
     }
   }
 

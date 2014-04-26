@@ -173,4 +173,78 @@ object User extends ModelCompanion[User, ObjectId] {
     dao.update(MongoDBObject("email" -> email),MongoDBObject("name" -> user.get.name, "email" -> user.get.email, "password" -> BCrypt.hashpw(password, BCrypt.gensalt())),false)
     return (Option(user.get.name),None)
   }
+
+  /**
+   * Changes the password for the email address in the MongoDB
+   * Used in the User Admin screen
+   *
+   * @param email     String Email address of the User
+   * @param password  String new Password of the User
+   * @return          String containing any update errors that occur
+   */
+  def changePassword(user:ObjectId, email: String, password: String): String = {
+    /** Update the password for the email address */
+    dao.update(q = MongoDBObject("_id" -> user, "email" -> email),o = MongoDBObject("$set" -> MongoDBObject(
+      "password" -> BCrypt.hashpw(password, BCrypt.gensalt()))),
+      upsert = false, multi = false, wc = new WriteConcern()).getError()
+  }
+
+  /**
+   * Changes the email address for the user in the MongoDB
+   * Ensure the session is reset on the browser to implement the changes without logging out
+   *
+   * @param user    ObjectID of the user
+   * @param email   String new email address for the user
+   * @return        String containing any update errors that occur
+   */
+  def changeEmail(user:ObjectId, email: String): String = {
+    /** Update the email address for the user */
+    dao.update(q = MongoDBObject("_id" -> user),o = MongoDBObject("$set" -> MongoDBObject(
+      "email" -> email)),
+      upsert = false, multi = false, wc = new WriteConcern()).getError()
+  }
+
+  /**
+   * Creates the new fund by giving the user a new object id
+   * Old users are kept without their email addresses to allow future changes where the user can open old
+   * funds again
+   *
+   * @param user  ObjectID of the user
+   * @return      Boolean whether the fund change was successful or not
+   */
+  def newFund(user:ObjectId): Boolean = {
+    /** Get the current user from the MongoDB */
+    val mongoUser = dao.findOne(MongoDBObject("_id" -> user))
+    if (mongoUser.isDefined) {
+      /** Get the credentials of the new user */
+      val newUser = mongoUser.get.copy(id = new ObjectId)
+
+      /** Clear down the old user for reuse later */
+      dao.update(q = MongoDBObject("_id" -> user),o = MongoDBObject("$set" -> MongoDBObject(
+        "email" -> "",
+        "reset" -> "", "expire" -> "")),
+        upsert = false, multi = false, wc = new WriteConcern()).getError()
+
+      /** Insert the new user into the MongoDB
+        * This acts in the same way as creating a new fund
+        */
+      dao.insert(newUser).isDefined
+    }
+    else
+      false
+  }
+
+  /**
+   * Changes the name for the user in the MongoDB
+   *
+   * @param user  ObjectId of the user
+   * @param name  String the new name of the user
+   * @return      String containing any update errors that occur
+   */
+  def changeName(user:ObjectId, name:String): String = {
+    /** Update the name for the user */
+    dao.update(q = MongoDBObject("_id" -> user),o = MongoDBObject("$set" -> MongoDBObject(
+      "name" -> name)),
+      upsert = false, multi = false, wc = new WriteConcern()).getError()
+  }
 }

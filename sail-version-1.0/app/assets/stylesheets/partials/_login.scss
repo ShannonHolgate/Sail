@@ -59,4 +59,28 @@ div.login {
   .landing-content {
     padding: 5px 15px;
   }
+
+  .admin {
+    p.first {
+      margin-top: 0;
+    }
+
+    a.pop {
+      display: block;
+      background-color: #585858;
+      padding: 5px;
+      text-decoration: none;
+      color: white;
+      font-size: 1.1em;
+    }
+    a.pop:hover {
+      background-color: #8D6510;  
+    }
+    a.pop:active {
+      background-color: #CFA03A;
+    }
+    a.last {
+      margin-bottom: 10px;
+    }
+  }
 }

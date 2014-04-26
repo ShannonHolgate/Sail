@@ -1,0 +1,168 @@
+@(changePasswordForm: Form[(String,String,String,String)], changeEmailForm: Form[(String,String,String,String)],
+        newFundForm:Form[(String,String,String)],
+        changeNameForm:Form[(String,String,String)],
+        user:User)(implicit flash: Flash)
+@import play.api.Play
+@import play.api.Play.current
+
+@landing(Messages("view.admin.pagetitle"), Messages("view.admin.title"), {
+  // Add each possible error to a sequence
+  changePasswordForm.globalError.map { error => error.message } ::
+  changeEmailForm.globalError.map { error => error.message } ::
+  newFundForm.globalError.map { error => error.message } ::
+  changeNameForm.globalError.map { error => error.message } ::
+  flash.get(Play.application.configuration.getString("generic.error").get) ::
+  Nil
+},{
+  // Add each possible success to a sequence
+  flash.get(Play.application.configuration.getString("user.reset.flash").get).map { username => Messages("view.login.resetsuccess", username) } ::
+  flash.get(Play.application.configuration.getString("user.reset.request").get).map { email => Messages("view.login.resetrequest", email) } ::
+  flash.get(Play.application.configuration.getString("generic.success").get) ::
+  Nil
+}) {
+<div class="span-12 landing-content admin">
+  <div class="row">
+      <p class="first">@Messages("view.namelabel")</p>
+      <a class="pop" href="#name-pop" id="name-link">@user.name</a>
+  </div>
+  <div class="row">
+      <p>@Messages("view.emaillabel")</p> 
+      <a class="pop" href="#email-pop" id="email-link">@user.email</a>
+  </div>
+  <div class="row">
+      <p>@Messages("view.passwordlabel")</p> 
+      <a class="pop last" href="#password-pop" id="password-link">********</a>
+  </div>
+  <div class="row end">
+    <a class="flat-grey small left close-modal" href="#fund-pop">New Fund</a>
+    <a class="flat-grey small right close-modal" href="/dash">Dashboard</a>
+  </div>
+</div>
+
+<!-- Modal change password form -->
+<a href="#close" class="overlay close-modal" id="password-pop"></a>
+<div class="popup modal">
+  <h3>Set a New Password</h3>
+
+  @helper.form(routes.UserAdmin.changePassword, 'id -> "password-change-form", 'novalidate -> "novalidate") {
+    <div class="row">
+        @Messages("view.emaillabel")
+    </div>  
+    <div class="row">
+        <input type="email" name="email" id="email" value="@changePasswordForm("email").value">
+    </div>  
+    <div class="row">
+        Old Password <a href="/admin/reset" class="small-font" >[@Messages("view.login.forgotlabel")]</a>
+    </div>
+    <div class="row">
+      <input type="password" name="oldpassword" id="old-password">
+    </div>  
+    <div class="row">
+        @Messages("view.passwordlabel") 
+    </div>
+    <div class="row">
+      <input type="password" name="password" id="password">
+    </div>  
+    <div class="row">
+        @Messages("view.reset.confirmlabel")
+    </div>
+    <div class="row">
+      <input type="password" name="confirm" id="confirm">
+    </div>  
+    <a class="flat-grey small left close-modal" href="#close">@Messages("view.cancel")</a>
+    <input type="submit" value="Change" class="flat-grey small right"></input> 
+  }
+</div>
+
+<!-- Modal change email address form -->
+<a href="#close" class="overlay close-modal" id="email-pop"></a>
+<div class="popup modal">
+  <h3>Set a New Email Address</h3>
+
+  @helper.form(routes.UserAdmin.changeEmail, 'id -> "email-change-form", 'novalidate -> "novalidate") {
+    <div class="row">
+        Old Email
+    </div>  
+    <div class="row">
+        <input type="email" name="oldemail" value="@changeEmailForm("oldemail").value">
+    </div>  
+    <div class="row">
+        @Messages("view.passwordlabel") <a href="/admin/reset" class="small-font" >[@Messages("view.login.forgotlabel")]</a>
+    </div>
+    <div class="row">
+      <input type="password" name="password">
+    </div>  
+    <div class="row">
+        @Messages("view.emaillabel")
+    </div>  
+    <div class="row">
+        <input type="email" name="email" id="email" value="@changeEmailForm("email").value">
+    </div>  
+    <div class="row">
+        Re-type Email Address
+    </div>
+    <div class="row">
+      <input type="email" name="confirm" id="confirm" value="@changeEmailForm("confirm").value">
+    </div>  
+    <a class="flat-grey small left close-modal" href="#close">@Messages("view.cancel")</a>
+    <input type="submit" value="Change" class="flat-grey small right"></input> 
+  }
+</div>
+
+<!-- Modal new fund form -->
+<a href="#close" class="overlay close-modal" id="fund-pop"></a>
+<div class="popup modal">
+  <h3>Create a new fund</h3>
+  <p class="warning">Warning: Doing this completely removes all investments from the system.</p>
+  @helper.form(routes.UserAdmin.newFund, 'id -> "new-fund-form", 'novalidate -> "novalidate") {
+    <div class="row">
+        @Messages("view.emaillabel")
+    </div>  
+    <div class="row">
+        <input type="email" name="email" id="email" value="@newFundForm("email").value">
+    </div>  
+    <div class="row">
+        @Messages("view.passwordlabel") <a href="/admin/reset" class="small-font" >[@Messages("view.login.forgotlabel")]</a>
+    </div>
+    <div class="row">
+      <input type="password" name="password">
+    </div>  
+    <div class="row">
+        @Messages("view.admin.question")
+    </div>  
+    <div class="row">
+        <input type="text" name="answer" id="answer" value="@newFundForm("answer").value">
+    </div>  
+    <a class="flat-grey small left close-modal" href="#close">@Messages("view.cancel")</a>
+    <input type="submit" value="Create" class="flat-grey small right"></input> 
+  }
+</div>
+
+<!-- Modal new name form -->
+<a href="#close" class="overlay close-modal" id="name-pop"></a>
+<div class="popup modal">
+  <h3>Set a New Name</h3>
+  @helper.form(routes.UserAdmin.changeName, 'id -> "name-change-form", 'novalidate -> "novalidate") {
+    <div class="row">
+        @Messages("view.emaillabel")
+    </div>  
+    <div class="row">
+        <input type="email" name="email" id="email" value="@changeNameForm("email").value">
+    </div>  
+    <div class="row">
+        @Messages("view.passwordlabel") <a href="/admin/reset" class="small-font" >[@Messages("view.login.forgotlabel")]</a>
+    </div>
+    <div class="row">
+      <input type="password" name="password">
+    </div>  
+    <div class="row">
+        New Name
+    </div>  
+    <div class="row">
+        <input type="text" name="newname" id="new-name" value="@changeNameForm("newname").value">
+    </div>  
+    <a class="flat-grey small left close-modal" href="#close">@Messages("view.cancel")</a>
+    <input type="submit" value="Change" class="flat-grey small right"></input> 
+  }
+</div>
+}
