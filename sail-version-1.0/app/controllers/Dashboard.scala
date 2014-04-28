@@ -96,12 +96,16 @@ object Dashboard extends Controller with Secured with Valuation with Risker{
         /** Loop through the investments by asset class to parse the data into asset class key value pairs */
         for (investment <- investments.get.sortBy(_.assetclass)) {
 
-          /** If the investment has a symbol, it is automated and the value can be accessed real time. Add this to the Symbol List */
+          /** If the investment has a symbol, it is automated and the value can be accessed real time.
+            * Add this to the Symbol List */
           if (investment.symbol.isDefined && investment.quantity.get.>(0))
-            symbolInvestments.append((investment.symbol.get,investment.assetclass,investment.quantity.get,investment.value.setScale(2, RoundingMode.CEILING)))
-          /** The investment does not have a symbol but it exists in a class with automated values so it should be added to the symbol array */
+            symbolInvestments.append((investment.symbol.get,investment.assetclass,investment.quantity.get,
+              investment.value.setScale(2, RoundingMode.CEILING)))
+          /** The investment does not have a symbol but it exists in a class with automated values
+            * so it should be added to the symbol array */
           else if (classesWithSymbols.exists(sClass => sClass == investment.assetclass))
-            symbolInvestments.append(("Manual",investment.assetclass,1,investment.value.setScale(2, RoundingMode.CEILING)))
+            symbolInvestments.append(("Manual",investment.assetclass,1,investment.value.setScale(2,
+              RoundingMode.CEILING)))
 
           /** If the investment is in the same asset class as the previous, add it's value */
           if (investment.assetclass != tempAssetClass.get) {
@@ -109,7 +113,8 @@ object Dashboard extends Controller with Secured with Valuation with Risker{
           }
           /** Otherwise it is a new investment class and should be appended */
           else {
-            assetClassValues.update(assetClassValues.size-1, (assetClassValues.last._1, assetClassValues.last._2.+(investment.value.setScale(2, RoundingMode.CEILING))))
+            assetClassValues.update(assetClassValues.size-1, (assetClassValues.last._1, assetClassValues.last._2.+(
+              investment.value.setScale(2, RoundingMode.CEILING))))
           }
 
           /** Update the temporary values */

@@ -13,6 +13,7 @@ import scala.collection.mutable.ListBuffer
 import helpers.{InvestmentWithValue, Risker}
 import play.api.libs.json.{JsNumber, JsString, Writes, Json}
 import scala.math.BigDecimal.RoundingMode
+import play.i18n.Messages
 
 /**
  *  Controller for the Risk Web Services
@@ -45,12 +46,6 @@ object RiskFinder extends Controller with Secured with Risker{
       /** Retrieve the target fund percentage breakdown from the database */
       val targetFundBreakdown = models.TargetFund.getTargetFundForUser(user.id)
 
-      /** If the user has a target fund we should retrieve the risk related to it and add it to the risk list */
-      if (targetFundBreakdown.isDefined) {
-        // TODO Get the users risk from the Risk Appetite table
-        risks.append(("Target",2))
-      }
-
       /** Create the Json Risk parser which will format the Risk list into Json to be returned */
       implicit val riskWriter = new Writes[(String,Int)] {
         def writes(risk: (String,Int)) = {
@@ -65,7 +60,7 @@ object RiskFinder extends Controller with Secured with Risker{
       if (risks.size.>(0)) Ok(Json.toJson(risks.toList))
 
       /** No Risk analysis was performed */
-      else BadRequest("Risk appetite not found")
+      else BadRequest(Messages.get("error.risk.notfound"))
     }
 
   }

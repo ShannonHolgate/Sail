@@ -108,8 +108,11 @@ object User extends ModelCompanion[User, ObjectId] {
     val user: Option[User] = findByEmail(email)
     if (user.isDefined) {
       val resetKey = new ObjectId
-      val resetExpires = DateTime.now().plusDays(Play.application.configuration.getString("reset.expire.days").get.toInt).toDate
-      dao.update(MongoDBObject("email" -> user.get.email),MongoDBObject("name" -> user.get.name, "email" -> user.get.email, "password" -> user.get.password, "reset" -> resetKey, "expire" -> resetExpires),false)
+      val resetExpires = DateTime.now().plusDays(
+        Play.application.configuration.getString("reset.expire.days").get.toInt).toDate
+      dao.update(MongoDBObject("email" -> user.get.email),
+        MongoDBObject("name" -> user.get.name, "email" -> user.get.email,
+          "password" -> user.get.password, "reset" -> resetKey, "expire" -> resetExpires),false)
       (Option(resetKey.toString),Option(resetExpires),Option(user.get.name))
     }
     /** Unlikely to happen as client side validation of the email is performed */
@@ -130,7 +133,8 @@ object User extends ModelCompanion[User, ObjectId] {
       val user: Option[User] = dao.findOne(MongoDBObject("reset" -> new ObjectId(key)))
       if(user.isDefined && user.get.expire.isDefined){
         if(DateTime.now().isAfter(new DateTime(user.get.expire.get))) {
-          dao.update(MongoDBObject("email" -> user.get.email),MongoDBObject("name" -> user.get.name, "email" -> user.get.email, "password" -> user.get.password),false)
+          dao.update(MongoDBObject("email" -> user.get.email),
+            MongoDBObject("name" -> user.get.name, "email" -> user.get.email, "password" -> user.get.password),false)
           None
         }
         else user
@@ -167,10 +171,13 @@ object User extends ModelCompanion[User, ObjectId] {
    *                  or no user and an error message stating that the key did not match the email
    */
   def resetPassword(email: String, password: String, key: String):(Option[String],Option[String]) = {
-    val user: Option[User] = Option(dao.findOne(MongoDBObject("email" -> email,"reset" -> new ObjectId(key))).getOrElse({
+    val user: Option[User] = Option(dao.findOne(MongoDBObject("email" -> email,"reset" ->
+      new ObjectId(key))).getOrElse({
       return(None,Option(Messages.get("error.email.incorrect")))
     }))
-    dao.update(MongoDBObject("email" -> email),MongoDBObject("name" -> user.get.name, "email" -> user.get.email, "password" -> BCrypt.hashpw(password, BCrypt.gensalt())),false)
+    dao.update(MongoDBObject("email" -> email),
+      MongoDBObject("name" -> user.get.name, "email" -> user.get.email,
+        "password" -> BCrypt.hashpw(password, BCrypt.gensalt())),false)
     return (Option(user.get.name),None)
   }
 

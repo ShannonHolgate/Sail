@@ -61,7 +61,8 @@ object Register extends Controller with Secured with Mailer{
       user => {
         User.create(user._1,user._2,user._3)
         sendRegisteredEmail(user._2,user._1, request)
-        Redirect(routes.Application.index).withSession(Security.username -> user._2, configValues.timeoutSession -> DateTime.now.toString())
+        Redirect(routes.Application.index).withSession(Security.username -> user._2,
+          configValues.timeoutSession -> DateTime.now.toString())
       }
     )
   }

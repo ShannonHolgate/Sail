@@ -70,7 +70,8 @@ class LoginSpec extends Specification with TestUser with controllers.Secured{
       /** Run the authenticate action and set the connected date a week in the past
         * This allows the timeout to be reached by the next request
         */
-      val login= controllers.Login.authenticate(DateTime.now().minusWeeks(1).toString())(FakeRequest().withJsonBody(jsonObject))
+      val login= controllers.Login.authenticate(DateTime.now().minusWeeks(1).toString())(FakeRequest().
+        withJsonBody(jsonObject))
 
       /** Store the cookies to pass onto the next request */
       val sessionCookies = cookies(login).get("PLAY_SESSION").orNull
@@ -140,7 +141,8 @@ class LoginSpec extends Specification with TestUser with controllers.Secured{
       /** Run the authenticate action and set the connected date a week in the past
         * This allows the timeout to be reached by the next request
         */
-      val authenticate= controllers.Login.authenticate(DateTime.now().minusWeeks(1).toString())(FakeRequest(POST,"/login").withJsonBody(jsonObject))
+      val authenticate= controllers.Login.authenticate(DateTime.now().minusWeeks(1).toString())(
+        FakeRequest(POST,"/login").withJsonBody(jsonObject))
 
       /** Store the cookies to pass onto the next request */
       val sessionCookies = cookies(authenticate).get("PLAY_SESSION").orNull

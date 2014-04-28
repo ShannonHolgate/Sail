@@ -156,7 +156,8 @@ object UserAdmin extends Controller with Secured with Mailer{
           }
           else {
             /** The username and password do not match */
-            val formWithErrors = changeEmailForm.fill(changeEmail).withGlobalError(Messages.get("error.password.incorrect"))
+            val formWithErrors = changeEmailForm.fill(changeEmail).withGlobalError(
+              Messages.get("error.password.incorrect"))
             BadRequest(html.admin(changePasswordForm,formWithErrors,newFundForm,changeNameForm,user))
           }
         }

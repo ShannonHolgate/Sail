@@ -16,7 +16,7 @@
   <script src="@routes.Assets.at("javascripts/jquery-1.9.0.min.js")" type="text/javascript"></script>
   <script src="@routes.Assets.at("javascripts/jquery.validate.min.js")" type="text/javascript"></script>
   <script src="@routes.Assets.at("javascripts/messages/messages.js")" type="text/javascript"></script>
-    <script src="@routes.Assets.at("javascripts/validation/rules.validation.js")" type="text/javascript"></script>
+  <script src="@routes.Assets.at("javascripts/validation/rules.validation.js")" type="text/javascript"></script>
   <script src="@routes.Assets.at("javascripts/jquery.blockUI.js")" type="text/javascript"></script>
 </head>
 <!-- Main wrapper for any content -->
@@ -32,7 +32,7 @@
 				}
 			}    
 		</p>
-		<a class="flat-grey small right" href="#close">Continue</a>
+		<a class="flat-grey small right" href="#close">@Messages("view.continue")</a>
 	</div>
 
 	<!-- Iterate over the error messages to make a popup for each -->
@@ -45,7 +45,7 @@
 				}				
 			} 
 		</p>
-		<a class="flat-grey small right" href="#close">Continue</a>
+		<a class="flat-grey small right" href="#close">@Messages("view.continue")</a>
 	</div>
 	<script> 
 		//Checks to see if any error/success popups have been created and sets the browser to them

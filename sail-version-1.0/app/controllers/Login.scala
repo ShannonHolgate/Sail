@@ -64,7 +64,8 @@ object  Login extends Controller with Secured with Mailer{
   def authenticate(date:String=DateTime.now().toString()) = Action { implicit request =>
     loginForm.bindFromRequest.fold(
       formWithErrors => BadRequest(html.login(formWithErrors,resetRequestForm)),
-      user => Redirect(routes.Application.index).withSession(Security.username -> user._1, configValues.timeoutSession -> date)
+      user => Redirect(routes.Application.index).withSession(Security.username -> user._1,
+        configValues.timeoutSession -> date)
     )
   }
 

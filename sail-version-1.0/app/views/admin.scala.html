@@ -15,8 +15,10 @@
   Nil
 },{
   // Add each possible success to a sequence
-  flash.get(Play.application.configuration.getString("user.reset.flash").get).map { username => Messages("view.login.resetsuccess", username) } ::
-  flash.get(Play.application.configuration.getString("user.reset.request").get).map { email => Messages("view.login.resetrequest", email) } ::
+  flash.get(Play.application.configuration.getString("user.reset.flash").get).map {
+      username => Messages("view.login.resetsuccess", username) } ::
+  flash.get(Play.application.configuration.getString("user.reset.request").get).map {
+      email => Messages("view.login.resetrequest", email) } ::
   flash.get(Play.application.configuration.getString("generic.success").get) ::
   Nil
 }) {
@@ -34,19 +36,20 @@
       <a class="pop last" href="#password-pop" id="password-link">********</a>
   </div>
   <div class="row end">
-    <a class="flat-grey small left close-modal" href="#fund-pop">New Fund</a>
-    <a class="flat-grey small right close-modal" href="/dash">Dashboard</a>
+    <a class="flat-grey small left close-modal" href="#fund-pop">@Messages("view.admin.newfund")</a>
+    <a class="flat-grey small right close-modal" href="/dash">@Messages("view.admin.dashboard")</a>
   </div>
 </div>
 
 <!-- Modal change password form -->
 <a href="#close" class="overlay close-modal" id="password-pop"></a>
 <div class="popup modal">
-  <h3>Set a New Password</h3>
+  <h3>@Messages("view.admin.newpassword.title")</h3>
 
   @helper.form(routes.UserAdmin.changePassword, 'id -> "password-change-form", 'novalidate -> "novalidate") {
     <div class="row">
-        Old Password <a href="/admin/reset" class="small-font" >[@Messages("view.login.forgotlabel")]</a>
+        @Messages("view.admin.newpassword.old")
+        <a href="/admin/reset" class="small-font" >[@Messages("view.login.forgotlabel")]</a>
     </div>
     <div class="row">
       <input type="password" name="oldpassword" id="old-password">
@@ -64,14 +67,14 @@
       <input type="password" name="confirm" id="confirm">
     </div>  
     <a class="flat-grey small left close-modal" href="#close">@Messages("view.cancel")</a>
-    <input type="submit" value="Change" class="flat-grey small right"></input> 
+    <input type="submit" value="@Messages("view.admin.newpassword.change")" class="flat-grey small right"></input> 
   }
 </div>
 
 <!-- Modal change email address form -->
 <a href="#close" class="overlay close-modal" id="email-pop"></a>
 <div class="popup modal">
-  <h3>Set a New Email Address</h3>
+  <h3>@Messages("view.admin.newemail.title")</h3>
 
   @helper.form(routes.UserAdmin.changeEmail, 'id -> "email-change-form", 'novalidate -> "novalidate") {
     <div class="row">
@@ -81,27 +84,28 @@
         <input type="email" name="email" id="email" value="@changeEmailForm("email").value">
     </div>  
     <div class="row">
-        Re-type Email Address
+        @Messages("view.admin.newemail.confirm")
     </div>
     <div class="row">
       <input type="email" name="confirm" id="confirm" value="@changeEmailForm("confirm").value">
     </div>  
     <div class="row">
-        @Messages("view.passwordlabel") <a href="/admin/reset" class="small-font" >[@Messages("view.login.forgotlabel")]</a>
+        @Messages("view.passwordlabel")
+        <a href="/admin/reset" class="small-font" >[@Messages("view.login.forgotlabel")]</a>
     </div>
     <div class="row">
       <input type="password" name="password">
     </div>  
     <a class="flat-grey small left close-modal" href="#close">@Messages("view.cancel")</a>
-    <input type="submit" value="Change" class="flat-grey small right"></input> 
+    <input type="submit" value="@Messages("view.admin.newpassword.change")" class="flat-grey small right"></input> 
   }
 </div>
 
 <!-- Modal new fund form -->
 <a href="#close" class="overlay close-modal" id="fund-pop"></a>
 <div class="popup modal">
-  <h3>Create a new fund</h3>
-  <p class="warning">Warning: Doing this completely removes all investments from the system.</p>
+  <h3>@Messages("view.admin.newfund.title")</h3>
+  <p class="warning">@Messages("view.admin.newfund.warning")</p>
   @helper.form(routes.UserAdmin.newFund, 'id -> "new-fund-form", 'novalidate -> "novalidate") {
     <div class="row">
         @Messages("view.emaillabel")
@@ -110,7 +114,8 @@
         <input type="email" name="email" value="@newFundForm("email").value">
     </div>  
     <div class="row">
-        @Messages("view.passwordlabel") <a href="/admin/reset" class="small-font" >[@Messages("view.login.forgotlabel")]</a>
+        @Messages("view.passwordlabel")
+        <a href="/admin/reset" class="small-font" >[@Messages("view.login.forgotlabel")]</a>
     </div>
     <div class="row">
       <input type="password" name="password">
@@ -122,14 +127,14 @@
         <input type="text" name="answer" id="answer" value="@newFundForm("answer").value">
     </div>  
     <a class="flat-grey small left close-modal" href="#close">@Messages("view.cancel")</a>
-    <input type="submit" value="Create" class="flat-grey small right"></input> 
+    <input type="submit" value="@Messages("view.admin.newfund.create")" class="flat-grey small right"></input> 
   }
 </div>
 
 <!-- Modal new name form -->
 <a href="#close" class="overlay close-modal" id="name-pop"></a>
 <div class="popup modal">
-  <h3>Set a New Name</h3>
+  <h3>@Messages("view.admin.newname.title")</h3>
   @helper.form(routes.UserAdmin.changeName, 'id -> "name-change-form", 'novalidate -> "novalidate") {
     <div class="row">
         @Messages("view.emaillabel")
@@ -138,19 +143,20 @@
         <input type="email" name="email" value="@changeNameForm("email").value">
     </div>  
     <div class="row">
-        @Messages("view.passwordlabel") <a href="/admin/reset" class="small-font" >[@Messages("view.login.forgotlabel")]</a>
+        @Messages("view.passwordlabel")
+        <a href="/admin/reset" class="small-font" >[@Messages("view.login.forgotlabel")]</a>
     </div>
     <div class="row">
       <input type="password" name="password">
     </div>  
     <div class="row">
-        New Name
+        @Messages("view.admin.newname.name")
     </div>  
     <div class="row">
         <input type="text" name="newname" id="new-name" value="@changeNameForm("newname").value">
     </div>  
     <a class="flat-grey small left close-modal" href="#close">@Messages("view.cancel")</a>
-    <input type="submit" value="Change" class="flat-grey small right"></input> 
+    <input type="submit" value="@Messages("view.admin.newpassword.change")" class="flat-grey small right"></input> 
   }
 </div>
 <!-- Include the validation for the user admin forms -->

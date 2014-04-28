@@ -51,7 +51,7 @@
 	  		</li>
 	  	</ul>
   	</div>
-	<p><a class="flat-grey small-long right" id="submit-button" href="/dash">Continue</a></p>
+	<p><a class="flat-grey small-long right" id="submit-button" href="/dash">@Messages("view.target.continue")</a></p>
 </div>
 <script src="http://code.highcharts.com/highcharts.js"></script>
 <script src="http://code.highcharts.com/modules/exporting.js"></script>
@@ -102,7 +102,7 @@ $(function () {
 	        },
 	        title: {
 	            useHTML: true,
-	            text: 'Current Fund Percentages'
+	            text: '@Messages("view.target.currentperc")'
 	        },
 	        exporting: { enabled: false },
 	        plotOptions: {
@@ -116,7 +116,7 @@ $(function () {
 	            valueSuffix: '%'
 	        },
 	        series: [{
-	            name: 'Percentage of fund',
+	            name: '@Messages("view.target.percoffund")',
 	            data: currentFundPerc,
 	            innerSize: '30%',
 	            size: '80%',
@@ -146,7 +146,7 @@ $(function () {
         },
         title: {
             useHTML: true,
-            text: 'Target Fund Percentages'
+            text: '@Messages("view.target.targetperc")'
         },
         exporting: { enabled: false },
         plotOptions: {
@@ -160,7 +160,7 @@ $(function () {
             valueSuffix: '%'
         },
         series: [{
-            name: 'Percentage of fund',
+            name: '@Messages("view.target.percoffund")',
             data: targetFundPerc,
             innerSize: '30%',
             size: '80%',

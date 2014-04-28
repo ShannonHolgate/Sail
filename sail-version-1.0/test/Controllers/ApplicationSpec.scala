@@ -36,6 +36,9 @@ class ApplicationSpec extends Specification with TestUser{
     }
 
     "respond to the index Action" in new WithApplication(currentApplication){
+      /** Ensure user exists */
+      confirmTestUserExists
+
       /** The Json form object*/
       val jsonObject = toJson(
         Map(

@@ -67,10 +67,12 @@ object Reset extends Controller with Secured{
       reset => {
         val resetResult = User.resetPassword(reset._1,reset._2,key)
         val username:Option[String] = resetResult._1
-        if (username.isDefined) Results.Redirect(routes.Login.index).flashing(configValues.resetSuccess -> username.get)
+        if (username.isDefined) Results.Redirect(routes.Login.index).flashing(
+          configValues.resetSuccess -> username.get)
         else {
           /** The email address does not match the url key */
-          val formWithErrors = resetForm.fill(reset).withGlobalError(resetResult._2.getOrElse(Messages.get("error.email.incorrect")))
+          val formWithErrors = resetForm.fill(reset).withGlobalError(
+            resetResult._2.getOrElse(Messages.get("error.email.incorrect")))
           BadRequest(html.reset(formWithErrors,key))
         }
       }

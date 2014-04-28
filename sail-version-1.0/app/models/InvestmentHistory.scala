@@ -63,7 +63,8 @@ object InvestmentHistory extends ModelCompanion[InvestmentHistory, ObjectId] {
    * @param investments List[Investment] the list of investments to retrieve the histories for
    * @return            Option[List[InvestmentHistory] ] A list of investment histories for the investments, if any
    */
-  def getHistoryForInvestments(investments:List[Investment], dateFrom:Option[Date] = None, dateTo:Option[Date] = None) : Option[List[InvestmentHistory]] = {
+  def getHistoryForInvestments(investments:List[Investment], dateFrom:Option[Date] = None, dateTo:Option[Date] = None):
+  Option[List[InvestmentHistory]] = {
 
     /** Create an empty placeholder list to be filled with investment histories */
     var histories = List[InvestmentHistory]()
@@ -85,14 +86,19 @@ object InvestmentHistory extends ModelCompanion[InvestmentHistory, ObjectId] {
       val sortedHistory = histories.sortBy(history => history.date)
 
       /** Create a list of investments before the range to ensure the start date has the correct value */
-      val investmentsBeforeRange = histories.filter(history => LocalDate.fromDateFields(history.date).toDateTimeAtStartOfDay.isBefore(LocalDate.fromDateFields(dateFrom.get).toDateTimeAtStartOfDay)).map(history => history.investment).distinct
+      val investmentsBeforeRange = histories.filter(history => LocalDate.fromDateFields(history.date).
+        toDateTimeAtStartOfDay.isBefore(LocalDate.fromDateFields(dateFrom.get).toDateTimeAtStartOfDay)).
+        map(history => history.investment).distinct
 
       /** Ensure the investments that exist before the date exist on the first date by creating histories at the dateFrom */
       investmentsBeforeRange.foreach(investmentId => {
         /** If a history does not exist at the dateFrom for an existing id, create one */
-        if (!histories.exists(history => LocalDate.fromDateFields(history.date).toDateTimeAtStartOfDay.equals(LocalDate.fromDateFields(dateFrom.get).toDateTimeAtStartOfDay)
+        if (!histories.exists(history => LocalDate.fromDateFields(history.date).toDateTimeAtStartOfDay.
+          equals(LocalDate.fromDateFields(dateFrom.get).toDateTimeAtStartOfDay)
            && history.investment == investmentId)) {
-          val investmentBeforeRange = sortedHistory.reverse.find(history => LocalDate.fromDateFields(history.date).toDateTimeAtStartOfDay.isBefore(LocalDate.fromDateFields(dateFrom.get).toDateTimeAtStartOfDay) && history.investment.equals(investmentId))
+          val investmentBeforeRange = sortedHistory.reverse.find(history => LocalDate.fromDateFields(history.date).
+            toDateTimeAtStartOfDay.isBefore(LocalDate.fromDateFields(dateFrom.get).toDateTimeAtStartOfDay) &&
+            history.investment.equals(investmentId))
           if (investmentBeforeRange.isDefined) {
             val newHistory = investmentBeforeRange.get.copy(id = new ObjectId,date = dateFrom.get)
             if (this.create(newHistory))
@@ -102,8 +108,10 @@ object InvestmentHistory extends ModelCompanion[InvestmentHistory, ObjectId] {
       })
 
       /** Filter the list of histories between the dates and append them onto the new date range list */
-      historiesInRange.appendAll(sortedHistory.filter(history => LocalDate.fromDateFields(history.date).toDateTimeAtStartOfDay.isBefore(LocalDate.fromDateFields(dateTo.get).plusDays(1).toDateTimeAtStartOfDay) &&
-        LocalDate.fromDateFields(history.date).toDateTimeAtStartOfDay.isAfter(LocalDate.fromDateFields(dateFrom.get).minusDays(1).toDateTimeAtStartOfDay)))
+      historiesInRange.appendAll(sortedHistory.filter(history => LocalDate.fromDateFields(history.date).
+        toDateTimeAtStartOfDay.isBefore(LocalDate.fromDateFields(dateTo.get).plusDays(1).toDateTimeAtStartOfDay) &&
+        LocalDate.fromDateFields(history.date).toDateTimeAtStartOfDay.isAfter(LocalDate.fromDateFields(dateFrom.get).
+          minusDays(1).toDateTimeAtStartOfDay)))
 
       /** Get each investment id in the range to ensure a history is available at the end date */
       val investmentsInRange = historiesInRange.map(history => history.investment).distinct
@@ -111,9 +119,12 @@ object InvestmentHistory extends ModelCompanion[InvestmentHistory, ObjectId] {
       /** Ensure a history exists at the last date for each investment */
       investmentsInRange.foreach(investmentId => {
         /** If a history does not exist at the dateTo for an existing id, create one */
-        if (!historiesInRange.exists(history => LocalDate.fromDateFields(history.date).toDateTimeAtStartOfDay.equals(LocalDate.fromDateFields(dateTo.get).toDateTimeAtStartOfDay)
+        if (!historiesInRange.exists(history => LocalDate.fromDateFields(history.date).toDateTimeAtStartOfDay.
+          equals(LocalDate.fromDateFields(dateTo.get).toDateTimeAtStartOfDay)
           && history.investment == investmentId)) {
-          val investmentinRange = historiesInRange.reverse.find(history => LocalDate.fromDateFields(history.date).toDateTimeAtStartOfDay.isBefore(LocalDate.fromDateFields(dateTo.get).toDateTimeAtStartOfDay) && history.investment.equals(investmentId))
+          val investmentinRange = historiesInRange.reverse.find(history => LocalDate.fromDateFields(history.date).
+            toDateTimeAtStartOfDay.isBefore(LocalDate.fromDateFields(dateTo.get).toDateTimeAtStartOfDay) &&
+            history.investment.equals(investmentId))
           if (investmentinRange.isDefined) {
             val newHistory = investmentinRange.get.copy(id = new ObjectId,date = dateTo.get)
             if (this.create(newHistory))
@@ -258,12 +269,14 @@ object InvestmentHistory extends ModelCompanion[InvestmentHistory, ObjectId] {
     val midnight = LocalDate.now().plusDays(1).toDateTimeAtStartOfDay().toDate()
 
     /** Check if a history has been recorded for this investment today */
-    val alreadyRecorded = dao.findOne(MongoDBObject("investment" -> investmentId, "date" -> MongoDBObject("$gte" -> thisMorning, "$lte" -> midnight)))
+    val alreadyRecorded = dao.findOne(MongoDBObject("investment" -> investmentId, "date" ->
+      MongoDBObject("$gte" -> thisMorning, "$lte" -> midnight)))
 
     /** If the history has been not been recorded add it as a new date to the investmenthistorys table */
     val recordedHistory = alreadyRecorded.getOrElse({
       /** Create the history to add */
-      val history = new InvestmentHistory(value = value, valuechanged = valueChanged, investment = investmentId, quantity = quantity,date = DateTime.now().toDate, recentchange = None)
+      val history = new InvestmentHistory(value = value, valuechanged = valueChanged, investment = investmentId,
+        quantity = quantity,date = DateTime.now().toDate, recentchange = None)
       /** Insert the created history into the database and return true or false*/
       create(history)
     })

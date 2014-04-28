@@ -14,6 +14,7 @@ import play.api.libs.json.{JsNumber, JsString, Json, Writes}
 import helpers.InvestmentWithValue
 import java.util.Date
 import java.text.SimpleDateFormat
+import play.i18n.Messages
 
 
 /**
@@ -30,7 +31,8 @@ object InvestmentHistory extends Controller with Secured {
    * @return           Result Json result containing key value pairs for a time series. Conforms
    *                   to the Highcharts format to allow easy parsing.
    */
-  def getInvestmentHistoryForAssetClass(assetClass:String = "", dateFrom:Option[Date] = None, dateTo:Option[Date] = None) = withUser {
+  def getInvestmentHistoryForAssetClass(assetClass:String = "", dateFrom:Option[Date] = None,
+                                        dateTo:Option[Date] = None) = withUser {
     user => implicit request => {
 
       /** Create a list holder which will change based on the assetClass */
@@ -73,15 +75,15 @@ object InvestmentHistory extends Controller with Secured {
           }
 
           /** The time series failed to be collected */
-          else BadRequest("No data available")
+          else BadRequest(Messages.get("error.data.none"))
         }
 
         /** There are no histories available for the investment class */
-        else BadRequest("No data available")
+        else BadRequest(Messages.get("error.data.none"))
       }
 
       /** There are no investments defined */
-      else BadRequest("No data available")
+      else BadRequest(Messages.get("error.data.none"))
     }
   }
 }

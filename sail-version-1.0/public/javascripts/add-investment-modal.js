@@ -184,12 +184,14 @@ $(function () {
                     $.each(data, function() {
                         if (currentInvestment!=globalM.shares) {
                             if (this.type!='S') {
-                                resultOptions.append($("<option />").val(this.symbol+"~"+this.name).text(this.symbol+" ~ "+this.exch+" ~ "+this.name+" ~ "+this.typeDisp));    
+                                resultOptions.append($("<option />").val(this.symbol+"~"+this.name).text(
+                                    this.symbol+" ~ "+this.exch+" ~ "+this.name+" ~ "+this.typeDisp));
                             }    
                         }
                         else {
                             if (this.type=='S') {
-                                resultOptions.append($("<option />").val(this.symbol+"~"+this.name).text(this.symbol+" ~ "+this.exch+" ~ "+this.name));    
+                                resultOptions.append($("<option />").val(this.symbol+"~"+this.name).text(
+                                    this.symbol+" ~ "+this.exch+" ~ "+this.name));
                             }  
                         }
                         

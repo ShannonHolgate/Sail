@@ -19,7 +19,7 @@ $(function () {
     },
     messages: {
       email: {
-        required: validationM.emailrequired,
+        required: validationM.emailRequired,
         email: validationM.emailInvalid
       },
       name: {
@@ -58,11 +58,11 @@ $(function () {
         minlength: $.format(validationM.passwordMinLength)
       },
       email: {
-        required: validationM.emailrequired,
+        required: validationM.emailRequired,
         email: validationM.emailInvalid
       },
       confirm: {
-        required: validationM.emailrequired,
+        required: validationM.emailRequired,
         email: validationM.emailInvalid
       }
     }
@@ -142,7 +142,7 @@ $(function () {
     },
     messages: {
       email: {
-        required: validationM.emailrequired,
+        required: validationM.emailRequired,
         email: validationM.emailInvalid
       },
       password: {

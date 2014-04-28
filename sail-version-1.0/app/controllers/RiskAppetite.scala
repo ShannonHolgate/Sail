@@ -92,7 +92,7 @@ object RiskAppetite extends Controller with Secured with Risker{
   def submit = withUser{
     user => implicit request => {
       riskForm.bindFromRequest().fold(
-        formWithErrors => Redirect(routes.Dashboard.index).flashing(configValues.genericSuccess -> "failure"),
+        formWithErrors => Redirect(routes.Dashboard.index),
         riskBound => {
           /** Create a temporary empty total */
           var riskTotal = 0
@@ -107,15 +107,14 @@ object RiskAppetite extends Controller with Secured with Risker{
             /** Get the target fund and save it to the database for the user */
             models.TargetFund.addTargetFundForUser(user.id,getTargetFundForRiskAppetite(riskAppetite))
             /** Direct flow to the new Target Fund */
-            val successMessage = "You are a " + Messages.get("view.target.risk."+riskAppetite) +
-              " Investor, here is a suggested target fund"
+            val successMessage = Messages.get("success.risk.appetite", Messages.get("view.target.risk."+riskAppetite))
             Redirect(routes.TargetFund.index).flashing(configValues.genericSuccess ->
               successMessage)
           } catch {
             case nfe: NumberFormatException => {
               /** Someone messed with the form being sent */
               Redirect(routes.RiskAppetite.index).flashing(configValues.genericSuccess ->
-                "An error occured collecting your answers")
+                Messages.get("error.risk.collecting"))
             }
           }
         }

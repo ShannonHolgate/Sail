@@ -8,12 +8,14 @@ package Helpers
  * Makes use of the Play web framework for scala, MongoDB and the salat-Play plugin
  */
 
-import helpers._
+import helpers.Valuation
 import org.junit.runner.RunWith
 import org.specs2.mutable.Specification
 import org.specs2.runner.JUnitRunner
 import play.api.test.WithApplication
 import test_data.TestUser
+import org.joda.time.DateTime
+import play.i18n.Messages
 
 /**
  * Tests the Helper traits
@@ -33,7 +35,8 @@ class HelperSpec extends Specification with TestUser with Valuation{
     }
 
     "get current investment values for symbols with quantities" in new WithApplication(currentApplication){
-      val symbolList = getSymbolValuesWithQuantity(List[String]("GOOG","AAPL"),List[(String,Int)](("GOOG",20),("AAPL",50)))
+      val symbolList = getSymbolValuesWithQuantity(List[String]("GOOG","AAPL"),List[(String,Int)](("GOOG",20),
+        ("AAPL",50)))
       symbolList.isDefined must beTrue
       symbolList.get.size must be_==(2)
       symbolList.get(0).quantity must be_==(20)
@@ -42,8 +45,28 @@ class HelperSpec extends Specification with TestUser with Valuation{
     }
 
     "get current investment values for invalid symbols with quantities" in new WithApplication(currentApplication){
-      val symbolList = getSymbolValuesWithQuantity(List[String]("invalid","AAPL"),List[(String,Int)](("GOOG",20),("invalid",50)))
+      val symbolList = getSymbolValuesWithQuantity(List[String]("invalid","AAPL"),List[(String,Int)](("GOOG",20),
+        ("invalid",50)))
       symbolList.isDefined must beFalse
+    }
+
+    "find ticker symbols for google" in new WithApplication(currentApplication){
+      val symbolList = findTickerSymbols("google")
+      symbolList.isDefined must beTrue
+      symbolList.get must contain("GOOG")
+    }
+
+    "get Symbol values at a date" in new WithApplication(currentApplication){
+      val symbolList = getSymbolValuesAtDate(List[String]("AAPL"),DateTime.parse("2014-02-20").toDate)
+      symbolList.isDefined must beTrue
+      symbolList.get(0).Symbol must contain("AAPL")
+    }
+
+    "get Symbol values at a date with quantity" in new WithApplication(currentApplication){
+      val symbolList = getSymbolValuesAtDateWithQuantity(List[String]("AAPL"),List[(String,Int)](("AAPL",5)),
+        DateTime.parse("2014-02-20").toDate)
+      symbolList.isDefined must beTrue
+      symbolList.get(0).quantity must beEqualTo(5)
     }
   }
 }

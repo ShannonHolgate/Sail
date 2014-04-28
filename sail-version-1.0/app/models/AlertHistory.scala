@@ -55,7 +55,8 @@ object AlertHistory extends ModelCompanion[AlertHistory, ObjectId] {
    * @param dateTo        Option[Date] Optional date to set a date range to find alerts for
    * @return
    */
-  def getAlertsForInvestments(investments:List[Investment], dateFrom:Option[Date], dateTo:Option[Date]) : List[AlertHistory] = {
+  def getAlertsForInvestments(investments:List[Investment], dateFrom:Option[Date], dateTo:Option[Date]) :
+  List[AlertHistory] = {
 
     /** Create an empty list to be filled based on the date range */
     var histories = List[AlertHistory]()
@@ -68,7 +69,8 @@ object AlertHistory extends ModelCompanion[AlertHistory, ObjectId] {
     else {
       /** Get the Alerts in the date range provided */
       for( investment <- investments) {
-        histories = histories ++ dao.find(MongoDBObject("investment" -> investment.id, "date" -> MongoDBObject("$gte" -> dateFrom.get, "$lte" -> dateTo.get))).toList
+        histories = histories ++ dao.find(MongoDBObject("investment" -> investment.id, "date" ->
+          MongoDBObject("$gte" -> dateFrom.get, "$lte" -> dateTo.get))).toList
       }
     }
 
@@ -83,7 +85,8 @@ object AlertHistory extends ModelCompanion[AlertHistory, ObjectId] {
    */
   def markAlertRead(alerts:List[AlertHistory]) {
     for (alert <- alerts) {
-      dao.update(MongoDBObject("_id" -> alert.id),MongoDBObject("valuechanged" -> alert.valuechanged, "read" -> true, "investment" -> alert.investment),false)
+      dao.update(MongoDBObject("_id" -> alert.id),MongoDBObject("valuechanged" -> alert.valuechanged,
+        "read" -> true, "investment" -> alert.investment),false)
     }
   }
 

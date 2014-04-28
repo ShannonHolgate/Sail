@@ -64,7 +64,8 @@ object RecentChange extends ModelCompanion[RecentChange, ObjectId] {
    * @param dateTo      Option[Date] the date range to get the recent changes for
    * @return            List[RecentChange] the list of recent changes relating to the Investments
    */
-  def getRecentChangesForInvestments(investments:List[Investment], dateFrom:Option[Date], dateTo:Option[Date]) : List[RecentChange] = {
+  def getRecentChangesForInvestments(investments:List[Investment], dateFrom:Option[Date], dateTo:Option[Date]) :
+  List[RecentChange] = {
 
     /** Create an empty list to be updated with the recent changes */
     var histories = List[RecentChange]()
@@ -81,7 +82,8 @@ object RecentChange extends ModelCompanion[RecentChange, ObjectId] {
     else {
       for( investment <- investments) {
         /** For each list of recent changes, merge them onto the histories list */
-        histories = histories ++ dao.find(MongoDBObject("recentchanges" -> investment.id, "date" -> MongoDBObject("$gte" -> dateFrom.get, "$lte" -> dateTo.get))).toList
+        histories = histories ++ dao.find(MongoDBObject("recentchanges" -> investment.id, "date" ->
+          MongoDBObject("$gte" -> dateFrom.get, "$lte" -> dateTo.get))).toList
       }
     }
     /** Return the list of recent changes */

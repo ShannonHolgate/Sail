@@ -21,6 +21,11 @@ error.question.incorrect=That's the incorrect answer to this question, are you a
 error.newfund.failed=An error occured in the database, please try again
 error.name.failed=An error occured in the database, please try again
 error.password.incorrect=Incorrect password entered
+error.database.failed=Database failure, please try again
+error.parse.url=Please correct the URL: {0}
+error.exception.fail=Service request failed: {0}
+error.data.none=No data available
+error.data.noresults=No Results
 
 # Investment manipulation errors
 error.investment.quantity=Quantity must be greater than {0}
@@ -41,6 +46,17 @@ error.investment.valueupdatefail=Failed to update the value of {0}
 error.investment.valuequantityinvalid=Value or quantity have not been entered correctly
 error.investment.password=Password incorrect
 
+# Investment valuation errors
+error.value.failed=Could not get an accurate value for some of your investments!
+error.value.noneinrange=You have no investments in this date range!
+error.value.noinvestments=You have no investments, add new investments using the menu on the left
+error.value.onefailed=Could not get an accurate value for this investment!
+error.value.notinrange=This investment does not exist in this date range!
+error.value.noinvestment=This investment does not exist!
+error.value.noneinclass=Please add an investment for this asset class
+error.value.noneatdate=There are no investment values recorded at this date
+error.value.timeseriesfail=Time series generation failure, please try again
+
 # Success Messages
 success.logout=You are now logged out
 
@@ -50,6 +66,15 @@ success.investment.added={0} has been added
 success.investment.removed={0} Removed
 success.investment.quantity=Quantity for {0} changed
 success.investment.value=Value of {0} has been changed
+
+# Risk Appetite
+success.risk.appetite=You are a {0} Investor, here is a suggested target fund
+error.risk.collecting=An error occured collecting your answers
+error.risk.notfound=Risk appetite not found
+
+# Target Fund
+error.risk.none=Please find your risk appetite first
+error.target.none=No Target Fund Available
 
 # Date Format
 date.format=dd/MM/yyyy
@@ -68,8 +93,11 @@ email.admin.address=noreply@sail.com
 view.emaillabel=Email Address
 view.passwordlabel=Password
 view.namelabel=Name
+view.quantitylabel=Quantity
+view.valuelabel=Value
 view.sail=Sail
 view.cancel=Cancel
+view.continue=Continue
 
 # Langing page
 view.landing.tagline=Eventually, there will be a really nice tagline here about how Sail guides your investments
@@ -132,6 +160,7 @@ view.index.buy=Buy
 view.index.sell=Sell
 view.index.add=Add
 view.index.update=Change
+view.index.updatebutton=Update
 view.index.addinvestment=Add Investment
 view.index.addinvestmentmessage=Please choose an investment to add in the menu on the left
 view.index.search=Search
@@ -146,6 +175,10 @@ view.index.editinvestmentmessage=Please choose an investment to edit in the menu
 view.index.newvalue=Value
 view.index.newquantity=New Quantity
 view.index.removeall=Remove all
+view.index.view=View
+view.index.useradmin=User Admin
+view.index.logout=Logout
+view.index.note=Note: You will lose any progress on the current page when you add a new investment.
 
 # Asset Class Page
 view.assetclass.regularpayments=Regular Payments
@@ -154,10 +187,69 @@ view.assetclass.investments=Investment
 view.assetclass.from=From
 view.assetclass.to=To
 view.assetclass.all=Complete History?
+view.assetclass.totalvalue=Total Value:
+view.assetclass.alltag=All
+view.assetclass.updatechart=Update Chart
 
 # Risk Appetite Page
 view.risk.pagetitle=Risk Appetite - Sail
 view.risk.header=Risk Appetite
+view.risk.submit=Submit
+
+# Risk Appetite Questions
+view.risk.one.q=In general, how would your best friend describe you as a risk taker?
+view.risk.one.1=A real gambler
+view.risk.one.2=Willing to take risks after completing adequate research
+view.risk.one.3=Cautious
+view.risk.one.4=A real risk avoider
+view.risk.two.q=You are on a TV game show and can choose one of the following. Which would you take?
+view.risk.two.1=£1,000 in cash
+view.risk.two.2=A 50% chance at winning £5,000
+view.risk.two.3=A 25% chance at winning £10,000
+view.risk.two.4=A 5% chance at winning £100,000
+view.risk.three.q=You have just finished saving for a "once-in-a-lifetime" vacation. Three weeks before you plan to leave, you lose your job. You would:
+view.risk.three.1=Cancel the vacation
+view.risk.three.2=Take a much more modest vacation
+view.risk.three.3=Go as scheduled, reasoning that you need the time to prepare for a job search
+view.risk.three.4=Extend your vacation, because this might be your last chance to go first-class
+view.risk.four.q=If you unexpectedly received £20,000 to invest, what would you do?
+view.risk.four.1=Deposit it in a bank account, money market account, or an insured CD
+view.risk.four.2=Invest it in safe high quality bonds or bond mutual funds
+view.risk.four.3=Invest it in stocks or stock mutual funds
+view.risk.five.q=In terms of experience, how comfortable are you investing in stocks or stock mutual funds?
+view.risk.five.1=Not at all comfortable
+view.risk.five.2=Somewhat comfortable
+view.risk.five.3=Very comfortable
+view.risk.six.q=When you think of the word "risk" which of the following words comes to mind first?
+view.risk.six.1=Loss
+view.risk.six.2=Uncertainty
+view.risk.six.3=Opportunity
+view.risk.six.4=Thrill
+view.risk.seven.q=Some experts are predicting prices of assets such as gold, jewels, collectibles, and real estate (hard assets) to increase in value; bond prices may fall, however, experts tend to agree that government bonds are relatively safe. Most of your investment assets are now in high-interest government bonds. What would you do?
+view.risk.seven.1=Hold the bonds
+view.risk.seven.2=Sell the bonds, put half the proceeds into money market accounts, and the other half into hard assets
+view.risk.seven.3=Sell the bonds and put the total proceeds into hard assets
+view.risk.seven.4=Sell the bonds, put all the money into hard assets, and borrow additional money to buy more
+view.risk.eight.q=Given the best- and worst-case returns of the four investment choices below, which would you prefer?
+view.risk.eight.1=£200 gain best case; £0 gain/loss worst case
+view.risk.eight.2=£800 gain best case; £200 loss worst case
+view.risk.eight.3=£2,600 gain best case; £800 loss worst case
+view.risk.eight.4=£4,800 gain best case; £2,400 loss worst case
+view.risk.nine.q=In addition to whatever you own, you have been given £1,000. You are now asked to choose between:
+view.risk.nine.1=A sure gain of £500
+view.risk.nine.2=A 50% chance to gain £1,000 and a 50% chance to gain nothing
+view.risk.ten.q=In addition to whatever you own, you have been given £2,000. You are now asked to choose between:
+view.risk.ten.1=A sure loss of £500
+view.risk.ten.2=A 50% chance to lose £1,000 and a 50% chance to lose nothing
+view.risk.eleven.q=Suppose a relative left you an inheritance of £100,000, stipulating in the will that you invest ALL the money in ONE of the following choices. Which one would you select?
+view.risk.eleven.1=A savings account or money market mutual fund
+view.risk.eleven.2=A mutual fund that owns stocks and bonds
+view.risk.eleven.3=A portfolio of 15 common stocks
+view.risk.eleven.4=Commodities like gold, silver, and oil
+view.risk.twelve.q=If you had to invest £20,000, which of the following investment choices would you find most appealing?
+view.risk.twelve.1=60% in low-risk investments 30% in medium-risk investments 10% in high-risk investments
+view.risk.twelve.2=30% in low-risk investments 40% in medium-risk investments 30% in high-risk investments
+view.risk.twelve.3=10% in low-risk investments 40% in medium-risk investments 50% in high-risk investments
 
 # Target Fund Page
 view.target.pagetitle=Target Fund - Sail
@@ -167,6 +259,10 @@ view.target.risk.2=Low Risk
 view.target.risk.3=Medium Risk
 view.target.risk.4=High Risk
 view.target.risk.5=Very High Risk
+view.target.continue=Continue
+view.target.currentperc=Current Fund Percentages
+view.target.percoffund=Percentage of fund
+view.target.targetperc=Target Fund Percentages
 
 # User Admin Page
 view.admin.pagetitle=Sail - Admin
@@ -177,5 +273,17 @@ view.admin.answer.number=7
 view.admin.emailchanged=Success, {0}, your email address has been changed to: {1}
 view.admin.fundreset=Your fund is now empty, head over to the Dashboard to add your investments
 view.admin.namechanged=Success, {0}, you have changed your name
+view.admin.newfund=New Fund
+view.admin.dashboard=Dashboard
+view.admin.newpassword.title=Set a New Password
+view.admin.newpassword.old=Old Password
+view.admin.newpassword.change=Change
+view.admin.newemail.title=Set a New Email Address
+view.admin.newemail.confirm=Re-type Email Address
+view.admin.newfund.title=Create a new fund
+view.admin.newfund.warning=Warning: Doing this completely removes all investments from the system.
+view.admin.newfund.create=Create
+view.admin.newname.title=Set a New Name
+view.admin.newname.name=New Name
 
 

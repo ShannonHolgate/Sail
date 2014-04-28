@@ -19,7 +19,7 @@ $(function() {
     },
     messages: {
       email: {
-        required: validationM.emailrequired,
+        required: validationM.emailRequired,
         email: validationM.emailInvalid
       },
       name: {

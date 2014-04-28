@@ -10,8 +10,10 @@
   Nil
 },{
   // Add each possible success to a sequence
-  flash.get(Play.application.configuration.getString("user.reset.flash").get).map { username => Messages("view.login.resetsuccess", username) } ::
-  flash.get(Play.application.configuration.getString("user.reset.request").get).map { email => Messages("view.login.resetrequest", email) } ::
+  flash.get(Play.application.configuration.getString("user.reset.flash").get).map {
+      username => Messages("view.login.resetsuccess", username) } ::
+  flash.get(Play.application.configuration.getString("user.reset.request").get).map {
+      email => Messages("view.login.resetrequest", email) } ::
   Nil
 }) {
 <div class="span-12 landing-content">
@@ -24,7 +26,8 @@
       <input type="email" name="email" id="email" value="@loginForm("email").value">
   </div>  
   <div class="row">
-      @Messages("view.passwordlabel") <a href="#reset-form" class="small-font" id="reset_pop">[@Messages("view.login.forgotlabel")]</a>
+      @Messages("view.passwordlabel")
+      <a href="#reset-form" class="small-font" id="reset_pop">[@Messages("view.login.forgotlabel")]</a>
   </div>
   <div class="row">
     <input type="password" name="password" id="password">
@@ -55,8 +58,10 @@
     <div class="row">
       <input type="email" name="email" id="email-reset" value="@loginForm("email").value">
     </div> 
-    <a class="flat-grey small left" href="#close">Cancel</a>
-    <input type="submit" value="@Messages("view.login.resetsubmit")" class="flat-grey small right" id="reset-button"></input>
+    <a class="flat-grey small left" href="#close">@Messages("view.cancel")</a>
+    <input type="submit" value="@Messages("view.login.resetsubmit")" class="flat-grey small right" id="reset-button">
+
+    </input>
   }
 </div>
 <!-- Include the validation for the login form -->

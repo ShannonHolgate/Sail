@@ -87,7 +87,7 @@ object TargetFund extends Controller with Secured with Risker{
       else
         /** Redirect to the Risk Appetite Questionnaire */
         Redirect(routes.RiskAppetite.index).flashing(configValues.genericError ->
-          "Please find your risk appetite first")
+          Messages.get("error.risk.none"))
     }
   }
 
@@ -116,7 +116,7 @@ object TargetFund extends Controller with Secured with Risker{
       if (targetFund.isDefined) Ok(Json.toJson(targetFund.get))
 
       /** The user has not created a target fund */
-      else BadRequest("No Target Fund Available")
+      else BadRequest(Messages.get("error.target.none"))
     }
   }
 }

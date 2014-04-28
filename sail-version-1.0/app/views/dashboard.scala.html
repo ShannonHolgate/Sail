@@ -297,7 +297,8 @@
                         }
                         tempIndex++;
                     }
-                    while (tempIndex < symbolInvestments.length && symbolInvestments[tempIndex-1].name != data[i].symbol)
+                    while (tempIndex < symbolInvestments.length &&
+                    symbolInvestments[tempIndex-1].name != data[i].symbol)
                 }
 
                 /**
@@ -315,7 +316,8 @@
                             symbolArray.push(newClass);
                         }
                         else {
-                            symbolArray[symbolArray.length-1].y = symbolArray[symbolArray.length-1].y + symbolInvestments[i].value;
+                            symbolArray[symbolArray.length-1].y =
+                            symbolArray[symbolArray.length-1].y + symbolInvestments[i].value;
                         }
                         symbolAssetClass = symbolInvestments[i].assetClass;
                     }
@@ -380,7 +382,8 @@
                 },
                 title: {
                     useHTML: true,
-                    text: '<span id=\"fundTitleName\">@Messages("view.dash.fundtitle")</span> <span id=\"fundTitleValue" class=\"currency\">' + runningTotal + '</span>'
+                    text: '<span id=\"fundTitleName\">@Messages("view.dash.fundtitle")</span>' +
+                            '<span id=\"fundTitleValue" class=\"currency\">' + runningTotal + '</span>'
                 },
                 exporting: { enabled: false },
                 plotOptions: {
@@ -483,7 +486,7 @@
                     valueSuffix: '%'
                 },
                 series: [{
-                    name: 'Percentage of fund',
+                    name: '@Messages("view.dash.classpercent")',
                     data: targetFundPerc,
                     innerSize: '30%',
                     size: '80%',
@@ -515,7 +518,9 @@
             /**
             * Let the user know that there is no target fund
             **/
-            $('#target-holder').html('<p>@Messages("view.dash.notargetfund")</p><a class="flat-grey" href="/riskappetite">@Messages("view.dash.riskprofile")</a>');
+            $('#target-holder').html(
+            '<p>@Messages("view.dash.notargetfund")</p>' +
+                'a class="flat-grey" href="/riskappetite">@Messages("view.dash.riskprofile")</a>');
         }
 
         /**

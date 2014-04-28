@@ -188,10 +188,12 @@ object Investment extends ModelCompanion[Investment, ObjectId] {
    * @param user        The user who owns the investment
    * @return            Boolean whether the insert was successful
    */
-  def createOne(quantity:Option[Int],value:BigDecimal, assetClass:String, name:String,symbol:Option[String],user:User) : Option[ObjectId] = {
+  def createOne(quantity:Option[Int],value:BigDecimal, assetClass:String, name:String,symbol:Option[String],user:User):
+  Option[ObjectId] = {
 
     /** Createt the investment object */
-    val investment = Investment(quantity=quantity,value=value,assetclass=assetClass,name=name,symbol=symbol,user=user.id)
+    val investment = Investment(quantity=quantity,value=value,assetclass=assetClass,name=name,symbol=symbol,
+      user=user.id)
 
     /** Insert the investment into the database and ensure the returned id exists */
     dao.insert(investment)
@@ -245,10 +247,12 @@ object Investment extends ModelCompanion[Investment, ObjectId] {
       for (investment <- investments.toList.sortBy(_.assetclass)) {
 
         /** If the assetClass is different from the previous investment, append the value */
-        if (percentageList.isEmpty || !investment.assetclass.equals(tempClass)) percentageList.append((investment.assetclass,investment.value))
+        if (percentageList.isEmpty || !investment.assetclass.equals(tempClass))
+          percentageList.append((investment.assetclass,investment.value))
 
         /** Otherwise add the value to the current assetClass */
-        else percentageList.update(percentageList.size-1,(percentageList.last._1,percentageList.last._2+investment.value))
+        else
+          percentageList.update(percentageList.size-1,(percentageList.last._1,percentageList.last._2+investment.value))
 
         /** Update the temporary values */
         tempClass = investment.assetclass

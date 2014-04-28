@@ -28,7 +28,8 @@
                     <div id="date-holder">
                         <table class="span-12" id="date-table">
                             <tr>
-                                <th class="left">Name</th><th>Quantity</th><th>Value</th>
+                                <th class="left">@Messages("view.namelabel")</th>
+                                <th>@Messages("view.quantitylabel")</th><th>@Messages("view.valuelabel")</th>
                             </tr>
                         </table>
                         &nbsp;
@@ -36,7 +37,8 @@
                     <div class="date-table-foot right">
                         <table class="span-12">
                             <tr>
-                                <th></th><th>Total Value:</th><th id="total-value" class="currency"></th>
+                                <th></th><th>@Messages("view.assetclass.totalvalue")</th>
+                                <th id="total-value" class="currency"></th>
                             </tr>
                         </table>
                     </div>
@@ -50,7 +52,7 @@
                     <div class="summary-value">
                         <h5>@Messages("view.assetclass.investments")</h5>
                         <p><select name="investment" id="investment-select" class="span-8">
-                            <option value="">All</option>
+                            <option value="">@Messages("view.assetclass.alltag")</option>
                         </select></p>
                     </div>
                 </div>
@@ -78,7 +80,10 @@
                 <div class="span-2">
                     <div class="summary-value">
                         <p>&nbsp;</p>
-                        <p><input type="button" value="Update Chart" class="flat-grey small-long" id="update-button"></input></p>
+                        <p>
+                            <input type="button" value="@Messages("view.assetclass.updatechart")" class="flat-grey small-long" id="update-button">
+
+                            </input></p>
                     </div>
                 </div>
             }
@@ -206,14 +211,16 @@
               /**
               * Update the date pickers
               **/
-              dateFromPicker = new Pikaday({ field: $('#investment-from')[0], minDate: minDate, maxDate: maxDate, format: 'DD-MM-YYYY',
+              dateFromPicker = new Pikaday({ field: $('#investment-from')[0], minDate: minDate,
+              maxDate: maxDate, format: 'DD-MM-YYYY',
                 onOpen: function() {
                     $('.highcharts-markers path').css("cursor","pointer");    
                 },
                 onClose: function() {
                     $('.highcharts-markers path').css("cursor","default");
                 }});
-              dateToPicker = new Pikaday({ field: $('#investment-to')[0], minDate: minDate, maxDate: maxDate, format: 'DD-MM-YYYY' ,
+              dateToPicker = new Pikaday({ field: $('#investment-to')[0], minDate: minDate,
+              maxDate: maxDate, format: 'DD-MM-YYYY' ,
                 onOpen: function() {
                     $('.highcharts-markers path').css("cursor","pointer");    
                 },

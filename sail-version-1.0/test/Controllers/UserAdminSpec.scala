@@ -17,12 +17,12 @@ import play.api.libs.json.Json._
 import play.api.test.Helpers._
 
 /**
- * Tests the Dashboard Controller
+ * Tests the User Admin Controller
  */
 @RunWith(classOf[JUnitRunner])
-class DashboardSpec extends Specification with TestUser{
-  "Dashboard" should {
-    "render the Dashboard view" in new WithApplication(currentApplication){
+class UserAdminSpec extends Specification with TestUser{
+  "UserAdmin" should {
+    "render the User Admin view" in new WithApplication(currentApplication){
       /** Ensure user exists */
       confirmTestUserExists
 
@@ -38,19 +38,12 @@ class DashboardSpec extends Specification with TestUser{
       /** Store the cookies to pass onto the next request */
       val sessionCookies = cookies(login).get("PLAY_SESSION").orNull
 
-      val result = controllers.Dashboard.index()(FakeRequest().withCookies(sessionCookies))
+      val result = controllers.UserAdmin.index()(FakeRequest().withCookies(sessionCookies))
 
       status(result.run) must equalTo(OK)
-      contentAsString(result.run) must contain("Dashboard")
-      contentAsString(result.run) must contain(testUser.username)
+      contentAsString(result.run) must contain("Admin")
     }
 
-    "redirect to login - user not logged in" in new WithApplication(currentApplication){
-      /** Attempt to render the Dashboard view */
-      val result = controllers.Dashboard.index()(FakeRequest())
-
-      status(result.run) must equalTo(SEE_OTHER)
-      redirectLocation(result.run) must some("/login")
-    }
   }
+
 }

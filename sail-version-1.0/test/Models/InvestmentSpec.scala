@@ -14,6 +14,7 @@ import org.specs2.mutable.Specification
 import org.specs2.runner.JUnitRunner
 import play.api.test.WithApplication
 import test_data.TestUser
+import org.bson.types.ObjectId
 
 /**
  * Tests the Investment model
@@ -46,12 +47,74 @@ class InvestmentSpec extends Specification with TestUser{
     "get investments with Symbols" in new WithApplication(currentApplication){
       removeTestUsers
       confirmTestUserExists
-      val user = User.findByEmail(testUser.email)
-      val investments = Investment.getInvestmentsWithSymbols(user.get.id)
+      val investments = Investment.getInvestmentsWithSymbols(testUser.id)
 
       investments.isDefined must beTrue
       investments.get.size must be_>(0)
-      investments.get(0).user.equals(user.get.id) must beTrue
+      investments.get(0).user.equals(testUser.id) must beTrue
+    }
+
+    "get an investment from it's ID" in new WithApplication(currentApplication){
+      val investment = Investment.getOne(new ObjectId("5283e32d03649c70127432d7"))
+
+      investment.isDefined must beTrue
+    }
+
+    "get an investment from name" in new WithApplication(currentApplication){
+      removeTestUsers
+      confirmTestUserExists
+      val user = User.findByEmail(testUser.email)
+
+      val investment = Investment.getOneFromName("Cash",user.get)
+
+      investment.isDefined must beTrue
+    }
+
+    "get an investment from it's symbol" in new WithApplication(currentApplication){
+      removeTestUsers
+      confirmTestUserExists
+      val user = User.findByEmail(testUser.email)
+
+      val investment = Investment.getOneFromSymbol("AAPL",user.get)
+
+      investment.isDefined must beTrue
+    }
+
+    "update an investments value" in new WithApplication(currentApplication){
+      val investment = Investment.getOne(new ObjectId("5283e32d03649c70127432d7"))
+
+      val update = Investment.updateInvestmentValue(investment.get.copy(value=5000))
+
+      update must beTrue
+    }
+
+    "create an investment" in new WithApplication(currentApplication){
+      removeTestUsers
+      confirmTestUserExists
+      val user = User.findByEmail(testUser.email)
+
+      val newId = Investment.createOne(None,500,"Property","Test House",None,user.get)
+
+      newId.isDefined must beTrue
+    }
+
+    "remove an investment" in new WithApplication(currentApplication){
+      removeTestUsers
+      confirmTestUserExists
+      val user = User.findByEmail(testUser.email)
+
+      val newId = Investment.createOne(None,500,"Property","Test House delete",None,user.get)
+
+      val success = Investment.removeOne(newId.get)
+
+      success must beTrue
+    }
+
+    "get the percentage breakdown of the fund" in new WithApplication(currentApplication){
+      val breakdown = Investment.getPercentageBreakdown(testUser.id)
+
+      breakdown.isDefined must beTrue
+      breakdown.get.length must be_>(0)
     }
   }
 

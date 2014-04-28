@@ -70,7 +70,8 @@ case class InvestmentWithValue(
                                 )
 
 /**
- * Quotes received from YQL to get historical stock prices. Prices are in USD and need to use the exchange rate to convert
+ * Quotes received from YQL to get historical stock prices. Prices are in USD and need to use the exchange rate to
+ * convert
  * Should be parsed straight from the result of the query if a quote is returned.
  *
  * @param Symbol    String the ticker symbol of the history returned
@@ -138,7 +139,8 @@ trait Valuation {
    * @return            Option[List[InvestmentWithValue] ] A full meaningful list of real time investments
    *                                                       with values relating to their quantities
    */
-  def getSymbolValuesWithQuantity(symbols:List[String], quantities:List[(String,Int)]): Option[List[InvestmentWithValue]] = {
+  def getSymbolValuesWithQuantity(symbols:List[String], quantities:List[(String,Int)]):
+  Option[List[InvestmentWithValue]] = {
 
     /** Use the helper method to retrieve a cryptic representation of the real time investment from the Google Finance
       * API
@@ -151,8 +153,11 @@ trait Valuation {
       for (gFinance <- gFSequence.get) {
         val quantity = quantities.find{item => item._1.equals(gFinance.t)}
         if (quantity.isDefined) {
-          val formattedInvestment = new FormattedInvestment(gFinance.t,BigDecimal(gFinance.l.replace(",","")),gFinance.e)
-          val investmentWithValue = new InvestmentWithValue(formattedInvestment,formattedInvestment.closingPrice.*(quantity.get._2).setScale(2, RoundingMode.CEILING),quantity.get._2)
+          val formattedInvestment = new FormattedInvestment(
+            gFinance.t,BigDecimal(gFinance.l.replace(",","")),gFinance.e)
+          val investmentWithValue = new InvestmentWithValue(
+            formattedInvestment,formattedInvestment.closingPrice.*(quantity.get._2).
+              setScale(2, RoundingMode.CEILING),quantity.get._2)
           investmentsWithValues.append(investmentWithValue)
         }
       }
@@ -204,7 +209,9 @@ trait Valuation {
         * Then create a Google Finance object out of each and add it to the gFinanceList to be returned
         */
       for ((symbol,index) <- gSymbols.zipWithIndex) {
-        val gFinance = new GoogleFinance(symbol.as[String],BigDecimal(gLastPrices(index).as[String].replace(",","")).*(exchangeRate.get.rate).toString(),gExchanges(index).as[String])
+        val gFinance = new GoogleFinance(symbol.as[String],
+          BigDecimal(gLastPrices(index).as[String].replace(",","")).
+            *(exchangeRate.get.rate).toString(),gExchanges(index).as[String])
         gFinanceList.append(gFinance)
       }
 
@@ -258,7 +265,8 @@ trait Valuation {
     val stringDate = new SimpleDateFormat("yyyy-MM-dd").format(date)
 
     /** Make a synchronous call to the open exchange rate api and retrieve a json string of results */
-    val response = WS.url("http://openexchangerates.org/api/historical/"+stringDate+".json?app_id=006d0137e6b24aa6ace57f4afdb4fdaf").get()
+    val response = WS.url("http://openexchangerates.org/api/historical/"+stringDate+
+      ".json?app_id=006d0137e6b24aa6ace57f4afdb4fdaf").get()
     val result = Await.result(response, 10.seconds)
 
     /** Ensure an exchange rate is found */
@@ -288,7 +296,8 @@ trait Valuation {
    */
   def findTickerSymbols(query:String): Option[String] = {
     /** Make a synchronous call to the yahoo finance and retrieve a json string of investment results */
-    val response = WS.url("http://d.yimg.com/autoc.finance.yahoo.com/autoc?query=" + query + "&callback=YAHOO.Finance.SymbolSuggest.ssCallback").get();
+    val response = WS.url("http://d.yimg.com/autoc.finance.yahoo.com/autoc?query=" + query +
+      "&callback=YAHOO.Finance.SymbolSuggest.ssCallback").get();
     val result = Await.result(response, 10.seconds)
     val cleanResult = result.body.split("\"Result\":").last.dropRight(3)
     /** Return the un-formatted Json String */
@@ -319,10 +328,12 @@ trait Valuation {
     val simpleDate = dateFormat.format(date)
 
     /** Concatenate the YQL query string with dates and symbols */
-    val queryString = "select * from yahoo.finance.historicaldata where symbol in " + symbolString +" and startDate = \"" +simpleDate+ "\" and endDate = \"" +simpleDate+"\"".replaceAll("//%5E","%5F")
+    val queryString = "select * from yahoo.finance.historicaldata where symbol in " + symbolString +
+      " and startDate = \"" +simpleDate+ "\" and endDate = \"" +simpleDate+"\"".replaceAll("//%5E","%5F")
 
     /** Make a synchronous call to the Google finance URL and retrieve the Json String of results */
-    val response = WS.url(yahooQueryUrl).withQueryString("q" -> queryString, "env" -> "http://datatables.org/alltables.env", "format" -> "json").get()
+    val response = WS.url(yahooQueryUrl).withQueryString("q" -> queryString, "env" ->
+      "http://datatables.org/alltables.env", "format" -> "json").get()
     val result = Await.result(response, 10.seconds)
 
     if (result.status.equals(200)) {
@@ -346,7 +357,8 @@ trait Valuation {
 
       if (historicalQuotes.isDefined && exchangeRate.isDefined) {
         /** Convert the values to GBP */
-        val finalHistoricalQuotes = historicalQuotes.get.map(quote => quote.copy(Close = quote.Close.*(exchangeRate.get.rate).setScale(2, RoundingMode.CEILING)))
+        val finalHistoricalQuotes = historicalQuotes.get.map(quote => quote.copy(Close = quote.Close.
+          *(exchangeRate.get.rate).setScale(2, RoundingMode.CEILING)))
 
         /** Return the list of GBP Formatted historical quotes */
         Some(finalHistoricalQuotes)
@@ -368,7 +380,8 @@ trait Valuation {
    * @param date        Date the simple date to get the quotes for
    * @return
    */
-  def getSymbolValuesAtDateWithQuantity(symbols:List[String], quantities:List[(String,Int)], date:Date): Option[List[InvestmentAtDate]] = {
+  def getSymbolValuesAtDateWithQuantity(symbols:List[String], quantities:List[(String,Int)], date:Date):
+  Option[List[InvestmentAtDate]] = {
     /** Use the helper method to retrieve a simple representation of the real time investment from the YQL
       * API
       */
@@ -380,7 +393,8 @@ trait Valuation {
       for (quote <- yqlQuotes.get) {
         val quantity = quantities.find{item => item._1.equals(quote.Symbol)}
         if (quantity.isDefined) {
-          val investmentAtDate = new InvestmentAtDate(quote,quote.Close.*(quantity.get._2).setScale(2, RoundingMode.CEILING),quantity.get._2)
+          val investmentAtDate = new InvestmentAtDate(quote,quote.Close.*(quantity.get._2).
+            setScale(2, RoundingMode.CEILING),quantity.get._2)
           investmentsAtDates.append(investmentAtDate)
         }
       }

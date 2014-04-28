@@ -115,5 +115,37 @@ class UserSpec extends Specification with TestUser{
         name.isDefined must beFalse
         errorMessage.get must equalTo(Messages.get("error.email.incorrect"))
       }
+
+      "change password - admin view" in new WithApplication(currentApplication){
+        removeTestUsers
+        createStandaloneUser
+
+        val error = User.changePassword(standalone.id,standalone.email,standalone.password)
+        error must beNull
+      }
+
+      "change Email - admin view" in new WithApplication(currentApplication){
+        removeTestUsers
+        createStandaloneUser
+
+        val error = User.changeEmail(standalone.id,standalone.email)
+        error must beNull
+      }
+
+      "create a new fund - admin view" in new WithApplication(currentApplication){
+        removeTestUsers
+        createStandaloneUser
+
+        val success = User.newFund(standalone.id)
+        success must beTrue
+      }
+
+      "change username - admin view" in new WithApplication(currentApplication){
+        removeTestUsers
+        createStandaloneUser
+
+        val error = User.changeName(standalone.id,standalone.username)
+        error must beNull
+      }
     }
 }
