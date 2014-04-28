@@ -7,6 +7,6 @@ libraryDependencies ++= Seq(
   anorm,
   cache,
   "com.github.nscala-time" %% "nscala-time" % "0.6.0"
-)     
+)
 
 play.Project.playScalaSettings
