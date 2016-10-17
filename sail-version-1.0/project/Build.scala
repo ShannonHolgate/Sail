@@ -17,7 +17,8 @@ object ApplicationBuild extends Build {
 
   val appDependencies = Seq(
     /** Add the salat-Play plugin*/
-    "se.radley" %% "play-plugins-salat" % "1.3.0",
+    "org.mongodb" %% "casbah" % "2.8.2",
+    "com.novus" %% "salat" % "1.9.9",
     /** Add the emailer plugin*/
     "com.typesafe" %% "play-plugins-mailer" % "2.2.0",
     /** Add the BCrypt encryption plugin*/
@@ -26,7 +27,7 @@ object ApplicationBuild extends Build {
 
   val main = play.Project(appName, appVersion, appDependencies).settings(
     /** Add the new dependencies to support the salat-Play plugin*/
-    routesImport += "se.radley.plugin.salat.Binders._",
+    routesImport += "plugins.salat.Binders._",
     routesImport += "extensions.Binders._",
     templatesImport += "org.bson.types.ObjectId"
   )

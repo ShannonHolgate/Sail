@@ -13,7 +13,7 @@ import org.bson.types.ObjectId
 import com.mongodb.casbah.commons.TypeImports.ObjectId
 import java.util.Date
 import com.novus.salat.dao.{SalatDAO, ModelCompanion}
-import se.radley.plugin.salat._
+import plugins.salat._
 import play.api.Play.current
 import models.MongoContext._
 

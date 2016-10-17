@@ -11,7 +11,7 @@ package models
 import play.api.Play.current
 import com.novus.salat.dao._
 import com.mongodb.casbah.Imports._
-import se.radley.plugin.salat._
+import plugins.salat._
 import models.MongoContext._
 import com.mongodb.casbah.commons.TypeImports.ObjectId
 import java.util.Date

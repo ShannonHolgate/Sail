@@ -12,7 +12,7 @@ import play.api.Play.current
 import java.util.Date
 import com.novus.salat.dao._
 import com.mongodb.casbah.Imports._
-import se.radley.plugin.salat._
+import plugins.salat._
 import models.MongoContext._
 import org.joda.time.{DateTime, Days}
 import play.api.Play

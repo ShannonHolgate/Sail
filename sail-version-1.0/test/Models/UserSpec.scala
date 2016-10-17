@@ -18,7 +18,7 @@ import play.api.Play
 import play.api.Play.current
 import play.api.test._
 import play.i18n.Messages
-import se.radley.plugin.salat.Binders.ObjectId
+import plugins.salat.Binders.ObjectId
 import test_data.TestUser
 
 /**
